@@ -1,3 +1,7 @@
 'use strict';
 
-module.exports.Dispatcher = require('./lib/Dispatcher');
+var Fluxy = function() {};
+Fluxy.Dispatcher = require('./lib/Dispatcher');
+Fluxy.createStore = require('./lib/StoreFactory');
+
+module.exports = Fluxy;

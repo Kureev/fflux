@@ -1,12 +1,3 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Fluxy=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-var Fluxy = function() {};
-Fluxy.Dispatcher = require('./lib/Dispatcher');
-Fluxy.createStore = require('./lib/StoreFactory');
-
-module.exports = Fluxy;
-},{"./lib/Dispatcher":2,"./lib/StoreFactory":3}],2:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -117,13 +108,13 @@ var _prefix = 'ID_';
  * registered callbacks in order: `CountryStore`, `CityStore`, then
  * `FlightPriceStore`.
  */
-
-    function Dispatcher() {
-        this.$Dispatcher_callbacks = {};
-        this.$Dispatcher_isPending = {};
-        this.$Dispatcher_isHandled = {};
-        this.$Dispatcher_isDispatching = false;
-        this.$Dispatcher_pendingPayload = null;
+class Dispatcher {
+    constructor() {
+        this._callbacks = {};
+        this._isPending = {};
+        this._isHandled = {};
+        this._isDispatching = false;
+        this._pendingPayload = null;
     }
 
     /**
@@ -133,25 +124,25 @@ var _prefix = 'ID_';
      * @param {function} callback
      * @return {string}
      */
-    Dispatcher.prototype.register=function(callback) {
+    register(callback) {
         var id = _prefix + _lastID++;
-        this.$Dispatcher_callbacks[id] = callback;
+        this._callbacks[id] = callback;
         return id;
-    };
+    }
 
     /**
      * Removes a callback based on its token.
      *
      * @param {string} id
      */
-    Dispatcher.prototype.unregister=function(id) {
+    unregister(id) {
         invariant(
-            this.$Dispatcher_callbacks[id],
+            this._callbacks[id],
             'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
             id
         );
-        delete this.$Dispatcher_callbacks[id];
-    };
+        delete this._callbacks[id];
+    }
 
     /**
      * Waits for the callbacks specified to be invoked before continuing execution
@@ -160,16 +151,16 @@ var _prefix = 'ID_';
      *
      * @param {array<string>} ids
      */
-    Dispatcher.prototype.waitFor=function(ids) {
+    waitFor(ids) {
         invariant(
-            this.$Dispatcher_isDispatching,
+            this._isDispatching,
             'Dispatcher.waitFor(...): Must be invoked while dispatching.'
         );
         for (var ii = 0; ii < ids.length; ii++) {
             var id = ids[ii];
-            if (this.$Dispatcher_isPending[id]) {
+            if (this._isPending[id]) {
                 invariant(
-                    this.$Dispatcher_isHandled[id],
+                    this._isHandled[id],
                     'Dispatcher.waitFor(...): Circular dependency detected while ' +
                     'waiting for `%s`.',
                     id
@@ -177,44 +168,44 @@ var _prefix = 'ID_';
                 continue;
             }
             invariant(
-                this.$Dispatcher_callbacks[id],
+                this._callbacks[id],
                 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
                 id
             );
-            this.$Dispatcher_invokeCallback(id);
+            this._invokeCallback(id);
         }
-    };
+    }
 
     /**
      * Dispatches a payload to all registered callbacks.
      *
      * @param {object} payload
      */
-    Dispatcher.prototype.dispatch=function(payload) {
-        invariant(!this.$Dispatcher_isDispatching,
+    dispatch(payload) {
+        invariant(!this._isDispatching,
             'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
         );
-        this.$Dispatcher_startDispatching(payload);
+        this._startDispatching(payload);
         try {
-            for (var id in this.$Dispatcher_callbacks) {
-                if (this.$Dispatcher_isPending[id]) {
+            for (var id in this._callbacks) {
+                if (this._isPending[id]) {
                     continue;
                 }
-                this.$Dispatcher_invokeCallback(id);
+                this._invokeCallback(id);
             }
         } finally {
-            this.$Dispatcher_stopDispatching();
+            this._stopDispatching();
         }
-    };
+    }
 
     /**
      * Is this Dispatcher currently dispatching.
      *
      * @return {boolean}
      */
-    Dispatcher.prototype.isDispatching=function() {
-        return this.$Dispatcher_isDispatching;
-    };
+    isDispatching() {
+        return this._isDispatching;
+    }
 
     /**
      * Call the callback stored with the given id. Also do some internal
@@ -223,11 +214,11 @@ var _prefix = 'ID_';
      * @param {string} id
      * @internal
      */
-    Dispatcher.prototype.$Dispatcher_invokeCallback=function(id) {
-        this.$Dispatcher_isPending[id] = true;
-        this.$Dispatcher_callbacks[id](this.$Dispatcher_pendingPayload);
-        this.$Dispatcher_isHandled[id] = true;
-    };
+    _invokeCallback(id) {
+        this._isPending[id] = true;
+        this._callbacks[id](this._pendingPayload);
+        this._isHandled[id] = true;
+    }
 
     /**
      * Set up bookkeeping needed when dispatching.
@@ -235,95 +226,24 @@ var _prefix = 'ID_';
      * @param {object} payload
      * @internal
      */
-    Dispatcher.prototype.$Dispatcher_startDispatching=function(payload) {
-        for (var id in this.$Dispatcher_callbacks) {
-            this.$Dispatcher_isPending[id] = false;
-            this.$Dispatcher_isHandled[id] = false;
+    _startDispatching(payload) {
+        for (var id in this._callbacks) {
+            this._isPending[id] = false;
+            this._isHandled[id] = false;
         }
-        this.$Dispatcher_pendingPayload = payload;
-        this.$Dispatcher_isDispatching = true;
-    };
+        this._pendingPayload = payload;
+        this._isDispatching = true;
+    }
 
     /**
      * Clear bookkeeping used for dispatching.
      *
      * @internal
      */
-    Dispatcher.prototype.$Dispatcher_stopDispatching=function() {
-        this.$Dispatcher_pendingPayload = null;
-        this.$Dispatcher_isDispatching = false;
-    };
-
+    _stopDispatching() {
+        this._pendingPayload = null;
+        this._isDispatching = false;
+    }
+}
 
 module.exports = Dispatcher;
-},{"./invariant":4}],3:[function(require,module,exports){
-'use strict';
-
-var defaultActions = {};
-
-module.exports = function(options) {
-
-    var constr = function Store() {
-        this.actions = _.extend(defaultActions, options.actions || {});
-    };
-
-    _.extend(constr.prototype, Backbone.Events, options);
-
-    return new constr();
-};
-},{}],4:[function(require,module,exports){
-/**
- * Copyright (c) 2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
-
-"use strict";
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var invariant = function(condition, format, a, b, c, d, e, f) {
-  if (false) {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error(
-        'Minified exception occurred; use the non-minified dev environment ' +
-        'for the full error message and additional helpful warnings.'
-      );
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(
-        'Invariant Violation: ' +
-        format.replace(/%s/g, function() { return args[argIndex++]; })
-      );
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-};
-
-module.exports = invariant;
-},{}]},{},[1])(1)
-});
