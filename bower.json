@@ -1,0 +1,20 @@
+{
+  "name": "fluxy",
+  "version": "0.0.1",
+  "authors": [
+    "Kureev Alexey <kureev-mail@ya.ru>"
+  ],
+  "description": "Flux architecture realisation",
+  "main": "index.js",
+  "keywords": [
+    "flux"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
