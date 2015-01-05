@@ -1,9 +1,13 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Fluxy=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var Fluxy = function() {};
-Fluxy.Dispatcher = require('./lib/Dispatcher');
-Fluxy.createStore = require('./lib/StoreFactory');
+var Dispatcher = require('./lib/Dispatcher');
+var createStore = require('./lib/StoreFactory');
+
+var Fluxy = function() {
+    this.dispatcher = new Dispatcher();
+    this.createStore = createStore;
+};
 
 module.exports = Fluxy;
 },{"./lib/Dispatcher":2,"./lib/StoreFactory":3}],2:[function(require,module,exports){
@@ -263,13 +267,26 @@ var defaultActions = {};
 
 module.exports = function(options) {
 
-    var constr = function Store() {
+    var constr = function FluxyStore() {
         this.actions = _.extend(defaultActions, options.actions || {});
     };
 
     _.extend(constr.prototype, Backbone.Events, options);
 
-    return new constr();
+    var instance = new constr();
+
+    // Register store callback to the application dispatcher
+    this.dispatcher.register(function(payload) {
+        var action = payload.action;
+
+        var actionKeys = _.keys(instance.actions);
+
+        if (~actionKeys.indexOf(action.actionName)) {
+            instance.actions[action.actionName].call(instance, payload);
+        }
+    });
+
+    return instance;
 };
 },{}],4:[function(require,module,exports){
 /**
