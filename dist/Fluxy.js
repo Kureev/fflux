@@ -282,7 +282,7 @@ module.exports = function(options) {
         var actionKeys = _.keys(instance.actions);
 
         if (~actionKeys.indexOf(action.actionName)) {
-            instance.actions[action.actionName].call(instance, payload);
+            instance[action.actionName].call(instance, payload);
         }
     });
 
