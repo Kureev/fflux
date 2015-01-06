@@ -4,9 +4,41 @@
 var Dispatcher = require('./lib/Dispatcher');
 var createStore = require('./lib/StoreFactory');
 
+/**
+ * Application constructor
+ */
 var Fluxy = function() {
-    this.dispatcher = new Dispatcher();
-    this.createStore = createStore;
+    var _dispatcher = new Dispatcher();
+
+    /**
+     * Create new store
+     * @return {options} Configuration for the store
+     */
+    this.createStore = function(options) {
+        createStore.call(this, options);
+    };
+
+    /**
+     * Dispatcher getter
+     * @private
+     * @return {Flux.Dispatcher}
+     */
+    this.getDispatcher = function() {
+        return _dispatcher;
+    };
+
+    /**
+     * Invoke dispatch method of the flux dispatcher's instance
+     * @param {object} payload
+     * @return true
+     */
+    this.dispatch = function(payload) {
+        var dispatcher = this.getDispatcher();
+
+        dispatcher.dispatch.call(dispatcher, payload);
+
+        return true;
+    };
 };
 
 module.exports = Fluxy;
@@ -261,33 +293,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 },{"./invariant":4}],3:[function(require,module,exports){
-'use strict';
 
-var defaultActions = {};
-
-module.exports = function(options) {
-
-    var constr = function FluxyStore() {
-        this.actions = _.extend(defaultActions, options.actions || {});
-    };
-
-    _.extend(constr.prototype, Backbone.Events, options);
-
-    var instance = new constr();
-
-    // Register store callback to the application dispatcher
-    this.dispatcher.register(function(payload) {
-        var action = payload.action;
-
-        var actionKeys = _.keys(instance.actions);
-
-        if (~actionKeys.indexOf(action.actionName)) {
-            instance[action.actionName].call(instance, payload);
-        }
-    });
-
-    return instance;
-};
 },{}],4:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
