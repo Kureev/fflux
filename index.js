@@ -60,7 +60,7 @@ var Fluxy = function() {
      */
     this.register = function(instance) {
         return _dispatcher.register(function(payload) {
-            var actionName = payload.action;
+            var actionName = payload.actionName;
             var actionKeys = _.keys(instance.actions);
 
             // Check if we have something to wait for
