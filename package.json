@@ -18,5 +18,8 @@
     "gulp-react": "^2.0.0",
     "gulp-replace": "^0.5.0",
     "vinyl-source-stream": "^1.0.0"
+  },
+  "dependencies": {
+    "react": "^0.12.2"
   }
 }
