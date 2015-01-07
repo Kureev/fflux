@@ -4,6 +4,8 @@ var Dispatcher = require('./lib/Dispatcher');
 var createStore = require('./lib/StoreFactory');
 var createView = require('./lib/ViewFactory');
 
+var NOT_FOUND = -1;
+
 /**
  * Application constructor
  */
@@ -17,6 +19,20 @@ var Fluxy = function() {
      */
     this.createStore = function(options) {
         return createStore.call(this, options);
+    };
+
+    /**
+     * Create object with action interface
+     * @param  {string} actionName Name of the action
+     * @param  {object} payload    Payload object
+     * @return {object}            Object with action interface
+     */
+    this.createAction = function(actionName, payload) {
+        var action = {
+            actionName: actionName
+        };
+
+        return _.extend(action, payload);
     };
 
     /**
@@ -35,6 +51,48 @@ var Fluxy = function() {
      */
     this.getDispatcher = function() {
         return _dispatcher;
+    };
+
+    /**
+     * Register store to dispatcher
+     * @param {FluxyStore} instance FluxyStore instance
+     * @return {string} Registration id
+     */
+    this.register = function(instance) {
+        return _dispatcher.register(function(payload) {
+            var actionName = payload.action;
+            var actionKeys = _.keys(instance.actions);
+
+            // Check if we have something to wait for
+            // see http://facebook.github.io/flux/docs/dispatcher.html
+            // for more details
+            if (instance.waitFor.length) {
+                _dispatcher.waitFor(instance.waitFor);
+            }
+
+            // If we have such actions listener, invoke 
+            // related function with payload provided
+            if (actionKeys.indexOf(actionName) !== NOT_FOUND) {
+                instance[actionName].call(instance, payload);
+            }
+        });
+    };
+
+    /**
+     * Unregister store from dispatcher
+     * @param {object} options Binding identificator or store instance
+     * @return {void}
+     */
+    this.unregister = function(options) {
+        var id;
+
+        if (typeof options === 'string') {
+            id = options;
+        } else {
+            id = options._id;
+        }
+
+        _dispatcher.unregister(id);
     };
 
     /**

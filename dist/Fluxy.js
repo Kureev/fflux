@@ -3,6 +3,9 @@
 
 var Dispatcher = require('./lib/Dispatcher');
 var createStore = require('./lib/StoreFactory');
+var createView = require('./lib/ViewFactory');
+
+var NOT_FOUND = -1;
 
 /**
  * Application constructor
@@ -12,10 +15,34 @@ var Fluxy = function() {
 
     /**
      * Create new store
-     * @return {options} Configuration for the store
+     * @param {options} Configuration for the store
+     * @return {FluxyStore} New instance of the store
      */
     this.createStore = function(options) {
-        createStore.call(this, options);
+        return createStore.call(this, options);
+    };
+
+    /**
+     * Create object with action interface
+     * @param  {string} actionName Name of the action
+     * @param  {object} payload    Payload object
+     * @return {object}            Object with action interface
+     */
+    this.createAction = function(actionName, payload) {
+        var action = {
+            actionName: actionName
+        };
+
+        return _.extend(action, payload);
+    };
+
+    /**
+     * Create new React view
+     * @param {options} Configuration for the view
+     * @return {ReactView} New instance of the view
+     */
+    this.createView = function(options) {
+        return createView.call(this, options);
     };
 
     /**
@@ -25,6 +52,48 @@ var Fluxy = function() {
      */
     this.getDispatcher = function() {
         return _dispatcher;
+    };
+
+    /**
+     * Register store to dispatcher
+     * @param {FluxyStore} instance FluxyStore instance
+     * @return {string} Registration id
+     */
+    this.register = function(instance) {
+        return _dispatcher.register(function(payload) {
+            var actionName = payload.action;
+            var actionKeys = _.keys(instance.actions);
+
+            // Check if we have something to wait for
+            // see http://facebook.github.io/flux/docs/dispatcher.html
+            // for more details
+            if (instance.waitFor.length) {
+                _dispatcher.waitFor(instance.waitFor);
+            }
+
+            // If we have such actions listener, invoke 
+            // related function with payload provided
+            if (actionKeys.indexOf(actionName) !== NOT_FOUND) {
+                instance[actionName].call(instance, payload);
+            }
+        });
+    };
+
+    /**
+     * Unregister store from dispatcher
+     * @param {object} options Binding identificator or store instance
+     * @return {void}
+     */
+    this.unregister = function(options) {
+        var id;
+
+        if (typeof options === 'string') {
+            id = options;
+        } else {
+            id = options._id;
+        }
+
+        _dispatcher.unregister(id);
     };
 
     /**
@@ -42,7 +111,7 @@ var Fluxy = function() {
 };
 
 module.exports = Fluxy;
-},{"./lib/Dispatcher":2,"./lib/StoreFactory":3}],2:[function(require,module,exports){
+},{"./lib/Dispatcher":2,"./lib/StoreFactory":3,"./lib/ViewFactory":4}],2:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -292,9 +361,57 @@ var _prefix = 'ID_';
 
 
 module.exports = Dispatcher;
-},{"./invariant":4}],3:[function(require,module,exports){
+},{"./invariant":5}],3:[function(require,module,exports){
+'use strict';
 
+/**
+ * Store factory
+ * @param  {object} options Configuration of the store instance
+ * @param {boolean} shouldRegister Automatic registration flag
+ * @return {function} New store instance
+ */
+module.exports = function(options, shouldRegister) {
+    // Simplify the scope usage
+    var app = this;
+
+    // If shouldRegister wasn't specified,
+    // register by default
+    if (shouldRegister === undefined) {
+        shouldRegister = true;
+    }
+
+    /**
+     * Store instance constructor
+     */
+    var constr = function FluxyStore() {
+        this.actions = options.actions || {};
+        this.waitFor = options.waitFor || [];
+    };
+
+    // Inherit store prototype from bb events and passed options
+    _.extend(constr.prototype, Backbone.Events, options);
+
+    // Create instance
+    var instance = new constr();
+
+    // If we don't need to register the store
+    // automaticly, return the built instance
+    if (shouldRegister !== true) {
+        return instance;
+    }
+
+    // Register store callback to the application dispatcher
+    instance._id = app.register(instance);
+
+    return instance;
+};
 },{}],4:[function(require,module,exports){
+'use strict';
+
+module.export = function() {
+
+};
+},{}],5:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
