@@ -1,4 +1,4 @@
-fluxy
+Fluxy
 =====
 
-flux-based architecture library
+[Flux](https://facebook.github.io/flux/)-based architecture library
