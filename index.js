@@ -14,7 +14,7 @@ var Fluxy = function() {
 
     /**
      * Create new store
-     * @param {options} Configuration for the store
+     * @param {options}     Configuration for the store
      * @return {FluxyStore} New instance of the store
      */
     this.createStore = function(options) {
@@ -23,13 +23,13 @@ var Fluxy = function() {
 
     /**
      * Create object with action interface
-     * @param  {string} actionName Name of the action
+     * @param  {string} type       Type of the action
      * @param  {object} payload    Payload object
      * @return {object}            Object with action interface
      */
-    this.createAction = function(actionName, payload) {
+    this.createAction = function(type, payload) {
         var action = {
-            actionName: actionName
+            type: type
         };
 
         return _.extend(action, payload);
@@ -37,8 +37,8 @@ var Fluxy = function() {
 
     /**
      * Create new React view
-     * @param {options} Configuration for the view
-     * @return {ReactView} New instance of the view
+     * @param {options}     Configuration for the view
+     * @return {ReactView}  New instance of the view
      */
     this.createView = function(options) {
         return createView.call(this, options);
@@ -55,7 +55,7 @@ var Fluxy = function() {
 
     /**
      * Register store to dispatcher
-     * @param {FluxyStore} instance FluxyStore instance
+     * @param {FluxyStore} instance     FluxyStore instance
      * @return {string} Registration id
      */
     this.register = function(instance) {
@@ -80,7 +80,7 @@ var Fluxy = function() {
 
     /**
      * Unregister store from dispatcher
-     * @param {object} options Binding identificator or store instance
+     * @param {object} options  Binding identificator or store instance
      * @return {void}
      */
     this.unregister = function(options) {
