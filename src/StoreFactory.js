@@ -2,13 +2,14 @@
 
 /**
  * Store factory
- * @param  {object} options Configuration of the store instance
- * @param {boolean} shouldRegister Automatic registration flag
+ * @param  {object} options         Configuration of the store instance
+ * @param {boolean} shouldRegister  Automatic registration flag
  * @return {function} New store instance
  */
 module.exports = function(options, shouldRegister) {
     // Simplify the scope usage
     var app = this;
+    var _id;
 
     // If shouldRegister wasn't specified,
     // register by default
@@ -25,7 +26,23 @@ module.exports = function(options, shouldRegister) {
     };
 
     // Inherit store prototype from bb events and passed options
-    _.extend(constr.prototype, Backbone.Events, options);
+    _.extend(constr.prototype, Backbone.Events, {
+        /**
+         * Get registered callback id
+         * @return {string} Id of the registered callback
+         */
+        getCallbackId: function() {
+            return _id;
+        },
+
+        /**
+         * Emit change
+         * @return {void}
+         */
+        emitChange: function() {
+            this.trigger('change');
+        }
+    }, options);
 
     // Create instance
     var instance = new constr();
@@ -37,7 +54,7 @@ module.exports = function(options, shouldRegister) {
     }
 
     // Register store callback to the application dispatcher
-    instance._id = app.register(instance);
+    _id = app.register(instance);
 
     return instance;
 };
