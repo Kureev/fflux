@@ -60,7 +60,7 @@ var Fluxy = function() {
      */
     this.register = function(instance) {
         return _dispatcher.register(function(payload) {
-            var actionName = payload.actionName;
+            var type = payload.type;
             var actionKeys = _.keys(instance.actions);
 
             // Check if we have something to wait for
@@ -70,10 +70,12 @@ var Fluxy = function() {
                 _dispatcher.waitFor(instance.waitFor);
             }
 
+            var handler = instance[instance.actions[type]];
+
             // If we have such actions listener, invoke 
             // related function with payload provided
-            if (actionKeys.indexOf(actionName) !== NOT_FOUND) {
-                instance[actionName].call(instance, payload);
+            if (actionKeys.indexOf(type) !== NOT_FOUND) {
+                handler.call(instance, payload);
             }
         });
     };

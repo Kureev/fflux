@@ -15,7 +15,7 @@ var Fluxy = function() {
 
     /**
      * Create new store
-     * @param {options} Configuration for the store
+     * @param {options}     Configuration for the store
      * @return {FluxyStore} New instance of the store
      */
     this.createStore = function(options) {
@@ -24,13 +24,13 @@ var Fluxy = function() {
 
     /**
      * Create object with action interface
-     * @param  {string} actionName Name of the action
+     * @param  {string} type       Type of the action
      * @param  {object} payload    Payload object
      * @return {object}            Object with action interface
      */
-    this.createAction = function(actionName, payload) {
+    this.createAction = function(type, payload) {
         var action = {
-            actionName: actionName
+            type: type
         };
 
         return _.extend(action, payload);
@@ -38,8 +38,8 @@ var Fluxy = function() {
 
     /**
      * Create new React view
-     * @param {options} Configuration for the view
-     * @return {ReactView} New instance of the view
+     * @param {options}     Configuration for the view
+     * @return {ReactView}  New instance of the view
      */
     this.createView = function(options) {
         return createView.call(this, options);
@@ -56,12 +56,12 @@ var Fluxy = function() {
 
     /**
      * Register store to dispatcher
-     * @param {FluxyStore} instance FluxyStore instance
+     * @param {FluxyStore} instance     FluxyStore instance
      * @return {string} Registration id
      */
     this.register = function(instance) {
         return _dispatcher.register(function(payload) {
-            var actionName = payload.actionName;
+            var type = payload.type;
             var actionKeys = _.keys(instance.actions);
 
             // Check if we have something to wait for
@@ -71,17 +71,19 @@ var Fluxy = function() {
                 _dispatcher.waitFor(instance.waitFor);
             }
 
+            var handler = instance[instance.actions[type]];
+
             // If we have such actions listener, invoke 
             // related function with payload provided
-            if (actionKeys.indexOf(actionName) !== NOT_FOUND) {
-                instance[actionName].call(instance, payload);
+            if (actionKeys.indexOf(type) !== NOT_FOUND) {
+                handler.call(instance, payload);
             }
         });
     };
 
     /**
      * Unregister store from dispatcher
-     * @param {object} options Binding identificator or store instance
+     * @param {object} options  Binding identificator or store instance
      * @return {void}
      */
     this.unregister = function(options) {
@@ -366,13 +368,14 @@ module.exports = Dispatcher;
 
 /**
  * Store factory
- * @param  {object} options Configuration of the store instance
- * @param {boolean} shouldRegister Automatic registration flag
+ * @param  {object} options         Configuration of the store instance
+ * @param {boolean} shouldRegister  Automatic registration flag
  * @return {function} New store instance
  */
 module.exports = function(options, shouldRegister) {
     // Simplify the scope usage
     var app = this;
+    var _id;
 
     // If shouldRegister wasn't specified,
     // register by default
@@ -389,7 +392,23 @@ module.exports = function(options, shouldRegister) {
     };
 
     // Inherit store prototype from bb events and passed options
-    _.extend(constr.prototype, Backbone.Events, options);
+    _.extend(constr.prototype, Backbone.Events, {
+        /**
+         * Get registered callback id
+         * @return {string} Id of the registered callback
+         */
+        getCallbackId: function() {
+            return _id;
+        },
+
+        /**
+         * Emit change
+         * @return {void}
+         */
+        emitChange: function() {
+            this.trigger('change');
+        }
+    }, options);
 
     // Create instance
     var instance = new constr();
@@ -401,15 +420,44 @@ module.exports = function(options, shouldRegister) {
     }
 
     // Register store callback to the application dispatcher
-    instance._id = app.register(instance);
+    _id = app.register(instance);
 
     return instance;
 };
 },{}],4:[function(require,module,exports){
 'use strict';
 
-module.export = function() {
+/**
+ * View factory
+ * @param  {object} options React class configuration
+ * @return {React.Class}
+ */
+module.exports = function(options) {
+    var defaults = {
+        render: function() {
+            
+        }
+    };
 
+    return React.createClass(_.extend(defaults, options), {
+        componentDidMount: function() {
+            if (this.listenTo && this.listenTo.length) {
+                for (var i = 0; i < this.listenTo.length; i++) {
+                    this.listenTo[i].on('change', this.onChange);
+                }
+            }
+
+            if (options.componentDidMount) {
+                options.componentDidMount.call(this);
+            }
+        },
+
+        componentWillUnmount: function () {
+            if (options.componentWillUnmount) {
+                options.componentWillUnmount.call(this);
+            }  
+        }
+    });
 };
 },{}],5:[function(require,module,exports){
 /**
