@@ -1,7 +1,7 @@
 {
   "name": "fluxy",
   "version": "0.0.1",
-  "description": "Flux architecture realisation",
+  "description": "Flux-based library to provide some easy API to build architecture",
   "main": "index.js",
   "scripts": {
     "test": "npm test"

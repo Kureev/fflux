@@ -6,13 +6,12 @@
  * @return {React.Class}
  */
 module.exports = function(options) {
-    var defaults = {
-        render: function() {
-            
-        }
-    };
 
-    return React.createClass(_.extend(defaults, options, {
+    return React.createClass(_.extend({}, options, {
+        /**
+         * Default componentDidMount behaviour
+         * @return {void}
+         */
         componentDidMount: function() {
             if (typeof this.listenTo === 'object') {
                 this.listenTo.on('change', this.onChange);
@@ -27,12 +26,20 @@ module.exports = function(options) {
             }
         },
 
+        /**
+         * Default componentWillUnmount behaviour
+         * @return {void}
+         */
         componentWillUnmount: function () {
             if (options.componentWillUnmount) {
                 options.componentWillUnmount.call(this);
             }  
         },
 
+        /**
+         * Default onChange handler
+         * @return {void}
+         */
         onChange: function() {
             if (!options.onChange) {
                 throw Error('onChange must be implemented in the view');
