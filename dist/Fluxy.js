@@ -439,7 +439,7 @@ module.exports = function(options) {
         }
     };
 
-    return React.createClass(_.extend(defaults, options), {
+    return React.createClass(_.extend(defaults, options, {
         componentDidMount: function() {
             if (this.listenTo && this.listenTo.length) {
                 for (var i = 0; i < this.listenTo.length; i++) {
@@ -456,8 +456,16 @@ module.exports = function(options) {
             if (options.componentWillUnmount) {
                 options.componentWillUnmount.call(this);
             }  
+        },
+
+        onChange: function() {
+            if (!options.onChange) {
+                throw Error('onChange must be implemented in the view');
+            } else {
+                options.onChange.call(this);
+            }
         }
-    });
+    }));
 };
 },{}],5:[function(require,module,exports){
 /**
