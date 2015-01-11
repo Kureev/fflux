@@ -45,13 +45,8 @@ var Fluxy = function() {
         return createView.call(this, options);
     };
 
-    /**
-     * Dispatcher getter
-     * @private
-     * @return {Flux.Dispatcher}
-     */
-    this.getDispatcher = function() {
-        return _dispatcher;
+    this.waitFor = function(arrayOfStores) {
+        _dispatcher.waitFor(arrayOfStores);
     };
 
     /**
@@ -63,13 +58,6 @@ var Fluxy = function() {
         return _dispatcher.register(function(payload) {
             var type = payload.type;
             var actionKeys = _.keys(instance.actions);
-
-            // Check if we have something to wait for
-            // see http://facebook.github.io/flux/docs/dispatcher.html
-            // for more details
-            if (instance.waitFor.length) {
-                _dispatcher.waitFor(instance.waitFor);
-            }
 
             var handler = instance[instance.actions[type]];
 
@@ -104,9 +92,7 @@ var Fluxy = function() {
      * @return true
      */
     this.dispatch = function(payload) {
-        var dispatcher = this.getDispatcher();
-
-        dispatcher.dispatch.call(dispatcher, payload);
+        _dispatcher.dispatch.call(_dispatcher, payload);
 
         return true;
     };
@@ -388,7 +374,6 @@ module.exports = function(options, shouldRegister) {
      */
     var constr = function FluxyStore() {
         this.actions = options.actions || {};
-        this.waitFor = options.waitFor || [];
     };
 
     // Inherit store prototype from bb events and passed options
