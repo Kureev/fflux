@@ -7,18 +7,32 @@
  */
 module.exports = function(options) {
 
-    return React.createClass(_.extend({}, options, {
+    var defaults = {
+        render: function() {
+            throw Error('Method render must be implemented in the view');
+        },
+
+        /**
+         * Default onChange handler
+         * @return {void}
+         */
+        onChange: function() {
+            throw Error('Method onChange must be implemented in the view');
+        }
+    };
+
+    return React.createClass(_.extend(defaults, options, {
         /**
          * Default componentDidMount behaviour
          * @return {void}
          */
         componentDidMount: function() {
-            if (typeof this.listenTo === 'object') {
-                this.listenTo.on('change', this.onChange);
-            } else if (this.listenTo && this.listenTo.length) {
+            if (_.isArray(this.listenTo) && this.listenTo.length) {
                 for (var i = 0; i < this.listenTo.length; i++) {
                     this.listenTo[i].on('change', this.onChange);
                 }
+            } else {
+                this.listenTo.on('change', this.onChange);
             }
 
             if (options.componentDidMount) {
@@ -34,18 +48,6 @@ module.exports = function(options) {
             if (options.componentWillUnmount) {
                 options.componentWillUnmount.call(this);
             }  
-        },
-
-        /**
-         * Default onChange handler
-         * @return {void}
-         */
-        onChange: function() {
-            if (!options.onChange) {
-                throw Error('onChange must be implemented in the view');
-            } else {
-                options.onChange.call(this);
-            }
         }
     }));
 };

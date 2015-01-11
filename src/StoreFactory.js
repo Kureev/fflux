@@ -22,7 +22,6 @@ module.exports = function(options, shouldRegister) {
      */
     var constr = function FluxyStore() {
         this.actions = options.actions || {};
-        this.waitFor = options.waitFor || [];
     };
 
     // Inherit store prototype from bb events and passed options
