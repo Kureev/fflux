@@ -9,13 +9,13 @@ var NOT_FOUND = -1;
 /**
  * Application constructor
  */
-var Fluxy = function() {
+var FFlux = function() {
     var _dispatcher = new Dispatcher();
 
     /**
      * Create new store
      * @param {options}     Configuration for the store
-     * @return {FluxyStore} New instance of the store
+     * @return {FFluxStore} New instance of the store
      */
     this.createStore = function(options) {
         return createStore.call(this, options);
@@ -50,7 +50,7 @@ var Fluxy = function() {
 
     /**
      * Register store to dispatcher
-     * @param {FluxyStore} instance     FluxyStore instance
+     * @param {FFluxStore} instance     FFluxStore instance
      * @return {string} Registration id
      */
     this.register = function(instance) {
@@ -97,4 +97,4 @@ var Fluxy = function() {
     };
 };
 
-module.exports = Fluxy;
+module.exports = FFlux;

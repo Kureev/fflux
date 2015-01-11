@@ -20,7 +20,7 @@ module.exports = function(options, shouldRegister) {
     /**
      * Store instance constructor
      */
-    var constr = function FluxyStore() {
+    var constr = function FFluxStore() {
         this.actions = options.actions || {};
     };
 

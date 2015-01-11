@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Fluxy=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.FFlux=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('./lib/Dispatcher');
@@ -10,13 +10,13 @@ var NOT_FOUND = -1;
 /**
  * Application constructor
  */
-var Fluxy = function() {
+var FFlux = function() {
     var _dispatcher = new Dispatcher();
 
     /**
      * Create new store
      * @param {options}     Configuration for the store
-     * @return {FluxyStore} New instance of the store
+     * @return {FFluxStore} New instance of the store
      */
     this.createStore = function(options) {
         return createStore.call(this, options);
@@ -51,7 +51,7 @@ var Fluxy = function() {
 
     /**
      * Register store to dispatcher
-     * @param {FluxyStore} instance     FluxyStore instance
+     * @param {FFluxStore} instance     FFluxStore instance
      * @return {string} Registration id
      */
     this.register = function(instance) {
@@ -98,7 +98,7 @@ var Fluxy = function() {
     };
 };
 
-module.exports = Fluxy;
+module.exports = FFlux;
 },{"./lib/Dispatcher":2,"./lib/StoreFactory":3,"./lib/ViewFactory":4}],2:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
@@ -372,7 +372,7 @@ module.exports = function(options, shouldRegister) {
     /**
      * Store instance constructor
      */
-    var constr = function FluxyStore() {
+    var constr = function FFluxStore() {
         this.actions = options.actions || {};
     };
 

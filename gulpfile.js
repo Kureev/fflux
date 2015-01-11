@@ -8,11 +8,11 @@ var source = require('vinyl-source-stream');
 var del = require('del');
 var browserifyConfig = {
     entries: ['./index.js'],
-    standalone: 'Fluxy'
+    standalone: 'FFlux'
 };
 
 gulp.task('clean', function(cb) {
-    del(['lib/', 'Fluxy.js'], cb);
+    del(['lib/', 'fflux.js'], cb);
 });
 
 gulp.task('lib', function() {
@@ -27,7 +27,7 @@ gulp.task('lib', function() {
 gulp.task('browserify', function() {
     return browserify(browserifyConfig)
         .bundle()
-        .pipe(source('Fluxy.js'))
+        .pipe(source('fflux.js'))
         .pipe(gulp.dest('./dist/'));
 });
 
