@@ -8,6 +8,10 @@
 module.exports = function(options) {
 
     var defaults = {
+        /**
+         * Default render function
+         * @return {void}
+         */
         render: function() {
             throw Error('Method render must be implemented in the view');
         },

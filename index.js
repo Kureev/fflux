@@ -4,8 +4,6 @@ var Dispatcher = require('./lib/Dispatcher');
 var createStore = require('./lib/StoreFactory');
 var createView = require('./lib/ViewFactory');
 
-var NOT_FOUND = -1;
-
 /**
  * Application constructor
  */
@@ -17,28 +15,27 @@ var FFlux = function() {
      * @param {options}     Configuration for the store
      * @return {FFluxStore} New instance of the store
      */
-    this.createStore = function(options) {
-        return createStore.call(this, options);
+    this.createStore = function(options, settings) {
+        return createStore.call(this, options, settings);
     };
 
     /**
      * Create object with action interface
-     * @param  {string} type       Type of the action
-     * @param  {object} payload    Payload object
-     * @return {object}            Object with action interface
+     * @param  {string} type    Type of the action
+     * @param  {object} data    Payload object
+     * @return {object}         Object with action interface
      */
-    this.createAction = function(type, payload) {
-        var action = {
-            type: type
+    this.createAction = function(type, data) {
+        return {
+            type: type,
+            data: data
         };
-
-        return _.extend(action, payload);
     };
 
     /**
      * Create new React view
-     * @param {options}     Configuration for the view
-     * @return {ReactView}  New instance of the view
+     * @param {options} options Configuration for the view
+     * @return {ReactView}      New instance of the view
      */
     this.createView = function(options) {
         return createView.call(this, options);
@@ -54,17 +51,30 @@ var FFlux = function() {
      * @return {string} Registration id
      */
     this.register = function(instance) {
-        return _dispatcher.register(function(payload) {
-            var type = payload.type;
+        return _dispatcher.register(function(action) {
+            var type = action.type;
+            var handler;
+            // Get array of registered actions
             var actionKeys = _.keys(instance.actions);
 
-            var handler = instance[instance.actions[type]];
-
-            // If we have such actions listener, invoke 
-            // related function with payload provided
-            if (actionKeys.indexOf(type) !== NOT_FOUND) {
-                handler.call(instance, payload);
-            }
+            // If we have such actions listener(s), invoke 
+            // related function with action provided
+            actionKeys.forEach(function(key) {
+                if (key === type) {
+                    switch (typeof instance.actions[type]) {
+                        case 'string':
+                            handler = instance[instance.actions[type]];
+                            break;
+                        case 'function':
+                            handler = instance.actions[type];
+                            break;
+                        default:
+                            throw Error('You must specify handler for action ' + type);
+                    }
+                    
+                    handler.call(instance, action.data);
+                }
+            });
         });
     };
 

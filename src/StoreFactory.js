@@ -2,20 +2,22 @@
 
 /**
  * Store factory
- * @param  {object} options         Configuration of the store instance
- * @param {boolean} shouldRegister  Automatic registration flag
- * @return {function} New store instance
+ * @param  {object}     options             Configuration of the store instance
+ * @param  {boolean}    settings.register   Automatic registration flag
+ * @return {function}   New store instance
  */
-module.exports = function(options, shouldRegister) {
+module.exports = function(options, settings) {
+    settings = settings || {};
+
+    // If settings.register wasn't specified,
+    // register by default
+    if (settings.register === undefined) {
+        settings.register = true;
+    }
+    
     // Simplify the scope usage
     var app = this;
     var _id;
-
-    // If shouldRegister wasn't specified,
-    // register by default
-    if (shouldRegister === undefined) {
-        shouldRegister = true;
-    }
 
     /**
      * Store instance constructor
@@ -40,6 +42,33 @@ module.exports = function(options, shouldRegister) {
          */
         emitChange: function() {
             this.trigger('change');
+        },
+
+        /**
+         * Register action's handler
+         * @param  {string} action  Action's name
+         * @param  {function} handler Aciont's handler
+         * @return {void}
+         */
+        registerAction: function(action, handler) {
+            if (this.actions[action]) {
+                throw Error('You can\'t override existing handler. Unregister it first!');
+            }
+
+            this.actions[action] = handler;
+        },
+
+        /**
+         * Unregister action's handler from store
+         * @param  {string} action Action name
+         * @return {void}
+         */
+        unregisterAction: function(action) {
+            if (this.actions[action]) {
+                delete this.actions[action];
+            } else {
+                throw Error('You have no handlers for action ' + action);
+            }
         }
     }, options);
 
@@ -48,7 +77,7 @@ module.exports = function(options, shouldRegister) {
 
     // If we don't need to register the store
     // automaticly, return the built instance
-    if (shouldRegister !== true) {
+    if (settings.register !== true) {
         return instance;
     }
 
