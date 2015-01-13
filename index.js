@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var Dispatcher = require('./lib/Dispatcher');
 var createStore = require('./lib/StoreFactory');
 var createView = require('./lib/ViewFactory');
@@ -117,10 +119,10 @@ FFlux.mixins.binding = {
     componentDidMount: function() {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
-                this.listenTo[i].on('change', this.onChange);
+                this.listenTo[i].addEventListener('change', this.onChange);
             }
         } else {
-            this.listenTo.on('change', this.onChange);
+            this.listenTo.addListener('change', this.onChange);
         }
     },
 
@@ -131,10 +133,10 @@ FFlux.mixins.binding = {
     componentWillUnmount: function () {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
-                this.listenTo[i].off('change', this.onChange);
+                this.listenTo[i].removeEventListener('change', this.onChange);
             }
         } else {
-            this.listenTo.off('change', this.onChange);
+            this.listenTo.removeListener('change', this.onChange);
         }
     }
 };

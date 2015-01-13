@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Flux-based library to provide some easy API to build architecture",
   "main": "index.js",
-  "scripts": {
-    "test": "npm test"
-  },
   "keywords": [
     "flux"
   ],
@@ -20,6 +17,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "react": "^0.12.2"
+    "react": "^0.12.2",
+    "underscore": "^1.7.0"
   }
 }

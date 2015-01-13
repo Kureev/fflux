@@ -1,5 +1,8 @@
 'use strict';
 
+var _ = require('underscore');
+var EventEmitter = require('events').EventEmitter;
+
 /**
  * View factory
  * @param  {object} options React class configuration

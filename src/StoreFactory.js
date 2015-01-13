@@ -1,5 +1,8 @@
 'use strict';
 
+var _ = require('underscore');
+var EventEmitter = require('events').EventEmitter;
+
 /**
  * Store factory
  * @param  {object}     options             Configuration of the store instance
@@ -26,8 +29,8 @@ module.exports = function(options, settings) {
         this.actions = options.actions || {};
     };
 
-    // Inherit store prototype from bb events and passed options
-    _.extend(constr.prototype, Backbone.Events, {
+    // Inherit store prototype from event emitter and passed options
+    _.extend(constr.prototype, EventEmitter.prototype, {
         /**
          * Get registered callback id
          * @return {string} Id of the registered callback
@@ -41,7 +44,7 @@ module.exports = function(options, settings) {
          * @return {void}
          */
         emitChange: function() {
-            this.trigger('change');
+            this.emit('change');
         },
 
         /**
