@@ -88,6 +88,6 @@
         "React"     : false,
         "Backbone"  : false,
         "_"         : true,
-        "Fluxy"     : true
+        "FFlux"     : true
     }        // additional predefined global variables
 }

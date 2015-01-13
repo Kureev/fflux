@@ -108,6 +108,38 @@ var FFlux = function() {
     };
 };
 
+FFlux.mixins = {};
+
+FFlux.mixins.binding = {
+    /**
+     * Set `onChange` listener to `listenTo` store(s)
+     * @return {void}
+     */
+    componentDidMount: function() {
+        if (_.isArray(this.listenTo) && this.listenTo.length) {
+            for (var i = 0; i < this.listenTo.length; i++) {
+                this.listenTo[i].on('change', this.onChange);
+            }
+        } else {
+            this.listenTo.on('change', this.onChange);
+        }
+    },
+
+    /**
+     * Remove all `onChange` callbacks from binded stores
+     * @return {void}
+     */
+    componentWillUnmount: function () {
+        if (_.isArray(this.listenTo) && this.listenTo.length) {
+            for (var i = 0; i < this.listenTo.length; i++) {
+                this.listenTo[i].off('change', this.onChange);
+            }
+        } else {
+            this.listenTo.off('change', this.onChange);
+        }
+    }
+};
+
 module.exports = FFlux;
 },{"./lib/Dispatcher":2,"./lib/StoreFactory":3,"./lib/ViewFactory":4}],2:[function(require,module,exports){
 /*
@@ -460,14 +492,6 @@ module.exports = function(options) {
 
     var defaults = {
         /**
-         * Default render function
-         * @return {void}
-         */
-        render: function() {
-            throw Error('Method render must be implemented in the view');
-        },
-
-        /**
          * Default onChange handler
          * @return {void}
          */
@@ -478,32 +502,9 @@ module.exports = function(options) {
 
     return React.createClass(_.extend(defaults, options, {
         /**
-         * Default componentDidMount behaviour
-         * @return {void}
+         * Merge `default` binding mixin with user-specified
          */
-        componentDidMount: function() {
-            if (_.isArray(this.listenTo) && this.listenTo.length) {
-                for (var i = 0; i < this.listenTo.length; i++) {
-                    this.listenTo[i].on('change', this.onChange);
-                }
-            } else {
-                this.listenTo.on('change', this.onChange);
-            }
-
-            if (options.componentDidMount) {
-                options.componentDidMount.call(this);
-            }
-        },
-
-        /**
-         * Default componentWillUnmount behaviour
-         * @return {void}
-         */
-        componentWillUnmount: function () {
-            if (options.componentWillUnmount) {
-                options.componentWillUnmount.call(this);
-            }  
-        }
+        mixins: _.union([FFlux.mixins.binding], options.mixins || [])
     }));
 };
 },{}],5:[function(require,module,exports){
