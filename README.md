@@ -97,6 +97,13 @@ function otherActionHandler(data) {
 }
 
 var store = app.createStore({
+  /**
+   * In this property we declare list
+   * of the actions we're interested in.
+   *
+   * For every of those actions we specify handler function. It can be independent
+   * function like `otherActionHandler` or instance method like `someMethod`
+   */
   actions: {
     'SOME_ACTION': 'someMethod'
     'OTHER_ACTION': otherActionHandler
