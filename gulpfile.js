@@ -1,35 +1,25 @@
 'use strict';
 
 var gulp = require('gulp');
-var gReact = require('gulp-react');
-var gReplace = require('gulp-replace');
+var rename = require('gulp-rename');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
-var del = require('del');
-var browserifyConfig = {
-    entries: ['./index.js'],
-    standalone: 'FFlux'
-};
+var uglify = require('gulp-uglify');
 
-gulp.task('clean', function(cb) {
-    del(['lib/', 'fflux.js'], cb);
-});
-
-gulp.task('lib', function() {
-    return gulp.src('src/*.js')
-        .pipe(gReact({
-            harmony: true
-        }))
-        .pipe(gReplace(/__DEV__/g, 'false'))
-        .pipe(gulp.dest('lib'));
-});
+var sourceFile = './index.js';
+var destFile = 'fflux.js';
+var destFolder = './dist/';
 
 gulp.task('browserify', function() {
-    return browserify(browserifyConfig)
+    return browserify(sourceFile)
         .bundle()
-        .pipe(source('fflux.js'))
-        .pipe(gulp.dest('./dist/'));
+        .pipe(source(destFile))
+        .pipe(gulp.dest(destFolder));
 });
 
-gulp.task('publish', ['clean', 'default']);
-gulp.task('default', ['lib', 'browserify']);
+gulp.task('default', ['browserify'], function() {
+    gulp.src('./dist/*.js')
+        .pipe(uglify())
+        .pipe(rename('fflux.min.js'))
+        .pipe(gulp.dest(destFolder));
+});

@@ -2,9 +2,8 @@
 
 var _ = require('underscore');
 
-var Dispatcher = require('./lib/Dispatcher');
-var createStore = require('./lib/StoreFactory');
-var createView = require('./lib/ViewFactory');
+var Dispatcher = require('./src/Dispatcher');
+var createStore = require('./src/StoreFactory');
 
 /**
  * Application constructor
@@ -38,10 +37,11 @@ var FFlux = function() {
      * Create new React view
      * @param {options} options Configuration for the view
      * @return {ReactView}      New instance of the view
+     *
+     *  this.createView = function(options) {
+     *      return createView.call(this, options);
+     *  };
      */
-    this.createView = function(options) {
-        return createView.call(this, options);
-    };
 
     this.waitFor = function(arrayOfStores) {
         _dispatcher.waitFor(arrayOfStores);
