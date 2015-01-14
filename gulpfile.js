@@ -18,7 +18,7 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('default', ['browserify'], function() {
-    gulp.src('./dist/*.js')
+    gulp.src('./dist/fflux.js')
         .pipe(uglify())
         .pipe(rename('fflux.min.js'))
         .pipe(gulp.dest(destFolder));

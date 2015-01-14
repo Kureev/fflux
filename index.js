@@ -57,7 +57,7 @@ var FFlux = function() {
             var type = action.type;
             var handler;
             // Get array of registered actions
-            var actionKeys = _.keys(instance.actions);
+            var actionKeys = Object.keys(instance.actions);
 
             // If we have such actions listener(s), invoke 
             // related function with action provided
@@ -141,4 +141,4 @@ FFlux.mixins.binding = {
     }
 };
 
-module.exports = FFlux;
+window.FFlux = FFlux;
