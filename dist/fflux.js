@@ -134,7 +134,7 @@ FFlux.mixins.binding = {
     componentWillUnmount: function () {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
-                this.listenTo[i].removeEventListener('change', this.onChange);
+                this.listenTo[i].removeListener('change', this.onChange);
             }
         } else {
             this.listenTo.removeListener('change', this.onChange);
