@@ -55,7 +55,7 @@ var FFlux = function() {
      */
     this.getStore = function(name) {
         return this._stores[name] || null;
-    }
+    };
 
     /**
      * Register store to dispatcher
@@ -129,7 +129,11 @@ FFlux.mixins.binding = {
     componentDidMount: function() {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
-                this.listenTo[i].addEventListener('change', this.onChange);
+                if (_.isObject(this.listenTo[i])) {
+                    this.listenTo[i].addListener('change', this.onChange);
+                } else {
+                    this.getStore(this.listenTo[i]).addListener('change', this.onChange);
+                }
             }
         } else {
             this.listenTo.addListener('change', this.onChange);
@@ -143,7 +147,11 @@ FFlux.mixins.binding = {
     componentWillUnmount: function () {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
-                this.listenTo[i].removeListener('change', this.onChange);
+                if (_.isObject(this.listenTo[i])) {
+                    this.listenTo[i].removeListener('change', this.onChange);
+                } else {
+                    this.getStore(this.listenTo[i]).removeListener('change', this.onChange);    
+                }
             }
         } else {
             this.listenTo.removeListener('change', this.onChange);
