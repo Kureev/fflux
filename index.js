@@ -1,7 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
-
+var _ = require('./src/helper');
 var Dispatcher = require('./src/Dispatcher');
 var createStore = require('./src/StoreFactory');
 
@@ -57,7 +56,7 @@ var FFlux = function() {
             var type = action.type;
             var handler;
             // Get array of registered actions
-            var actionKeys = Object.keys(instance.actions);
+            var actionKeys = _.keys(instance.actions);
 
             // If we have such actions listener(s), invoke 
             // related function with action provided
