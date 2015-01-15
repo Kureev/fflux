@@ -175,46 +175,42 @@ store.unregisterAction('SOME_ACTION');
 
 That's what we have in our flux stores!
 
-Views-Controllers or just React components
+View layer
 ------------------------------------------
-
-Views are just React components. For simplification binding to the stores, I added listenTo property, which accepts object (store instance) or array of the stores. It automatically binds view to change event of those store(s). Each change event will trigger `onChange` method of the view:
+Flux doesn't have any requirements for the view layer.
+For the sake of the simplicity (and package size), I decided not to add any view layer and let programmers decide themselfs what to use. The only thing that fflux.js provides you - it's mixins for auto-binding to the stores:
 
 ```javascript
+/**
+ * Create some store
+ */
 var store = app.createStore({...});
 
-var HelloMessage = app.createView({
+/**
+ * React class to describe component
+ */
+var MyComponentClass = React.createClass({
+  mixins: [FFlux.mixins.binding],
+
   /**
-   * Listen to `store`.
-   * You can also listen to multiple stores
-   * using following syntax:
-   *
-   * listenTo: [store1, store2]
+   * Bind view to listen `store` changes.
+   * Or, if you're looking for a way to 
+   * bind `React Component` to multiple stores
+   * you can use array syntax like this:
+   * 
+   * listenTo: [store, otherStore]
    */
   listenTo: store,
 
-  /**
-   * Initial state of the view
-   * Probably, could be store.getState()
-   * @return {object}
-   */
-  getInitialState: function() {
-      return {};
-  },
-
-  /**
-   * Storege's `change` event handler
-   * @return {void}
-   */
-  onChange: function() {
-      this.setState(store.getState());
-  },
-
-  /**
-   * Standart React render function
-   * @return {React.DOM}
-   */
-  render: function() {
-      return <div>Hello {this.state.name}</div>;
-  }
+  render: function() {...}
 });
+
+// Create React component (using 0.12.2 syntax)
+var MyComponent = React.createFactory(MyComponentClass);
+
+/**
+ * That's it, now you can render `MyComponent` and
+ * if `store` will emit `change` event, your component
+ * will be redrawn
+ */
+``` 
