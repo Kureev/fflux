@@ -1,15 +1,17 @@
 'use strict';
 
 var _ = require('./helper');
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events')
+    .EventEmitter;
 
 /**
  * Store factory
+ * @param  {string}     name                Name of the store
  * @param  {object}     options             Configuration of the store instance
- * @param  {boolean}    settings.register   Automatic registration flag
+ * @param  {object}     settings            Extra settings for the store
  * @return {function}   New store instance
  */
-module.exports = function(options, settings) {
+module.exports = function(name, options, settings) {
     settings = settings || {};
 
     // If settings.register wasn't specified,
@@ -17,7 +19,7 @@ module.exports = function(options, settings) {
     if (settings.register === undefined) {
         settings.register = true;
     }
-    
+
     // Simplify the scope usage
     var app = this;
     var _id;
@@ -84,8 +86,16 @@ module.exports = function(options, settings) {
         return instance;
     }
 
-    // Register store callback to the application dispatcher
+    // Register store callback to the application dispatоcher
     _id = app.register(instance);
+
+    app._stores = app._stores || {};
+
+    if (!app._stores[name]) {
+        app._stores[name] = instance;
+    } else {
+        throw Error('Store with those name is already exists');
+    }
 
     return instance;
 };

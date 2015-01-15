@@ -12,11 +12,13 @@ var FFlux = function() {
 
     /**
      * Create new store
-     * @param {options}     Configuration for the store
+     * @param {string}      name        Name of the store
+     * @param {object}      options     Configuration for the store
+     * @param {object}      settings    Settings for the store
      * @return {FFluxStore} New instance of the store
      */
-    this.createStore = function(options, settings) {
-        return createStore.call(this, options, settings);
+    this.createStore = function(name, options, settings) {
+        return createStore.call(this, name, options, settings);
     };
 
     /**
