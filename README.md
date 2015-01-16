@@ -4,63 +4,48 @@ fflux.js
 
 Some time ago Facebook engineers released a specification describing flux - one-way data flow architecture. After that, they released a Dispatcher constructor, but skipped store, actions and react view/controller-binding parts. In fflux.js I tried to supplement existing code to complete architecture with a tiny layer of the user-friendly API for it.
 
-Application
+Dispatcher
 -----------
-
-To create new flux-based application:
-
-```javascript
-var app = new FFlux();
-```
-
-All dispatcher's API endpoints are included in the <code>app</code> instance. So, you can use it for create and dispatch actions:
+To create a dispatcher:
 
 ```javascript
-/**
- * Create action
- */
-var someAction = app.createAction(type, payload);
-
-/**
- * Dispatch action to stores
- */
-app.dispatch(someAction);
+var dispatcher = new FFlux();
 ```
 
-or register/unregister stores from the application dispatcher:
+It's very similar with facebook's realization (because it's based on it), but register/unregister methods changed regarding to specific of the current library:
 
 ```javascript
 /**
  * Create store
+ * @type {FFluxStore}
  */
-var store = app.createStore({ ... });
+var store = FFlux.createStore({ ... });
 
 /**
- * By default, store is auto-registered in the app's dispatcher,
- * so first of all we'll unregister it
+ * Create action
+ * @type {FFluxAction}
  */
-app.unregister(store);
+var someAction = FFlux.createAction({ ... });
 
 /**
- * Nothing will happend, because store has been unregistered from the dispatcher
+ * Dispatch our action to the system
  */
-app.dispatch(someAction);
-
-/**
- * And after that we'll register it back
- */
-app.register(store);
-
-/**
- * And now we'll see console.log message
- */
-app.dispatch(someAction);
+dispatcher.dispatch(someAction);
 ```
+
+But as you see, nothing happens. The reason is that the store has to be registered in the dispatcher:
+
+
+```javascript
+dispatcher.register(store);
+
+```
+
+Now all dispatched events will be available in the action handlers
 
 Actions
 -------
-
-Actions are used for sending messages from sources to dispatcher. Actions are just simple JS objects with specific interface. You can create them natively:
+Actions are used for sending messages from different sources to dispatcher. They're just simple JS objects with specific interface. You can create them natively:
 
 ```javascript
 var action = {
@@ -71,29 +56,26 @@ var action = {
 
 **note:** `type` key is required for every action in the system!
 
-Also, you can use small fflux function, designed for that:
+Or you can use small fflux function, designed for that:
 
 ```javascript
-var action = app.createAction('SOME_ACTION', {...});
+var action = FFlux.createAction('SOME_ACTION', {...});
 ```
 It will guarantee you accordance with the system interface.
 
 
 Store
 -----
-
-To create a store you need to have an instance of the application. Basic store looks like this:
+Store instances should process and store applicatoin data(**they shouldn't fetch or push data!**). Basic store looks like this:
 
 ```javascript
-var app = new FFlux();
-
 /**
  * Handler for OTHER_ACTION
  * @param {object} data Payload
  * @return {void}
  */
 function otherActionHandler(data) {
-  //...
+  console.log('Some other function has been called');
 }
 
 var store = FFlux.createStore({
@@ -118,19 +100,9 @@ var store = FFlux.createStore({
     console.log('Some method has been called');
   }
 });
-
-/**
- * Register `store` in the dispatcher
- */
-app.register(store);
-
-/**
- * Unregister `store` from the dispatcher
- */
-app.unregister(store);
 ```
 
-As you can see from the example above, you will have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). In every action handler you can use waitFor method as it's described on the [flux's dispatcher page](http://facebook.github.io/flux/docs/dispatcher.html#content):
+As you can see from the example above, you will have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). In every action handler you can use `waitFor` method as it's described on the [flux's dispatcher page](http://facebook.github.io/flux/docs/dispatcher.html#content):
 
 ```javascript
 {
@@ -144,10 +116,10 @@ As you can see from the example above, you will have an actions property which p
    */
   someMethod: function(data) {
     /**
-     * Now we have no idea if `storage` already processed the data
-     * But after calling `waitFor` we can be sure, that `storage` had finished processing
+     * Now we have no idea if `storage` store already processed the data
+     * But after calling `waitFor` we can be sure, that it's done
      */
-    app.waitFor([storage]);
+    dispatcher.waitFor([storage]);
   }
 }
 ```
@@ -155,7 +127,7 @@ As you can see from the example above, you will have an actions property which p
 You can register/unregister action handlers dynamicly after store initialization:
 
 ```javascript
-var store = app.createStore({...});
+var store = FFlux.createStore({...});
 
 /**
  * Action handler function
@@ -188,12 +160,16 @@ For the sake of the simplicity (and package size), I decided not to add any view
 /**
  * Create some store
  */
-var store = app.createStore({...});
+var store = FFlux.createStore({...});
 
 /**
  * React class to describe component
  */
 var MyComponentClass = React.createClass({
+  /**
+   * Mixin our auto-binding to the store(s)
+   * @type {Array}
+   */
   mixins: [FFlux.mixins.binding],
 
   /**
@@ -206,15 +182,23 @@ var MyComponentClass = React.createClass({
    */
   listenTo: store,
 
+  /**
+   * After store emit `change` event
+   * this function will be invoked
+   * @return {void}
+   */
+  onStoreUpdated: function() {...},
+
   render: function() {...}
 });
 
 // Create React component (using 0.12.2 syntax)
-var MyComponent = React.createFactory(MyComponentClass);
+var MyComponent = React.createElement(MyComponentClass);
 
 /**
  * That's it, now you can render `MyComponent` and
- * if `store` will emit `change` event, your component
- * will be redrawn
+ * as soon as `store` will emit `change` event, 
+ * your component will be redrawn
  */
+React.render(MyComponent, document.body);
 ``` 

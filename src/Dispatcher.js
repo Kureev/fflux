@@ -14,13 +14,17 @@ function FFluxDispatcher() {
      * @param {object} payload
      * @return true
      */
-    this.dispatch = this._dispatcher.dispatch;
+    this.dispatch = function(action) {
+        this._dispatcher.dispatch.call(this._dispatcher, action);
+    };
     
     /**
      * Bridge to dispatcher's waitFor
      * @param {array} arrayOfStores Array of stores to wait for
      */
-    this.waitFor = this._dispatcher.waitFor;
+    this.waitFor = function(arrayOfStores) {
+        this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
+    };
 }
 
 _.extend(FFluxDispatcher.prototype, {

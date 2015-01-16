@@ -13,7 +13,7 @@ function FFluxStore(options) {
 /**
  * Inherit store prototype from event emitter and passed options
  */
-_.extend(constr.prototype, EventEmitter.prototype, {
+_.extend(FFluxStore.prototype, EventEmitter.prototype, {
     /**
      * Emit change
      * @return {void}

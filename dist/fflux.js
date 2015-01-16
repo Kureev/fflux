@@ -397,13 +397,17 @@ function FFluxDispatcher() {
      * @param {object} payload
      * @return true
      */
-    this.dispatch = this._dispatcher.dispatch;
+    this.dispatch = function(action) {
+        this._dispatcher.dispatch.call(this._dispatcher, action);
+    };
     
     /**
      * Bridge to dispatcher's waitFor
      * @param {array} arrayOfStores Array of stores to wait for
      */
-    this.waitFor = this._dispatcher.waitFor;
+    this.waitFor = function(arrayOfStores) {
+        this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
+    };
 }
 
 _.extend(FFluxDispatcher.prototype, {
@@ -477,7 +481,7 @@ function FFluxStore(options) {
 /**
  * Inherit store prototype from event emitter and passed options
  */
-_.extend(constr.prototype, EventEmitter.prototype, {
+_.extend(FFluxStore.prototype, EventEmitter.prototype, {
     /**
      * Emit change
      * @return {void}
