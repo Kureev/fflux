@@ -2,112 +2,17 @@
 'use strict';
 
 var _ = require('./src/helper');
-var Dispatcher = require('./src/Dispatcher');
 var createStore = require('./src/Store');
+var createDispatcher = require('./src/Dispatcher');
 
 /**
  * Application constructor
  */
-var FFlux = function() {
-    var _dispatcher = new Dispatcher();
+var FFlux = FFlux || {};
 
-    /**
-     * Create object with action interface
-     * @param  {string} type    Type of the action
-     * @param  {object} data    Payload object
-     * @return {object}         Object with action interface
-     */
-    this.createAction = function(type, data) {
-        return {
-            type: type,
-            data: data
-        };
-    };
-
-    /**
-     * Create new React view
-     * @param {options} options Configuration for the view
-     * @return {ReactView}      New instance of the view
-     *
-     *  this.createView = function(options) {
-     *      return createView.call(this, options);
-     *  };
-     */
-
-    this.waitFor = function(arrayOfStores) {
-        _dispatcher.waitFor(arrayOfStores);
-    };
-
-    /**
-     * Get store by name
-     * @param  {string} name Name of the store
-     * @return {FFluxStore|null}
-     */
-    this.getStore = function(name) {
-        return this._stores[name] || null;
-    };
-
-    /**
-     * Register store to dispatcher
-     * @param {FFluxStore} instance     FFluxStore instance
-     * @return {string} Registration id
-     */
-    this.register = function(instance) {
-        return _dispatcher.register(function(action) {
-            var type = action.type;
-            var handler;
-            // Get array of registered actions
-            var actionKeys = _.keys(instance.actions);
-
-            // If we have such actions listener(s), invoke 
-            // related function with action provided
-            actionKeys.forEach(function(key) {
-                if (key === type) {
-                    switch (typeof instance.actions[type]) {
-                        case 'string':
-                            handler = instance[instance.actions[type]];
-                            break;
-                        case 'function':
-                            handler = instance.actions[type];
-                            break;
-                        default:
-                            throw Error('You must specify handler for action ' + type);
-                    }
-                    
-                    handler.call(instance, action.data);
-                }
-            });
-        });
-    };
-
-    /**
-     * Unregister store from dispatcher
-     * @param {object} options  Binding identificator or store instance
-     * @return {void}
-     */
-    this.unregister = function(options) {
-        var id;
-
-        if (typeof options === 'string') {
-            id = options;
-        } else {
-            id = options._id;
-        }
-
-        _dispatcher.unregister(id);
-    };
-
-    /**
-     * Invoke dispatch method of the flux dispatcher's instance
-     * @param {object} payload
-     * @return true
-     */
-    this.dispatch = function(payload) {
-        _dispatcher.dispatch.call(_dispatcher, payload);
-
-        return true;
-    };
-};
+FFlux.createDispatcher = function() {
+    return createDispatcher.call(null);
+}
 
 /**
  * Create new store
@@ -115,45 +20,58 @@ var FFlux = function() {
  * @return {FFluxStore} New instance of the store
  */
 FFlux.createStore = function(options) {
-    return createStore.call(this, options);
+    return createStore.call(null, options);
+};
+
+/**
+ * Create object with action interface
+ * @param  {string} type    Type of the action
+ * @param  {object} data    Payload object
+ * @return {object}         Object with action interface
+ */
+FFlux.createAction = function(type, data) {
+    return {
+        type: type,
+        data: data
+    };
 };
 
 FFlux.mixins = {};
 
 FFlux.mixins.binding = {
     /**
-     * Set `onChange` listener to `listenTo` store(s)
+     * Set `onStoreUpdate` listener to `listenTo` store(s)
      * @return {void}
      */
     componentDidMount: function() {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
                 if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].addListener('change', this.onChange);
+                    this.listenTo[i].addListener('change', this.onStoreUpdate);
                 } else {
-                    this.getStore(this.listenTo[i]).addListener('change', this.onChange);
+                    this.getStore(this.listenTo[i]).addListener('change', this.onStoreUpdate);
                 }
             }
         } else {
-            this.listenTo.addListener('change', this.onChange);
+            this.listenTo.addListener('change', this.onStoreUpdate);
         }
     },
 
     /**
-     * Remove all `onChange` callbacks from binded stores
+     * Remove all `onStoreUpdate` callbacks from binded stores
      * @return {void}
      */
     componentWillUnmount: function () {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
                 if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].removeListener('change', this.onChange);
+                    this.listenTo[i].removeListener('change', this.onStoreUpdate);
                 } else {
-                    this.getStore(this.listenTo[i]).removeListener('change', this.onChange);    
+                    this.getStore(this.listenTo[i]).removeListener('change', this.onStoreUpdate);    
                 }
             }
         } else {
-            this.listenTo.removeListener('change', this.onChange);
+            this.listenTo.removeListener('change', this.onStoreUpdate);
         }
     }
 };
@@ -463,6 +381,188 @@ function isUndefined(arg) {
 }
 
 },{}],3:[function(require,module,exports){
+'use strict';
+
+var Dispatcher = require('./vendor/Dispatcher');
+var _ = require('./helper');
+
+function FFluxDispatcher() {
+    /**
+     * Create facebook's dispatcher realization
+     * @type {Dispatcher}
+     */
+    this._dispatcher = new Dispatcher();
+    /**
+     * Invoke dispatch method of the flux dispatcher's instance
+     * @param {object} payload
+     * @return true
+     */
+    this.dispatch = this._dispatcher.dispatch;
+    
+    /**
+     * Bridge to dispatcher's waitFor
+     * @param {array} arrayOfStores Array of stores to wait for
+     */
+    this.waitFor = this._dispatcher.waitFor;
+}
+
+_.extend(FFluxDispatcher.prototype, {
+    /**
+     * Register store to dispatcher
+     * @param {FFluxStore} instance     FFluxStore instance
+     * @return {string} Registration id
+     */
+    register: function(instance) {
+        return this._dispatcher.register(function(action) {
+            var type = action.type;
+            var handler;
+            // Get array of registered actions
+            var actionKeys = _.keys(instance.actions);
+
+            // If we have such actions listener(s), invoke 
+            // related function with action provided
+            actionKeys.forEach(function(key) {
+                if (key === type) {
+                    switch (typeof instance.actions[type]) {
+                        case 'string':
+                            handler = instance[instance.actions[type]];
+                            break;
+                        case 'function':
+                            handler = instance.actions[type];
+                            break;
+                        default:
+                            throw Error('You must specify handler for action ' + type);
+                    }
+                    
+                    handler.call(instance, action.data);
+                }
+            });
+        });
+    },
+
+    /**
+     * Unregister store from dispatcher
+     * @param {object} options  Binding identificator or store instance
+     * @return {void}
+     */
+    unregister: function(options) {
+        var id;
+
+        if (typeof options === 'string') {
+            id = options;
+        } else {
+            id = options._id;
+        }
+
+        this._dispatcher.unregister(id);
+    }
+});
+
+module.exports = function() {
+    return new FFluxDispatcher();
+};
+},{"./helper":5,"./vendor/Dispatcher":6}],4:[function(require,module,exports){
+'use strict';
+
+var _ = require('./helper');
+var EventEmitter = require('events').EventEmitter;
+
+/**
+ * Store instance constructor
+ */
+function FFluxStore(options) {
+    _.extend(this, options);
+};
+
+/**
+ * Inherit store prototype from event emitter and passed options
+ */
+_.extend(constr.prototype, EventEmitter.prototype, {
+    /**
+     * Emit change
+     * @return {void}
+     */
+    emitChange: function() {
+        this.emit('change');
+    },
+
+    /**
+     * Register action's handler
+     * @param  {string} action  Action's name
+     * @param  {function} handler Aciont's handler
+     * @return {void}
+     */
+    registerAction: function(action, handler) {
+        if (this.actions[action]) {
+            throw Error('You can\'t override existing handler. Unregister it first!');
+        }
+
+        this.actions[action] = handler;
+    },
+
+    /**
+     * Unregister action's handler from store
+     * @param  {string} action Action name
+     * @return {void}
+     */
+    unregisterAction: function(action) {
+        if (this.actions[action]) {
+            delete this.actions[action];
+        } else {
+            throw Error('You have no handlers for action ' + action);
+        }
+    }
+});
+
+/**
+ * Store factory
+ * @param  {object}     options             Configuration of the store instance
+ * @return {function}   New store instance
+ */
+module.exports = function(options) {
+    return new FFluxStore(options);
+}
+},{"./helper":5,"events":2}],5:[function(require,module,exports){
+'use strict';
+
+function isObject(param) {
+    return Object.prototype.toString.call(param) === '[object Object]';  
+}
+
+function isArray(param) {
+    return Object.prototype.toString.call(param) === '[object Array]';
+}
+
+function keys(obj) {
+    return Object.keys(obj);
+}
+
+function extend(obj) {
+    if (!isObject(obj)) {
+        return obj;
+    }
+
+    var source, prop;
+
+    for (var i = 1, length = arguments.length; i < length; i++) {
+        source = arguments[i];
+        for (prop in source) {
+            if (Object.hasOwnProperty.call(source, prop)) {
+                obj[prop] = source[prop];
+            }
+        }
+    }
+
+    return obj;
+}
+
+module.exports = {
+    keys: keys,
+    isArray: isArray,
+    isObject: isObject,
+    extend: extend
+};
+},{}],6:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -712,108 +812,7 @@ var _prefix = 'ID_';
 
 
 module.exports = Dispatcher;
-},{"./invariant":6}],4:[function(require,module,exports){
-'use strict';
-
-var _ = require('./helper');
-var EventEmitter = require('events').EventEmitter;
-
-/**
- * Store instance constructor
- */
-function FFluxStore(options) {
-    this.actions = options.actions || {};
-};
-
-/**
- * Inherit store prototype from event emitter and passed options
- */
-_.extend(constr.prototype, EventEmitter.prototype, {
-    /**
-     * Emit change
-     * @return {void}
-     */
-    emitChange: function() {
-        this.emit('change');
-    },
-
-    /**
-     * Register action's handler
-     * @param  {string} action  Action's name
-     * @param  {function} handler Aciont's handler
-     * @return {void}
-     */
-    registerAction: function(action, handler) {
-        if (this.actions[action]) {
-            throw Error('You can\'t override existing handler. Unregister it first!');
-        }
-
-        this.actions[action] = handler;
-    },
-
-    /**
-     * Unregister action's handler from store
-     * @param  {string} action Action name
-     * @return {void}
-     */
-    unregisterAction: function(action) {
-        if (this.actions[action]) {
-            delete this.actions[action];
-        } else {
-            throw Error('You have no handlers for action ' + action);
-        }
-    }
-});
-
-/**
- * Store factory
- * @param  {object}     options             Configuration of the store instance
- * @return {function}   New store instance
- */
-module.exports = function(options) {
-    return new FFluxStore(options);
-}
-},{"./helper":5,"events":2}],5:[function(require,module,exports){
-'use strict';
-
-function isObject(param) {
-    return Object.prototype.toString.call(param) === '[object Object]';  
-}
-
-function isArray(param) {
-    return Object.prototype.toString.call(param) === '[object Array]';
-}
-
-function keys(obj) {
-    return Object.keys(obj);
-}
-
-function extend(obj) {
-    if (!isObject(obj)) {
-        return obj;
-    }
-
-    var source, prop;
-
-    for (var i = 1, length = arguments.length; i < length; i++) {
-        source = arguments[i];
-        for (prop in source) {
-            if (Object.hasOwnProperty.call(source, prop)) {
-                obj[prop] = source[prop];
-            }
-        }
-    }
-
-    return obj;
-}
-
-module.exports = {
-    keys: keys,
-    isArray: isArray,
-    isObject: isObject,
-    extend: extend
-};
-},{}],6:[function(require,module,exports){
+},{"./invariant":7}],7:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
