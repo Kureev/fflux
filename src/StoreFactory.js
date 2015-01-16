@@ -1,29 +1,14 @@
 'use strict';
 
 var _ = require('./helper');
-var EventEmitter = require('events')
-    .EventEmitter;
+var EventEmitter = require('events').EventEmitter;
 
 /**
  * Store factory
- * @param  {string}     name                Name of the store
  * @param  {object}     options             Configuration of the store instance
- * @param  {object}     settings            Extra settings for the store
  * @return {function}   New store instance
  */
-module.exports = function(name, options, settings) {
-    settings = settings || {};
-
-    // If settings.register wasn't specified,
-    // register by default
-    if (settings.register === undefined) {
-        settings.register = true;
-    }
-
-    // Simplify the scope usage
-    var app = this;
-    var _id;
-
+module.exports = function(options) {
     /**
      * Store instance constructor
      */
@@ -33,14 +18,6 @@ module.exports = function(name, options, settings) {
 
     // Inherit store prototype from event emitter and passed options
     _.extend(constr.prototype, EventEmitter.prototype, {
-        /**
-         * Get registered callback id
-         * @return {string} Id of the registered callback
-         */
-        getCallbackId: function() {
-            return _id;
-        },
-
         /**
          * Emit change
          * @return {void}
@@ -77,25 +54,5 @@ module.exports = function(name, options, settings) {
         }
     }, options);
 
-    // Create instance
-    var instance = new constr();
-
-    // If we don't need to register the store
-    // automaticly, return the built instance
-    if (settings.register !== true) {
-        return instance;
-    }
-
-    // Register store callback to the application dispatоcher
-    _id = app.register(instance);
-
-    app._stores = app._stores || {};
-
-    if (!app._stores[name]) {
-        app._stores[name] = instance;
-    } else {
-        throw Error('Store with those name is already exists');
-    }
-
-    return instance;
+    return new constr();
 };

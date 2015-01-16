@@ -11,17 +11,6 @@ var FFlux = function() {
     var _dispatcher = new Dispatcher();
 
     /**
-     * Create new store
-     * @param {string}      name        Name of the store
-     * @param {object}      options     Configuration for the store
-     * @param {object}      settings    Settings for the store
-     * @return {FFluxStore} New instance of the store
-     */
-    this.createStore = function(name, options, settings) {
-        return createStore.call(this, name, options, settings);
-    };
-
-    /**
      * Create object with action interface
      * @param  {string} type    Type of the action
      * @param  {object} data    Payload object
@@ -117,6 +106,15 @@ var FFlux = function() {
 
         return true;
     };
+};
+
+/**
+ * Create new store
+ * @param {object}      options     Configuration for the store
+ * @return {FFluxStore} New instance of the store
+ */
+FFlux.createStore = function(options) {
+    return createStore.call(this, options);
 };
 
 FFlux.mixins = {};
