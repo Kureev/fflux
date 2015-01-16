@@ -39,38 +39,38 @@ FFlux.mixins = {};
 
 FFlux.mixins.binding = {
     /**
-     * Set `onStoreUpdate` listener to `listenTo` store(s)
+     * Set `storeDidUpdate` listener to `listenTo` store(s)
      * @return {void}
      */
     componentDidMount: function() {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
                 if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].addListener('change', this.onStoreUpdate);
+                    this.listenTo[i].addListener('change', this.storeDidUpdate);
                 } else {
-                    this.getStore(this.listenTo[i]).addListener('change', this.onStoreUpdate);
+                    this.getStore(this.listenTo[i]).addListener('change', this.storeDidUpdate);
                 }
             }
         } else {
-            this.listenTo.addListener('change', this.onStoreUpdate);
+            this.listenTo.addListener('change', this.storeDidUpdate);
         }
     },
 
     /**
-     * Remove all `onStoreUpdate` callbacks from binded stores
+     * Remove all `storeDidUpdate` callbacks from binded stores
      * @return {void}
      */
     componentWillUnmount: function () {
         if (_.isArray(this.listenTo) && this.listenTo.length) {
             for (var i = 0; i < this.listenTo.length; i++) {
                 if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].removeListener('change', this.onStoreUpdate);
+                    this.listenTo[i].removeListener('change', this.storeDidUpdate);
                 } else {
-                    this.getStore(this.listenTo[i]).removeListener('change', this.onStoreUpdate);    
+                    this.getStore(this.listenTo[i]).removeListener('change', this.storeDidUpdate);    
                 }
             }
         } else {
-            this.listenTo.removeListener('change', this.onStoreUpdate);
+            this.listenTo.removeListener('change', this.storeDidUpdate);
         }
     }
 };

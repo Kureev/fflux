@@ -187,7 +187,7 @@ var MyComponentClass = React.createClass({
    * this function will be invoked
    * @return {void}
    */
-  onStoreUpdated: function() {...},
+  storeDidUpdate: function() {...},
 
   render: function() {...}
 });
