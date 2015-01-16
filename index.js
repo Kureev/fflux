@@ -2,7 +2,7 @@
 
 var _ = require('./src/helper');
 var Dispatcher = require('./src/Dispatcher');
-var createStore = require('./src/StoreFactory');
+var createStore = require('./src/Store');
 
 /**
  * Application constructor
