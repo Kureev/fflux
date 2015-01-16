@@ -7,7 +7,7 @@ var EventEmitter = require('events').EventEmitter;
  * Store instance constructor
  */
 function FFluxStore(options) {
-    this.actions = options.actions || {};
+    _.extend(this, options);
 };
 
 /**
