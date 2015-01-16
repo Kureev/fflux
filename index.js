@@ -38,15 +38,6 @@ var FFlux = function() {
     };
 
     /**
-     * Get store by name
-     * @param  {string} name Name of the store
-     * @return {FFluxStore|null}
-     */
-    this.getStore = function(name) {
-        return this._stores[name] || null;
-    };
-
-    /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
      * @return {string} Registration id
