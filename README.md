@@ -96,7 +96,7 @@ function otherActionHandler(data) {
   //...
 }
 
-var store = app.createStore({
+var store = FFlux.createStore({
   /**
    * In this property we declare list
    * of the actions we're interested in.
@@ -118,6 +118,16 @@ var store = app.createStore({
     console.log('Some method has been called');
   }
 });
+
+/**
+ * Register `store` in the dispatcher
+ */
+app.register(store);
+
+/**
+ * Unregister `store` from the dispatcher
+ */
+app.unregister(store);
 ```
 
 As you can see from the example above, you will have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). In every action handler you can use waitFor method as it's described on the [flux's dispatcher page](http://facebook.github.io/flux/docs/dispatcher.html#content):
@@ -140,12 +150,6 @@ As you can see from the example above, you will have an actions property which p
     app.waitFor([storage]);
   }
 }
-```
-
-Every store by default will be automatically assigned to the application dispatcher. If for some reason you wouldn't want to auto-bind store to the dispatcher, use flag false after object with constructor settings:
-
-```javascript
-app.createStore({...}, { register: false });
 ```
 
 You can register/unregister action handlers dynamicly after store initialization:
