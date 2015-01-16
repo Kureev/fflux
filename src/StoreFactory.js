@@ -4,19 +4,21 @@ var _ = require('./helper');
 var EventEmitter = require('events').EventEmitter;
 
 /**
+ * Store instance constructor
+ */
+var constr = function FFluxStore() {
+    this.actions = options.actions || {};
+};
+
+/**
  * Store factory
  * @param  {object}     options             Configuration of the store instance
  * @return {function}   New store instance
  */
 module.exports = function(options) {
     /**
-     * Store instance constructor
+     * Inherit store prototype from event emitter and passed options
      */
-    var constr = function FFluxStore() {
-        this.actions = options.actions || {};
-    };
-
-    // Inherit store prototype from event emitter and passed options
     _.extend(constr.prototype, EventEmitter.prototype, {
         /**
          * Emit change
