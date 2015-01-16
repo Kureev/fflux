@@ -3,7 +3,7 @@
 
 var _ = require('./src/helper');
 var Dispatcher = require('./src/Dispatcher');
-var createStore = require('./src/StoreFactory');
+var createStore = require('./src/Store');
 
 /**
  * Application constructor
@@ -159,7 +159,7 @@ FFlux.mixins.binding = {
 };
 
 window.FFlux = FFlux;
-},{"./src/Dispatcher":3,"./src/StoreFactory":4,"./src/helper":5}],2:[function(require,module,exports){
+},{"./src/Dispatcher":3,"./src/Store":4,"./src/helper":5}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -721,9 +721,49 @@ var EventEmitter = require('events').EventEmitter;
 /**
  * Store instance constructor
  */
-var constr = function FFluxStore() {
+function FFluxStore(options) {
     this.actions = options.actions || {};
 };
+
+/**
+ * Inherit store prototype from event emitter and passed options
+ */
+_.extend(constr.prototype, EventEmitter.prototype, {
+    /**
+     * Emit change
+     * @return {void}
+     */
+    emitChange: function() {
+        this.emit('change');
+    },
+
+    /**
+     * Register action's handler
+     * @param  {string} action  Action's name
+     * @param  {function} handler Aciont's handler
+     * @return {void}
+     */
+    registerAction: function(action, handler) {
+        if (this.actions[action]) {
+            throw Error('You can\'t override existing handler. Unregister it first!');
+        }
+
+        this.actions[action] = handler;
+    },
+
+    /**
+     * Unregister action's handler from store
+     * @param  {string} action Action name
+     * @return {void}
+     */
+    unregisterAction: function(action) {
+        if (this.actions[action]) {
+            delete this.actions[action];
+        } else {
+            throw Error('You have no handlers for action ' + action);
+        }
+    }
+});
 
 /**
  * Store factory
@@ -731,48 +771,8 @@ var constr = function FFluxStore() {
  * @return {function}   New store instance
  */
 module.exports = function(options) {
-    /**
-     * Inherit store prototype from event emitter and passed options
-     */
-    _.extend(constr.prototype, EventEmitter.prototype, {
-        /**
-         * Emit change
-         * @return {void}
-         */
-        emitChange: function() {
-            this.emit('change');
-        },
-
-        /**
-         * Register action's handler
-         * @param  {string} action  Action's name
-         * @param  {function} handler Aciont's handler
-         * @return {void}
-         */
-        registerAction: function(action, handler) {
-            if (this.actions[action]) {
-                throw Error('You can\'t override existing handler. Unregister it first!');
-            }
-
-            this.actions[action] = handler;
-        },
-
-        /**
-         * Unregister action's handler from store
-         * @param  {string} action Action name
-         * @return {void}
-         */
-        unregisterAction: function(action) {
-            if (this.actions[action]) {
-                delete this.actions[action];
-            } else {
-                throw Error('You have no handlers for action ' + action);
-            }
-        }
-    }, options);
-
-    return new constr();
-};
+    return new FFluxStore(options);
+}
 },{"./helper":5,"events":2}],5:[function(require,module,exports){
 'use strict';
 
