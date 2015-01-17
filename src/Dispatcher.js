@@ -9,13 +9,18 @@ function FFluxDispatcher() {
      * @type {Dispatcher}
      */
     this._dispatcher = new Dispatcher();
+
     /**
      * Invoke dispatch method of the flux dispatcher's instance
-     * @param {object} payload
-     * @return true
+     * @param {string} type Type of the action
+     * @param {object} data Payload of the action
+     * @return {void}
      */
-    this.dispatch = function(action) {
-        this._dispatcher.dispatch.call(this._dispatcher, action);
+    this.dispatch = function(type, data) {
+        this._dispatcher.dispatch.call(this._dispatcher, {
+            type: type,
+            data: data
+        });
     };
     
     /**

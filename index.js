@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('./src/helper');
 var createStore = require('./src/Store');
 var createDispatcher = require('./src/Dispatcher');
 
@@ -11,7 +10,7 @@ var FFlux = FFlux || {};
 
 FFlux.createDispatcher = function() {
     return createDispatcher.call(null);
-}
+};
 
 /**
  * Create new store
@@ -20,19 +19,6 @@ FFlux.createDispatcher = function() {
  */
 FFlux.createStore = function(options) {
     return createStore.call(null, options);
-};
-
-/**
- * Create object with action interface
- * @param  {string} type    Type of the action
- * @param  {object} data    Payload object
- * @return {object}         Object with action interface
- */
-FFlux.createAction = function(type, data) {
-    return {
-        type: type,
-        data: data
-    };
 };
 
 FFlux.mixins = {};
@@ -55,4 +41,8 @@ FFlux.mixins.binding = {
     }
 };
 
-window.FFlux = FFlux;
+if (typeof require === 'function') {
+    module.exports = FFlux;
+} else {
+    window.FFlux = FFlux;
+}
