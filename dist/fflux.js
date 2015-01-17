@@ -1,7 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _ = require('./src/helper');
 var createStore = require('./src/Store');
 var createDispatcher = require('./src/Dispatcher');
 
@@ -12,7 +11,7 @@ var FFlux = FFlux || {};
 
 FFlux.createDispatcher = function() {
     return createDispatcher.call(null);
-}
+};
 
 /**
  * Create new store
@@ -21,19 +20,6 @@ FFlux.createDispatcher = function() {
  */
 FFlux.createStore = function(options) {
     return createStore.call(null, options);
-};
-
-/**
- * Create object with action interface
- * @param  {string} type    Type of the action
- * @param  {object} data    Payload object
- * @return {object}         Object with action interface
- */
-FFlux.createAction = function(type, data) {
-    return {
-        type: type,
-        data: data
-    };
 };
 
 FFlux.mixins = {};
@@ -56,8 +42,12 @@ FFlux.mixins.binding = {
     }
 };
 
-window.FFlux = FFlux;
-},{"./src/Dispatcher":3,"./src/Store":4,"./src/helper":5}],2:[function(require,module,exports){
+if (typeof require === 'function') {
+    module.exports = FFlux;
+} else {
+    window.FFlux = FFlux;
+}
+},{"./src/Dispatcher":3,"./src/Store":4}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -372,13 +362,18 @@ function FFluxDispatcher() {
      * @type {Dispatcher}
      */
     this._dispatcher = new Dispatcher();
+
     /**
      * Invoke dispatch method of the flux dispatcher's instance
-     * @param {object} payload
-     * @return true
+     * @param {string} type Type of the action
+     * @param {object} data Payload of the action
+     * @return {void}
      */
-    this.dispatch = function(action) {
-        this._dispatcher.dispatch.call(this._dispatcher, action);
+    this.dispatch = function(type, data) {
+        this._dispatcher.dispatch.call(this._dispatcher, {
+            type: type,
+            data: data
+        });
     };
     
     /**
