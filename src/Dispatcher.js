@@ -31,10 +31,10 @@ _.extend(FFluxDispatcher.prototype, {
     /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
-     * @return {string} Registration id
+     * @return {void}
      */
     register: function(instance) {
-        return this._dispatcher.register(function(action) {
+        instance.dispatchToken = this._dispatcher.register(function(action) {
             var type = action.type;
             var handler;
             // Get array of registered actions
@@ -72,7 +72,7 @@ _.extend(FFluxDispatcher.prototype, {
         if (typeof options === 'string') {
             id = options;
         } else {
-            id = options._id;
+            id = options.dispatchToken;
         }
 
         this._dispatcher.unregister(id);
