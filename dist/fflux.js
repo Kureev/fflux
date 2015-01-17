@@ -40,39 +40,19 @@ FFlux.mixins = {};
 
 FFlux.mixins.binding = {
     /**
-     * Set `storeDidUpdate` listener to `listenTo` store(s)
+     * Set `storeDidUpdate` listener to the specified store
      * @return {void}
      */
     componentDidMount: function() {
-        if (_.isArray(this.listenTo) && this.listenTo.length) {
-            for (var i = 0; i < this.listenTo.length; i++) {
-                if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].addListener('change', this.storeDidUpdate);
-                } else {
-                    this.getStore(this.listenTo[i]).addListener('change', this.storeDidUpdate);
-                }
-            }
-        } else {
-            this.listenTo.addListener('change', this.storeDidUpdate);
-        }
+        this.listenTo.addListener('change', this.storeDidUpdate);
     },
 
     /**
-     * Remove all `storeDidUpdate` callbacks from binded stores
+     * Remove all `storeDidUpdate` callbacks from the binded store
      * @return {void}
      */
     componentWillUnmount: function () {
-        if (_.isArray(this.listenTo) && this.listenTo.length) {
-            for (var i = 0; i < this.listenTo.length; i++) {
-                if (_.isObject(this.listenTo[i])) {
-                    this.listenTo[i].removeListener('change', this.storeDidUpdate);
-                } else {
-                    this.getStore(this.listenTo[i]).removeListener('change', this.storeDidUpdate);    
-                }
-            }
-        } else {
-            this.listenTo.removeListener('change', this.storeDidUpdate);
-        }
+        this.listenTo.removeListener('change', this.storeDidUpdate);
     }
 };
 
