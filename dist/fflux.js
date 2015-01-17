@@ -414,10 +414,10 @@ _.extend(FFluxDispatcher.prototype, {
     /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
-     * @return {string} Registration id
+     * @return {void}
      */
     register: function(instance) {
-        return this._dispatcher.register(function(action) {
+        instance.dispatchToken = this._dispatcher.register(function(action) {
             var type = action.type;
             var handler;
             // Get array of registered actions
@@ -455,7 +455,7 @@ _.extend(FFluxDispatcher.prototype, {
         if (typeof options === 'string') {
             id = options;
         } else {
-            id = options._id;
+            id = options.dispatchToken;
         }
 
         this._dispatcher.unregister(id);
@@ -529,18 +529,38 @@ module.exports = function(options) {
 },{"./helper":5,"events":2}],5:[function(require,module,exports){
 'use strict';
 
+/**
+ * Check if param is object
+ * @param  {any}  param Parameter to check
+ * @return {boolean}
+ */
 function isObject(param) {
     return Object.prototype.toString.call(param) === '[object Object]';  
 }
 
+/**
+ * Check if param is array
+ * @param  {any}  param Parameter to check
+ * @return {boolean}
+ */
 function isArray(param) {
     return Object.prototype.toString.call(param) === '[object Array]';
 }
 
+/**
+ * Get object's keys
+ * @param  {object} obj
+ * @return {array}  Array of the keys
+ */
 function keys(obj) {
     return Object.keys(obj);
 }
 
+/**
+ * Extend object by other obect(s)
+ * @param  {object} obj Object to extend
+ * @return {object}     Extended object
+ */
 function extend(obj) {
     if (!isObject(obj)) {
         return obj;
