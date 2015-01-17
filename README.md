@@ -9,7 +9,7 @@ Dispatcher
 To create a dispatcher:
 
 ```javascript
-var dispatcher = new FFlux();
+var dispatcher = FFlux.createDispatcher();
 ```
 
 It's very similar with facebook's realization (because it's based on it), but register/unregister methods changed regarding to specific of the current library:
@@ -25,7 +25,7 @@ var store = FFlux.createStore({ ... });
  * Create action
  * @type {FFluxAction}
  */
-var someAction = FFlux.createAction({ ... });
+var someAction = FFlux.createAction('SOME_ACTION', { ... });
 
 /**
  * Dispatch our action to the system
@@ -174,11 +174,6 @@ var MyComponentClass = React.createClass({
 
   /**
    * Bind view to listen `store` changes.
-   * Or, if you're looking for a way to 
-   * bind `React Component` to multiple stores
-   * you can use array syntax like this:
-   * 
-   * listenTo: [store, otherStore]
    */
   listenTo: store,
 
