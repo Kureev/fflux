@@ -167,15 +167,10 @@ var store = FFlux.createStore({...});
  */
 var MyComponentClass = React.createClass({
   /**
-   * Mixin our auto-binding to the store(s)
+   * Bind React view to listen `change` event of the `store`
    * @type {Array}
    */
-  mixins: [FFlux.mixins.binding],
-
-  /**
-   * Bind view to listen `store` changes.
-   */
-  listenTo: store,
+  mixins: [FFlux.mixins.bind(store)],
 
   /**
    * After store emit `change` event

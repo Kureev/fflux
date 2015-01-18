@@ -23,22 +23,24 @@ FFlux.createStore = function(options) {
 
 FFlux.mixins = {};
 
-FFlux.mixins.binding = {
-    /**
-     * Set `storeDidUpdate` listener to the specified store
-     * @return {void}
-     */
-    componentDidMount: function() {
-        this.listenTo.addListener('change', this.storeDidUpdate);
-    },
+FFlux.mixins.bind = function(store) {
+    return {
+        /**
+         * Set `storeDidUpdate` listener to the specified store
+         * @return {void}
+         */
+        componentDidMount: function() {
+            store.addListener('change', this.storeDidUpdate);
+        },
 
-    /**
-     * Remove all `storeDidUpdate` callbacks from the binded store
-     * @return {void}
-     */
-    componentWillUnmount: function () {
-        this.listenTo.removeListener('change', this.storeDidUpdate);
-    }
+        /**
+         * Remove all `storeDidUpdate` callbacks from the binded store
+         * @return {void}
+         */
+        componentWillUnmount: function () {
+            store.removeListener('change', this.storeDidUpdate);
+        }
+    };
 };
 
 if (typeof require === 'function') {
