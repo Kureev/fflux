@@ -9,11 +9,13 @@
   "author": "Kureev Alexey <kureev-mail@ya.ru>",
   "license": "MIT",
   "devDependencies": {
+    "assert": "^1.3.0",
     "browserify": "^8.0.3",
     "gulp": "^3.8.10",
-    "gulp-replace": "^0.5.0",
-    "vinyl-source-stream": "^1.0.0",
     "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^1.0.2"
+    "gulp-replace": "^0.5.0",
+    "gulp-uglify": "^1.0.2",
+    "mocha": "^2.1.0",
+    "vinyl-source-stream": "^1.0.0"
   }
 }

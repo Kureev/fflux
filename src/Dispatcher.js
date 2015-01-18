@@ -1,6 +1,7 @@
 'use strict';
 
 var Dispatcher = require('./vendor/Dispatcher');
+var invariant = require('./vendor/invariant');
 var _ = require('./helper');
 
 function FFluxDispatcher() {
@@ -28,6 +29,10 @@ function FFluxDispatcher() {
      * @param {array} arrayOfStores Array of stores to wait for
      */
     this.waitFor = function(arrayOfStores) {
+        arrayOfStores = arrayOfStores.map(function(store) {
+            return store.dispatchToken;
+        });
+
         this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
     };
 }
@@ -59,6 +64,10 @@ _.extend(FFluxDispatcher.prototype, {
                         default:
                             throw Error('You must specify handler for action ' + type);
                     }
+
+                    invariant((typeof handler === 'function'),
+                        'Function for action ' + type + 'isn\'t defined'
+                    );
                     
                     handler.call(instance, action.data);
                 }
