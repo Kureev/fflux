@@ -23,6 +23,11 @@ FFlux.createStore = function(options) {
 
 FFlux.mixins = {};
 
+/**
+ * Bind mixin for React views
+ * @param  {object} store Store the React view will bind to
+ * @return {object}       Mixin for the specified store
+ */
 FFlux.mixins.bind = function(store) {
     return {
         /**
