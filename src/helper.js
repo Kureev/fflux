@@ -51,9 +51,20 @@ function extend(obj) {
     return obj;
 }
 
+/**
+ * Clone object(not deep) or array
+ * @param  {object} obj Object/Array to Clone
+ * @return {object}     Clonned instance of the source
+ */
+function clone(obj) {
+    if (!isObject(obj)) return obj;
+    return isArray(obj) ? obj.slice() : extend({}, obj);
+}
+
 module.exports = {
     keys: keys,
     isArray: isArray,
     isObject: isObject,
-    extend: extend
+    extend: extend,
+    clone: clone
 };

@@ -25,6 +25,14 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     },
 
     /**
+     * Get copy of the actions hash
+     * @return {object} Copy of the actions
+     */
+    getActions: function() {
+        return _.clone(this.actions);
+    },
+
+    /**
      * Register action's handler
      * @param  {string} action  Action's name
      * @param  {function} handler Aciont's handler

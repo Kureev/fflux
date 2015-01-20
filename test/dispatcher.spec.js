@@ -7,7 +7,7 @@ var expect = chai.expect;
 
 chai.use(require('chai-spies'));
 
-describe('FFlux dispatcher', function() {
+describe('FFlux dispatcher functions', function() {
 
     beforeEach(function() {
         dispatcher.register(store1);
