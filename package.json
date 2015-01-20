@@ -8,6 +8,9 @@
   ],
   "author": "Kureev Alexey <kureev-mail@ya.ru>",
   "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
   "devDependencies": {
     "assert": "^1.3.0",
     "browserify": "^8.0.3",
