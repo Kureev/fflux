@@ -1,7 +1,7 @@
 'use strict';
 
-var createStore = require('./src/Store');
-var createDispatcher = require('./src/Dispatcher');
+var createStore = require('./Store');
+var createDispatcher = require('./Dispatcher');
 
 /**
  * Application constructor

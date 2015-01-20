@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var createStore = require('./src/Store');
-var createDispatcher = require('./src/Dispatcher');
+var createStore = require('./Store');
+var createDispatcher = require('./Dispatcher');
 
 /**
  * Application constructor
@@ -54,7 +54,7 @@ if (typeof require === 'function') {
 } else {
     window.FFlux = FFlux;
 }
-},{"./src/Dispatcher":3,"./src/Store":4}],2:[function(require,module,exports){
+},{"./Dispatcher":3,"./Store":4}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -466,8 +466,10 @@ var EventEmitter = require('events').EventEmitter;
  * Store instance constructor
  */
 function FFluxStore(options) {
-    _.extend(this, options);
-};
+    _.extend(this, {
+        actions: {}
+    }, options);
+}
 
 /**
  * Inherit store prototype from event emitter and passed options
@@ -516,7 +518,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
  */
 module.exports = function(options) {
     return new FFluxStore(options);
-}
+};
 },{"./helper":5,"events":2}],5:[function(require,module,exports){
 'use strict';
 

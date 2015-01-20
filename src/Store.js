@@ -7,8 +7,10 @@ var EventEmitter = require('events').EventEmitter;
  * Store instance constructor
  */
 function FFluxStore(options) {
-    _.extend(this, options);
-};
+    _.extend(this, {
+        actions: {}
+    }, options);
+}
 
 /**
  * Inherit store prototype from event emitter and passed options
@@ -57,4 +59,4 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
  */
 module.exports = function(options) {
     return new FFluxStore(options);
-}
+};

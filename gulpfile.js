@@ -6,7 +6,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 
-var sourceFile = './index.js';
+var sourceFile = './src/index.js';
 var destFile = 'fflux.js';
 var destFolder = './dist/';
 

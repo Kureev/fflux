@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('assert');
-var FFlux = require('../index.js');
+var FFlux = require('../src/index.js');
 
 describe('FFlux static functions', function() {
     
