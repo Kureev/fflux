@@ -48,7 +48,7 @@ FFlux.mixins.bind = function(store) {
     };
 };
 
-if (typeof require === 'function') {
+if (process) {
     module.exports = FFlux;
 } else {
     window.FFlux = FFlux;
