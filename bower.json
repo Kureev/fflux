@@ -1,11 +1,11 @@
 {
   "name": "fluxy",
-  "version": "0.0.1",
+  "version": "0.8.0",
   "authors": [
     "Kureev Alexey <kureev-mail@ya.ru>"
   ],
   "description": "Flux architecture realisation",
-  "main": "index.js",
+  "main": "dist/fflux.min.js",
   "keywords": [
     "flux"
   ],
@@ -14,7 +14,6 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "test"
   ]
 }
