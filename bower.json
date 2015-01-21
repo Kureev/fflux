@@ -1,17 +1,29 @@
 {
   "name": "fluxy",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "authors": [
     "Kureev Alexey <kureev-mail@ya.ru>"
   ],
-  "description": "Flux architecture realisation",
-  "main": "dist/fflux.min.js",
+  "description": "Tiny Flux architecture realisation",
+  "main": "dist/fflux.js",
+  "homepage": "https://github.com/Kureev/fflux",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Kureev/fflux.git"
+  },
+  "dependencies": {
+    "flux": "https://github.com/facebook/flux.git#master"
+  },
   "keywords": [
     "flux"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "src",
+    ".*",
+    "gulpfile.js",
+    "package.json",
     "node_modules",
     "bower_components",
     "test"
