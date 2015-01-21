@@ -21,14 +21,20 @@ describe('FFlux store functions', function() {
         expect(spy).to.have.been.called.once();
     });
 
-    it('registerAction', function() {
+    it('(un)registerAction', function() {
         var handler = function() {};
         var actionName = 'STORE_TEST';
-
         var savedActions = store.getActions();
-        store.registerAction(actionName, handler);
 
+        // Register action to store
+        store.registerAction(actionName, handler);
+        // Check if the `actions` hash have been changed
         assert(savedActions !== store.getActions());
+
+        // Unregister the action
+        store.unregisterAction(actionName);
+        // Check if it's back to the default state
+        assert(JSON.stringify(savedActions) == JSON.stringify(store.getActions()));
     });
     
 });
