@@ -11,9 +11,6 @@
     "type": "git",
     "url": "git@github.com:Kureev/fflux.git"
   },
-  "dependencies": {
-    "flux": "https://github.com/facebook/flux.git#master"
-  },
   "keywords": [
     "flux"
   ],
