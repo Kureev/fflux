@@ -367,6 +367,7 @@ function isUndefined(arg) {
 // shim for using process in browser
 
 var process = module.exports = {};
+<<<<<<< HEAD
 
 process.nextTick = (function () {
     var canSetImmediate = typeof window !== 'undefined'
@@ -425,11 +426,44 @@ process.nextTick = (function () {
         setTimeout(fn, 0);
     };
 })();
+=======
+var queue = [];
+var draining = false;
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
+    }
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+>>>>>>> Fix for browser usage
 
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
+<<<<<<< HEAD
+=======
+process.version = ''; // empty string to avoid regexp issues
+>>>>>>> Fix for browser usage
 
 function noop() {}
 
@@ -450,6 +484,10 @@ process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
+<<<<<<< HEAD
+=======
+process.umask = function() { return 0; };
+>>>>>>> Fix for browser usage
 
 },{}],4:[function(require,module,exports){
 'use strict';
