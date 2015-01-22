@@ -12,7 +12,7 @@ To create a dispatcher:
 var dispatcher = FFlux.createDispatcher();
 ```
 
-It's very similar with facebook's realization (because it's based on it), but register/unregister methods changed regarding to specific of the current library:
+It's very similar with facebook's realization (because it's based on it), but `register` method takes store instance instead of callback function:
 
 ```javascript
 /**
@@ -22,47 +22,28 @@ It's very similar with facebook's realization (because it's based on it), but re
 var store = FFlux.createStore({ ... });
 
 /**
- * Create action
- * @type {FFluxAction}
+ * Dispatch action to the system
  */
-var someAction = FFlux.createAction('SOME_ACTION', { ... });
-
-/**
- * Dispatch our action to the system
- */
-dispatcher.dispatch(someAction);
+dispatcher.dispatch('SOME_ACTION', payload);
 ```
 
-But as you see, nothing happens. The reason is that the store has to be registered in the dispatcher:
-
+But as you see, nothing happens. The reason is that the store hasn't been registered in the dispatcher:
 
 ```javascript
 dispatcher.register(store);
-
 ```
 
-Now all dispatched events will be available in the action handlers
+Now all dispatched events will be available in the action handlers.
 
 Actions
 -------
-Actions are used for sending messages from different sources to dispatcher. They're just simple JS objects with specific interface. You can create them natively:
+Actions are used for sending messages from different sources to dispatcher:
 
 ```javascript
-var action = {
-  type: 'SOME_ACTION',
-  data: {...}
-}
+var action = FFlux.createAction('SOME_ACTION', payload);
 ```
 
-**note:** `type` key is required for every action in the system!
-
-Or you can use small fflux function, designed for that:
-
-```javascript
-var action = FFlux.createAction('SOME_ACTION', {...});
-```
-It will guarantee you accordance with the system interface.
-
+Where `payload` is an usual JS object with event's payload.
 
 Store
 -----
