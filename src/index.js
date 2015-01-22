@@ -8,6 +8,10 @@ var createDispatcher = require('./Dispatcher');
  */
 var FFlux = FFlux || {};
 
+/**
+ * Create new dispatcher
+ * @return {FFluxDispatcher} New instance of the dispatcher
+ */
 FFlux.createDispatcher = function() {
     return createDispatcher.call(null);
 };
