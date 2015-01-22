@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha",
-    "precommit": "npm test",
+    "precommit": "gulp && npm test",
     "prepush": "npm test",
     "postmerge": "npm test"
   },
