@@ -50,6 +50,14 @@ FFlux.mixins.bind = function(store) {
          */
         componentWillUnmount: function () {
             store.removeListener('change', this.storeDidUpdate);
+        },
+
+        /**
+         * Standart behaviour for `store` update
+         * @return {void}
+         */
+        storeDidUpdate: function() {
+            this.forceUpdate();
         }
     };
 };
