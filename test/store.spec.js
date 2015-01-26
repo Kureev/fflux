@@ -22,19 +22,18 @@ describe('FFlux store functions', function() {
     });
 
     it('(un)registerAction', function() {
-        var handler = function() {};
         var actionName = 'STORE_TEST';
         var savedActions = store.getActions();
 
         // Register action to store
-        store.registerAction(actionName, handler);
+        store.registerAction(actionName, function() {});
         // Check if the `actions` hash have been changed
         assert(savedActions !== store.getActions());
 
         // Unregister the action
         store.unregisterAction(actionName);
         // Check if it's back to the default state
-        assert(JSON.stringify(savedActions) == JSON.stringify(store.getActions()));
+        assert(JSON.stringify(savedActions) === JSON.stringify(store.getActions()));
     });
     
 });

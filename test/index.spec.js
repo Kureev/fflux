@@ -1,15 +1,15 @@
 'use strict';
 
-var assert = require('assert');
 var FFlux = require('../src/index.js');
+var expect = require('chai').expect;
 
 describe('FFlux static functions', function() {
     
     it('createDispatcher', function() {
-        var dispatcher = FFlux.createDispatcher();
+        expect(FFlux.createDispatcher).not.to.throw(Error);
     });
 
     it('createStore', function() {
-        var store = FFlux.createStore();
+        expect(FFlux.createStore).not.to.throw(Error);
     });
 });
