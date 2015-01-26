@@ -1,6 +1,6 @@
-fflux.js
+fflux.js[![Coverage Status](https://coveralls.io/repos/Kureev/fflux/badge.svg)](https://coveralls.io/r/Kureev/fflux)
 ==========
-*[Flux](https://facebook.github.io/flux/)-based library* [![Coverage Status](https://coveralls.io/repos/Kureev/fflux/badge.svg)](https://coveralls.io/r/Kureev/fflux)
+*[Flux](https://facebook.github.io/flux/)-based library* 
 
 Some time ago Facebook engineers released a specification describing flux - one-way data flow architecture. After that, they released a Dispatcher constructor, but skipped store, actions and react view/controller-binding parts. In fflux.js I tried to supplement existing code to complete architecture with a tiny layer of the user-friendly API for it.
 
