@@ -10,8 +10,8 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha",
-    "precommit": "gulp && npm test",
-    "prepush": "npm test",
+    "coverage": "codeclimate < coverage/lcov.info",
+    "precommit": "gulp && npm test && npm run coverage",
     "postmerge": "npm test"
   },
   "devDependencies": {

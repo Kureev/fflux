@@ -1,4 +1,6 @@
-fflux.js [![Coverage Status](https://coveralls.io/repos/Kureev/fflux/badge.svg)](https://coveralls.io/r/Kureev/fflux) [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux)
+fflux.js 
+[![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux)
+[![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux)
 ==========
 *[Flux](https://facebook.github.io/flux/)-based library* 
 
