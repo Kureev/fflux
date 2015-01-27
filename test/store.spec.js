@@ -30,8 +30,14 @@ describe('FFlux store functions', function() {
         // Check if the `actions` hash have been changed
         assert(savedActions !== store.getActions());
 
+        // You can't re-register existing action
+        expect(store.registerAction.bind(store, actionName, function() {})).to.throw(Error);
+            
         // Unregister the action
         store.unregisterAction(actionName);
+
+        // You can't unregister non-existing action
+        expect(store.unregisterAction.bind(store, actionName)).to.throw(Error);
         // Check if it's back to the default state
         assert(JSON.stringify(savedActions) === JSON.stringify(store.getActions()));
     });

@@ -38,7 +38,7 @@ FFlux.mixins.bind = function(store) {
          * Set `storeDidUpdate` listener to the specified store
          * @return {void}
          */
-        componentDidMount: function() {
+        componentWillMount: function() {
             store.addListener('change', this.storeDidUpdate);
         },
 
@@ -48,14 +48,6 @@ FFlux.mixins.bind = function(store) {
          */
         componentWillUnmount: function () {
             store.removeListener('change', this.storeDidUpdate);
-        },
-
-        /**
-         * Standart behaviour for `store` update
-         * @return {void}
-         */
-        storeDidUpdate: function() {
-            this.forceUpdate();
         }
     };
 };

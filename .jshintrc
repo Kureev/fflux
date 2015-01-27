@@ -85,7 +85,6 @@
     // Custom Globals
     "globals"       : {
         "Flux"      : false,
-        "React"     : false,
         "Backbone"  : false,
         "_"         : true,
         "FFlux"     : true
