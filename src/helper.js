@@ -33,10 +33,6 @@ function keys(obj) {
  * @return {object}     Extended object
  */
 function extend(obj) {
-    if (!isObject(obj)) {
-        return obj;
-    }
-
     var source, prop;
 
     for (var i = 1, length = arguments.length; i < length; i++) {
@@ -57,7 +53,6 @@ function extend(obj) {
  * @return {object}     Clonned instance of the source
  */
 function clone(obj) {
-    if (!isObject(obj)) return obj;
     return isArray(obj) ? obj.slice() : extend({}, obj);
 }
 
