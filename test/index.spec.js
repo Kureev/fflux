@@ -1,9 +1,13 @@
 'use strict';
 
 var FFlux = require('../src/index.js');
-var React = require('react');
+var React = require('react/addons');
 var chai = require('chai');
 var expect = chai.expect;
+var jsdom = require("jsdom").jsdom;
+
+global.document = jsdom();
+global.window = global.document.parentWindow;
 
 describe('FFlux static functions', function() {
     
@@ -43,7 +47,13 @@ describe('FFlux static functions', function() {
 
         var view = React.createFactory(viewClass)();
 
-        React.renderToString(view);
+        React.render(view, global.document.body);
+
+        dispatcher.dispatch('TEST');
+
+        expect(spy).to.have.been.called.once();
+
+        React.unmountComponentAtNode(global.document.body);
 
         dispatcher.dispatch('TEST');
 
