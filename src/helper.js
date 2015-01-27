@@ -1,15 +1,6 @@
 'use strict';
 
 /**
- * Check if param is object
- * @param  {any}  param Parameter to check
- * @return {boolean}
- */
-function isObject(param) {
-    return Object.prototype.toString.call(param) === '[object Object]';  
-}
-
-/**
  * Check if param is array
  * @param  {any}  param Parameter to check
  * @return {boolean}
@@ -59,7 +50,6 @@ function clone(obj) {
 module.exports = {
     keys: keys,
     isArray: isArray,
-    isObject: isObject,
     extend: extend,
     clone: clone
 };
