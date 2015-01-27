@@ -9,16 +9,6 @@ chai.use(require('chai-spies'));
 
 describe('FFlux dispatcher functions', function() {
 
-    beforeEach(function() {
-        dispatcher.register(store1);
-        dispatcher.register(store2);
-    });
-
-    afterEach(function() {
-        dispatcher.unregister(store1);
-        dispatcher.unregister(store2);
-    });
-
     var dispatcher = FFlux.createDispatcher();
     var store1 = FFlux.createStore({
         getData: function() { return this._data; }
@@ -32,6 +22,7 @@ describe('FFlux dispatcher functions', function() {
     var payload = { key: 'value' };
 
     it('dispatch', function() {
+        dispatcher.register(store1);
         // Create spy for handler function
         var spy = chai.spy();
 
@@ -46,9 +37,22 @@ describe('FFlux dispatcher functions', function() {
 
         // After test we should remove custom action handler
         store1.unregisterAction(actionName);
+
+        dispatcher.unregister(store1);
+    });
+
+    it('(un)register', function() {
+        expect(dispatcher.register.bind(dispatcher, store1)).not.to.throw(Error);
+        expect(dispatcher.unregister.bind(dispatcher, store1)).not.to.throw(Error);
+
+        dispatcher.register(store1);
+        expect(dispatcher.unregister.bind(dispatcher, store1.dispatchToken)).not.to.throw(Error);
     });
 
     it('waitFor', function() {
+        dispatcher.register(store1);
+        dispatcher.register(store2);
+
         function normalHandler(payload) {
             this._data = payload;
         }
@@ -63,7 +67,7 @@ describe('FFlux dispatcher functions', function() {
         }
 
         // Create 2 spies for 2 stores: sync and async
-        var normalSpy = chai.spy(normalHandler)
+        var normalSpy = chai.spy(normalHandler);
         var waitingSpy = chai.spy(waitingHandler);
 
         // Register those spies as action handlers
@@ -78,5 +82,8 @@ describe('FFlux dispatcher functions', function() {
 
         // Check if we got our waitFor condition work correct
         assert(store2.getData().dataFromStore1 === store1.getData());
+
+        dispatcher.unregister(store1);
+        dispatcher.unregister(store2);
     });
 });

@@ -61,8 +61,6 @@ _.extend(FFluxDispatcher.prototype, {
                         case 'function':
                             handler = instance.actions[type];
                             break;
-                        default:
-                            throw Error('You must specify handler for action ' + type);
                     }
 
                     invariant((typeof handler === 'function'),
