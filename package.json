@@ -11,7 +11,8 @@
   "scripts": {
     "test": "mocha",
     "coverage": "istanbul cover _mocha && codeclimate < coverage/lcov.info",
-    "precommit": "gulp && npm test && npm run coverage",
+    "precommit": "gulp && npm test",
+    "prepush": "npm run coverage",
     "postmerge": "npm test"
   },
   "devDependencies": {
