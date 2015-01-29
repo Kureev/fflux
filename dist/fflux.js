@@ -1,66 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (process){
-'use strict';
-
-var createStore = require('./Store');
-var createDispatcher = require('./Dispatcher');
-
-/**
- * Application constructor
- */
-var FFlux = FFlux || {};
-
-/**
- * Create new dispatcher
- * @return {FFluxDispatcher} New instance of the dispatcher
- */
-FFlux.createDispatcher = function() {
-    return createDispatcher.call(null);
-};
-
-/**
- * Create new store
- * @param {object}      options     Configuration for the store
- * @return {FFluxStore} New instance of the store
- */
-FFlux.createStore = function(options) {
-    return createStore.call(null, options);
-};
-
-FFlux.mixins = {};
-
-/**
- * Bind mixin for React views
- * @param  {object} store Store the React view will bind to
- * @return {object}       Mixin for the specified store
- */
-FFlux.mixins.bind = function(store) {
-    return {
-        /**
-         * Set `storeDidUpdate` listener to the specified store
-         * @return {void}
-         */
-        componentWillMount: function() {
-            store.addListener('change', this.storeDidUpdate);
-        },
-
-        /**
-         * Remove all `storeDidUpdate` callbacks from the binded store
-         * @return {void}
-         */
-        componentWillUnmount: function () {
-            store.removeListener('change', this.storeDidUpdate);
-        }
-    };
-};
-
-if (!process.browser) {
-    module.exports = FFlux;
-} else {
-    window.FFlux = FFlux;
-}
-}).call(this,require('_process'))
-},{"./Dispatcher":4,"./Store":5,"_process":3}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -363,7 +301,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -422,7 +360,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('./vendor/Dispatcher');
@@ -519,7 +457,7 @@ _.extend(FFluxDispatcher.prototype, {
 module.exports = function() {
     return new FFluxDispatcher();
 };
-},{"./helper":6,"./vendor/Dispatcher":7,"./vendor/invariant":8}],5:[function(require,module,exports){
+},{"./helper":5,"./vendor/Dispatcher":7,"./vendor/invariant":8}],4:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -590,7 +528,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
 module.exports = function(options) {
     return new FFluxStore(options);
 };
-},{"./helper":6,"events":2}],6:[function(require,module,exports){
+},{"./helper":5,"events":1}],5:[function(require,module,exports){
 'use strict';
 
 /**
@@ -646,7 +584,69 @@ module.exports = {
     extend: extend,
     clone: clone
 };
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+(function (process){
+'use strict';
+
+var createStore = require('./Store');
+var createDispatcher = require('./Dispatcher');
+
+/**
+ * Application constructor
+ */
+var FFlux = FFlux || {};
+
+/**
+ * Create new dispatcher
+ * @return {FFluxDispatcher} New instance of the dispatcher
+ */
+FFlux.createDispatcher = function() {
+    return createDispatcher.call(null);
+};
+
+/**
+ * Create new store
+ * @param {object}      options     Configuration for the store
+ * @return {FFluxStore} New instance of the store
+ */
+FFlux.createStore = function(options) {
+    return createStore.call(null, options);
+};
+
+FFlux.mixins = {};
+
+/**
+ * Bind mixin for React views
+ * @param  {object} store Store the React view will bind to
+ * @return {object}       Mixin for the specified store
+ */
+FFlux.mixins.bind = function(store) {
+    return {
+        /**
+         * Set `storeDidUpdate` listener to the specified store
+         * @return {void}
+         */
+        componentWillMount: function() {
+            store.addListener('change', this.storeDidUpdate);
+        },
+
+        /**
+         * Remove all `storeDidUpdate` callbacks from the binded store
+         * @return {void}
+         */
+        componentWillUnmount: function () {
+            store.removeListener('change', this.storeDidUpdate);
+        }
+    };
+};
+
+if (!process.browser) {
+    module.exports = FFlux;
+} else {
+    window.FFlux = FFlux;
+}
+}).call(this,require('_process'))
+},{"./Dispatcher":3,"./Store":4,"_process":2}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -950,4 +950,4 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 };
 
 module.exports = invariant;
-},{}]},{},[1]);
+},{}]},{},[6]);
