@@ -1,6 +1,6 @@
 {
   "name": "fflux",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Flux-based library to provide some easy API to build architecture",
   "main": "./dist/fflux.js",
   "keywords": [
