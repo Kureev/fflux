@@ -17,6 +17,9 @@
     "type": "git",
     "url": "git@github.com:Kureev/fflux.git"
   },
+  "bugs": {
+    "url": "https://github.com/Kureev/fflux/issues"
+  },
   "devDependencies": {
     "assert": "^1.3.0",
     "browserify": "^8.0.3",
