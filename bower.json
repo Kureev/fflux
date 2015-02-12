@@ -4,7 +4,7 @@
   "authors": [
     "Kureev Alexey <kureev-mail@ya.ru>"
   ],
-  "description": "Tiny Flux architecture realisation",
+  "description": "Flux-based library to provide some easy API to build architecture",
   "main": "dist/fflux.js",
   "homepage": "https://github.com/Kureev/fflux",
   "repository": {
