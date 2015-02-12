@@ -640,11 +640,11 @@ FFlux.mixins.bind = function(store) {
     };
 };
 
-if (!process.browser) {
-    module.exports = FFlux;
-} else {
+if (process.browser) {
     window.FFlux = FFlux;
 }
+
+module.exports = FFlux;
 }).call(this,require('_process'))
 },{"./Dispatcher":3,"./Store":4,"_process":2}],7:[function(require,module,exports){
 /*
