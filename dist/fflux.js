@@ -457,7 +457,7 @@ _.extend(FFluxDispatcher.prototype, {
 module.exports = function() {
     return new FFluxDispatcher();
 };
-},{"./helper":5,"./vendor/Dispatcher":7,"./vendor/invariant":8}],4:[function(require,module,exports){
+},{"./helper":5,"./vendor/Dispatcher":8,"./vendor/invariant":9}],4:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -588,57 +588,11 @@ module.exports = {
 (function (process){
 'use strict';
 
-var createStore = require('./Store');
-var createDispatcher = require('./Dispatcher');
-
-/**
- * Application constructor
- */
 var FFlux = FFlux || {};
 
-/**
- * Create new dispatcher
- * @return {FFluxDispatcher} New instance of the dispatcher
- */
-FFlux.createDispatcher = function() {
-    return createDispatcher.call(null);
-};
-
-/**
- * Create new store
- * @param {object}      options     Configuration for the store
- * @return {FFluxStore} New instance of the store
- */
-FFlux.createStore = function(options) {
-    return createStore.call(null, options);
-};
-
-FFlux.mixins = {};
-
-/**
- * Bind mixin for React views
- * @param  {object} store Store the React view will bind to
- * @return {object}       Mixin for the specified store
- */
-FFlux.mixins.bind = function(store) {
-    return {
-        /**
-         * Set `storeDidUpdate` listener to the specified store
-         * @return {void}
-         */
-        componentWillMount: function() {
-            store.addListener('change', this.storeDidUpdate);
-        },
-
-        /**
-         * Remove all `storeDidUpdate` callbacks from the binded store
-         * @return {void}
-         */
-        componentWillUnmount: function () {
-            store.removeListener('change', this.storeDidUpdate);
-        }
-    };
-};
+FFlux.createDispatcher = require('./Dispatcher');
+FFlux.createStore = require('./Store');
+FFlux.mixins = require('./mixins');
 
 if (process.browser) {
     window.FFlux = FFlux;
@@ -646,7 +600,36 @@ if (process.browser) {
 
 module.exports = FFlux;
 }).call(this,require('_process'))
-},{"./Dispatcher":3,"./Store":4,"_process":2}],7:[function(require,module,exports){
+},{"./Dispatcher":3,"./Store":4,"./mixins":7,"_process":2}],7:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+    /**
+     * Bind mixin for React views
+     * @param  {object} store Store the React view will bind to
+     * @return {object}       Mixin for the specified store
+     */
+    bind: function bind(store) {
+        return {
+            /**
+             * Set `storeDidUpdate` listener to the specified store
+             * @return {void}
+             */
+            componentWillMount: function() {
+                store.addListener('change', this.storeDidUpdate);
+            },
+
+            /**
+             * Remove all `storeDidUpdate` callbacks from the binded store
+             * @return {void}
+             */
+            componentWillUnmount: function () {
+                store.removeListener('change', this.storeDidUpdate);
+            }
+        };
+    }
+};
+},{}],8:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -896,7 +879,7 @@ var _prefix = 'ID_';
 
 
 module.exports = Dispatcher;
-},{"./invariant":8}],8:[function(require,module,exports){
+},{"./invariant":9}],9:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
