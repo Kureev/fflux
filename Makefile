@@ -5,4 +5,4 @@ dist/fflux.min.js: dist/fflux.js
 
 dist/fflux.js: $(shell find src -name '*.js')
 	mkdir -p $(@D)
-	./node_modules/browserify/bin/cmd.js $(MAIN) -o $@
+	./node_modules/browserify/bin/cmd.js $(MAIN) -s fflux > $@
