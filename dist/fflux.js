@@ -5614,10 +5614,9 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {Void}
      */
     setState: function(state) {
-        var oldState = this.state;
         var newState = this.state.mergeDeep(state);
 
-        if (oldState !== newState) {
+        if (this.state !== newState) {
             this.state = newState;
             this.emitChange();
         }

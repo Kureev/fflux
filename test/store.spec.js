@@ -22,7 +22,23 @@ describe('FFlux store functions', function() {
     });
 
     it('setState', function() {
-        // TODO
+        var spy = chai.spy();
+
+        store.on('change', spy);
+
+        store.setState({
+            a: 10,
+            b: 20
+        });
+
+        expect(store.state.get('a')).to.be.equal(10);
+        expect(store.state.get('b')).to.be.equal(20);
+        
+        expect(spy).to.have.been.called.once();
+    });
+
+    it('toJSON', function() {
+        expect(Object.prototype.toString.call(store.toJSON())).to.be.equal('[object Object]');
     });
 
     it('(un)registerAction', function() {
