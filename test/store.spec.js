@@ -21,6 +21,10 @@ describe('FFlux store functions', function() {
         expect(spy).to.have.been.called.once();
     });
 
+    it('setState', function() {
+        // TODO
+    });
+
     it('(un)registerAction', function() {
         var actionName = 'STORE_TEST';
         var savedActions = store.getActions();

@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('./helper');
+var Immutable = require('immutable');
 var EventEmitter = require('events').EventEmitter;
 
 /**
@@ -10,6 +11,8 @@ function FFluxStore(options) {
     _.extend(this, {
         actions: {}
     }, options);
+
+    this.state = this.getInitialState();
 }
 
 /**
@@ -22,6 +25,37 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      */
     emitChange: function() {
         this.emit('change');
+    },
+
+    /**
+     * Get initial state of the store
+     * @return {Object}
+     */
+    getInitialState: function() {
+        return Immutable.Map();
+    },
+
+    /**
+     * Set state
+     * @param {Object} state
+     * @return {Void}
+     */
+    setState: function(state) {
+        var oldState = this.state;
+        var newState = this.state.mergeDeep(state);
+
+        if (oldState !== newState) {
+            this.state = newState;
+            this.emitChange();
+        }
+    },
+
+    /**
+     * Represent current store state as JSON
+     * @return {Object}
+     */
+    toJSON: function() {
+        return this.state.toJSON();
     },
 
     /**
