@@ -302,269 +302,6 @@ function isUndefined(arg) {
 }
 
 },{}],2:[function(require,module,exports){
-'use strict';
-
-var Dispatcher = require('./vendor/Dispatcher');
-var invariant = require('./vendor/invariant');
-var _ = require('./helper');
-
-function FFluxDispatcher() {
-    /**
-     * Create facebook's dispatcher realization
-     * @type {Dispatcher}
-     */
-    this._dispatcher = new Dispatcher();
-
-    /**
-     * Invoke dispatch method of the flux dispatcher's instance
-     * @param {string} type Type of the action
-     * @param {object} data Payload of the action
-     * @return {void}
-     */
-    this.dispatch = function(type, data) {
-        this._dispatcher.dispatch.call(this._dispatcher, {
-            type: type,
-            data: data
-        });
-    };
-    
-    /**
-     * Bridge to dispatcher's waitFor
-     * @param {array} arrayOfStores Array of stores to wait for
-     */
-    this.waitFor = function(arrayOfStores) {
-        arrayOfStores = arrayOfStores.map(function(store) {
-            return store.dispatchToken;
-        });
-
-        this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
-    };
-}
-
-_.extend(FFluxDispatcher.prototype, {
-    /**
-     * Register store to dispatcher
-     * @param {FFluxStore} instance     FFluxStore instance
-     * @return {void}
-     */
-    register: function(instance) {
-        instance.dispatchToken = this._dispatcher.register(function(action) {
-            var type = action.type;
-            var handler;
-            // Get array of registered actions
-            var actionKeys = _.keys(instance.actions);
-
-            // If we have such actions listener(s), invoke 
-            // related function with action provided
-            actionKeys.forEach(function(key) {
-                if (key === type) {
-                    switch (typeof instance.actions[type]) {
-                        case 'string':
-                            handler = instance[instance.actions[type]];
-                            break;
-                        case 'function':
-                            handler = instance.actions[type];
-                            break;
-                    }
-
-                    invariant((typeof handler === 'function'),
-                        'Function for action ' + type + 'isn\'t defined'
-                    );
-                    
-                    handler.call(instance, action.data);
-                }
-            });
-        });
-    },
-
-    /**
-     * Unregister store from dispatcher
-     * @param {object} options  Binding identificator or store instance
-     * @return {void}
-     */
-    unregister: function(options) {
-        var id;
-
-        if (typeof options === 'string') {
-            id = options;
-        } else {
-            id = options.dispatchToken;
-        }
-
-        this._dispatcher.unregister(id);
-    }
-});
-
-module.exports = function() {
-    return new FFluxDispatcher();
-};
-},{"./helper":4,"./vendor/Dispatcher":7,"./vendor/invariant":8}],3:[function(require,module,exports){
-'use strict';
-
-var _ = require('./helper');
-var EventEmitter = require('events').EventEmitter;
-
-/**
- * Store instance constructor
- */
-function FFluxStore(options) {
-    _.extend(this, {
-        actions: {}
-    }, options);
-}
-
-/**
- * Inherit store prototype from event emitter and passed options
- */
-_.extend(FFluxStore.prototype, EventEmitter.prototype, {
-    /**
-     * Emit change
-     * @return {void}
-     */
-    emitChange: function() {
-        this.emit('change');
-    },
-
-    /**
-     * Get copy of the actions hash
-     * @return {object} Copy of the actions
-     */
-    getActions: function() {
-        return _.clone(this.actions);
-    },
-
-    /**
-     * Register action's handler
-     * @param  {string} action  Action's name
-     * @param  {function} handler Aciont's handler
-     * @return {void}
-     */
-    registerAction: function(action, handler) {
-        if (this.actions[action]) {
-            throw Error('You can\'t override existing handler. Unregister it first!');
-        }
-
-        this.actions[action] = handler;
-    },
-
-    /**
-     * Unregister action's handler from store
-     * @param  {string} action Action name
-     * @return {void}
-     */
-    unregisterAction: function(action) {
-        if (this.actions[action]) {
-            delete this.actions[action];
-        } else {
-            throw Error('You have no handlers for action ' + action);
-        }
-    }
-});
-
-/**
- * Store factory
- * @param  {object}     options             Configuration of the store instance
- * @return {function}   New store instance
- */
-module.exports = function(options) {
-    return new FFluxStore(options);
-};
-},{"./helper":4,"events":1}],4:[function(require,module,exports){
-'use strict';
-
-/**
- * Check if param is array
- * @param  {any}  param Parameter to check
- * @return {boolean}
- */
-function isArray(param) {
-    return Object.prototype.toString.call(param) === '[object Array]';
-}
-
-/**
- * Get object's keys
- * @param  {object} obj
- * @return {array}  Array of the keys
- */
-function keys(obj) {
-    return Object.keys(obj);
-}
-
-/**
- * Extend object by other obect(s)
- * @param  {object} obj Object to extend
- * @return {object}     Extended object
- */
-function extend(obj) {
-    var source, prop;
-
-    for (var i = 1, length = arguments.length; i < length; i++) {
-        source = arguments[i];
-        for (prop in source) {
-            if (Object.hasOwnProperty.call(source, prop)) {
-                obj[prop] = source[prop];
-            }
-        }
-    }
-
-    return obj;
-}
-
-/**
- * Clone object(not deep) or array
- * @param  {object} obj Object/Array to Clone
- * @return {object}     Clonned instance of the source
- */
-function clone(obj) {
-    return isArray(obj) ? obj.slice() : extend({}, obj);
-}
-
-module.exports = {
-    keys: keys,
-    isArray: isArray,
-    extend: extend,
-    clone: clone
-};
-},{}],5:[function(require,module,exports){
-'use strict';
-
-var FFlux = FFlux || {};
-
-FFlux.createDispatcher = require('./Dispatcher');
-FFlux.createStore = require('./Store');
-FFlux.mixins = require('./mixins');
-
-module.exports = FFlux;
-},{"./Dispatcher":2,"./Store":3,"./mixins":6}],6:[function(require,module,exports){
-'use strict';
-
-module.exports = {
-    /**
-     * Bind mixin for React views
-     * @param  {object} store Store the React view will bind to
-     * @return {object}       Mixin for the specified store
-     */
-    bind: function bind(store) {
-        return {
-            /**
-             * Set `storeDidUpdate` listener to the specified store
-             * @return {void}
-             */
-            componentWillMount: function() {
-                store.addListener('change', this.storeDidUpdate);
-            },
-
-            /**
-             * Remove all `storeDidUpdate` callbacks from the binded store
-             * @return {void}
-             */
-            componentWillUnmount: function () {
-                store.removeListener('change', this.storeDidUpdate);
-            }
-        };
-    }
-};
-},{}],7:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -676,145 +413,147 @@ var _prefix = 'ID_';
  * `FlightPriceStore`.
  */
 
-    function Dispatcher() {
-        this.$Dispatcher_callbacks = {};
-        this.$Dispatcher_isPending = {};
-        this.$Dispatcher_isHandled = {};
-        this.$Dispatcher_isDispatching = false;
-        this.$Dispatcher_pendingPayload = null;
+  function Dispatcher() {
+    this.$Dispatcher_callbacks = {};
+    this.$Dispatcher_isPending = {};
+    this.$Dispatcher_isHandled = {};
+    this.$Dispatcher_isDispatching = false;
+    this.$Dispatcher_pendingPayload = null;
+  }
+
+  /**
+   * Registers a callback to be invoked with every dispatched payload. Returns
+   * a token that can be used with `waitFor()`.
+   *
+   * @param {function} callback
+   * @return {string}
+   */
+  Dispatcher.prototype.register=function(callback) {
+    var id = _prefix + _lastID++;
+    this.$Dispatcher_callbacks[id] = callback;
+    return id;
+  };
+
+  /**
+   * Removes a callback based on its token.
+   *
+   * @param {string} id
+   */
+  Dispatcher.prototype.unregister=function(id) {
+    invariant(
+      this.$Dispatcher_callbacks[id],
+      'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
+      id
+    );
+    delete this.$Dispatcher_callbacks[id];
+  };
+
+  /**
+   * Waits for the callbacks specified to be invoked before continuing execution
+   * of the current callback. This method should only be used by a callback in
+   * response to a dispatched payload.
+   *
+   * @param {array<string>} ids
+   */
+  Dispatcher.prototype.waitFor=function(ids) {
+    invariant(
+      this.$Dispatcher_isDispatching,
+      'Dispatcher.waitFor(...): Must be invoked while dispatching.'
+    );
+    for (var ii = 0; ii < ids.length; ii++) {
+      var id = ids[ii];
+      if (this.$Dispatcher_isPending[id]) {
+        invariant(
+          this.$Dispatcher_isHandled[id],
+          'Dispatcher.waitFor(...): Circular dependency detected while ' +
+          'waiting for `%s`.',
+          id
+        );
+        continue;
+      }
+      invariant(
+        this.$Dispatcher_callbacks[id],
+        'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
+        id
+      );
+      this.$Dispatcher_invokeCallback(id);
     }
+  };
 
-    /**
-     * Registers a callback to be invoked with every dispatched payload. Returns
-     * a token that can be used with `waitFor()`.
-     *
-     * @param {function} callback
-     * @return {string}
-     */
-    Dispatcher.prototype.register=function(callback) {
-        var id = _prefix + _lastID++;
-        this.$Dispatcher_callbacks[id] = callback;
-        return id;
-    };
-
-    /**
-     * Removes a callback based on its token.
-     *
-     * @param {string} id
-     */
-    Dispatcher.prototype.unregister=function(id) {
-        invariant(
-            this.$Dispatcher_callbacks[id],
-            'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
-            id
-        );
-        delete this.$Dispatcher_callbacks[id];
-    };
-
-    /**
-     * Waits for the callbacks specified to be invoked before continuing execution
-     * of the current callback. This method should only be used by a callback in
-     * response to a dispatched payload.
-     *
-     * @param {array<string>} ids
-     */
-    Dispatcher.prototype.waitFor=function(ids) {
-        invariant(
-            this.$Dispatcher_isDispatching,
-            'Dispatcher.waitFor(...): Must be invoked while dispatching.'
-        );
-        for (var ii = 0; ii < ids.length; ii++) {
-            var id = ids[ii];
-            if (this.$Dispatcher_isPending[id]) {
-                invariant(
-                    this.$Dispatcher_isHandled[id],
-                    'Dispatcher.waitFor(...): Circular dependency detected while ' +
-                    'waiting for `%s`.',
-                    id
-                );
-                continue;
-            }
-            invariant(
-                this.$Dispatcher_callbacks[id],
-                'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
-                id
-            );
-            this.$Dispatcher_invokeCallback(id);
+  /**
+   * Dispatches a payload to all registered callbacks.
+   *
+   * @param {object} payload
+   */
+  Dispatcher.prototype.dispatch=function(payload) {
+    invariant(
+      !this.$Dispatcher_isDispatching,
+      'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
+    );
+    this.$Dispatcher_startDispatching(payload);
+    try {
+      for (var id in this.$Dispatcher_callbacks) {
+        if (this.$Dispatcher_isPending[id]) {
+          continue;
         }
-    };
+        this.$Dispatcher_invokeCallback(id);
+      }
+    } finally {
+      this.$Dispatcher_stopDispatching();
+    }
+  };
 
-    /**
-     * Dispatches a payload to all registered callbacks.
-     *
-     * @param {object} payload
-     */
-    Dispatcher.prototype.dispatch=function(payload) {
-        invariant(!this.$Dispatcher_isDispatching,
-            'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
-        );
-        this.$Dispatcher_startDispatching(payload);
-        try {
-            for (var id in this.$Dispatcher_callbacks) {
-                if (this.$Dispatcher_isPending[id]) {
-                    continue;
-                }
-                this.$Dispatcher_invokeCallback(id);
-            }
-        } finally {
-            this.$Dispatcher_stopDispatching();
-        }
-    };
+  /**
+   * Is this Dispatcher currently dispatching.
+   *
+   * @return {boolean}
+   */
+  Dispatcher.prototype.isDispatching=function() {
+    return this.$Dispatcher_isDispatching;
+  };
 
-    /**
-     * Is this Dispatcher currently dispatching.
-     *
-     * @return {boolean}
-     */
-    Dispatcher.prototype.isDispatching=function() {
-        return this.$Dispatcher_isDispatching;
-    };
+  /**
+   * Call the callback stored with the given id. Also do some internal
+   * bookkeeping.
+   *
+   * @param {string} id
+   * @internal
+   */
+  Dispatcher.prototype.$Dispatcher_invokeCallback=function(id) {
+    this.$Dispatcher_isPending[id] = true;
+    this.$Dispatcher_callbacks[id](this.$Dispatcher_pendingPayload);
+    this.$Dispatcher_isHandled[id] = true;
+  };
 
-    /**
-     * Call the callback stored with the given id. Also do some internal
-     * bookkeeping.
-     *
-     * @param {string} id
-     * @internal
-     */
-    Dispatcher.prototype.$Dispatcher_invokeCallback=function(id) {
-        this.$Dispatcher_isPending[id] = true;
-        this.$Dispatcher_callbacks[id](this.$Dispatcher_pendingPayload);
-        this.$Dispatcher_isHandled[id] = true;
-    };
+  /**
+   * Set up bookkeeping needed when dispatching.
+   *
+   * @param {object} payload
+   * @internal
+   */
+  Dispatcher.prototype.$Dispatcher_startDispatching=function(payload) {
+    for (var id in this.$Dispatcher_callbacks) {
+      this.$Dispatcher_isPending[id] = false;
+      this.$Dispatcher_isHandled[id] = false;
+    }
+    this.$Dispatcher_pendingPayload = payload;
+    this.$Dispatcher_isDispatching = true;
+  };
 
-    /**
-     * Set up bookkeeping needed when dispatching.
-     *
-     * @param {object} payload
-     * @internal
-     */
-    Dispatcher.prototype.$Dispatcher_startDispatching=function(payload) {
-        for (var id in this.$Dispatcher_callbacks) {
-            this.$Dispatcher_isPending[id] = false;
-            this.$Dispatcher_isHandled[id] = false;
-        }
-        this.$Dispatcher_pendingPayload = payload;
-        this.$Dispatcher_isDispatching = true;
-    };
-
-    /**
-     * Clear bookkeeping used for dispatching.
-     *
-     * @internal
-     */
-    Dispatcher.prototype.$Dispatcher_stopDispatching=function() {
-        this.$Dispatcher_pendingPayload = null;
-        this.$Dispatcher_isDispatching = false;
-    };
+  /**
+   * Clear bookkeeping used for dispatching.
+   *
+   * @internal
+   */
+  Dispatcher.prototype.$Dispatcher_stopDispatching=function() {
+    this.$Dispatcher_pendingPayload = null;
+    this.$Dispatcher_isDispatching = false;
+  };
 
 
 module.exports = Dispatcher;
-},{"./invariant":8}],8:[function(require,module,exports){
+
+},{"./invariant":3}],3:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -868,5 +607,269 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 };
 
 module.exports = invariant;
-},{}]},{},[5])(5)
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+var Dispatcher = require('flux/lib/Dispatcher');
+var invariant = require('flux/lib/invariant');
+var _ = require('./helper');
+
+function FFluxDispatcher() {
+    /**
+     * Create facebook's dispatcher realization
+     * @type {Dispatcher}
+     */
+    this._dispatcher = new Dispatcher();
+
+    /**
+     * Invoke dispatch method of the flux dispatcher's instance
+     * @param {string} type Type of the action
+     * @param {object} data Payload of the action
+     * @return {void}
+     */
+    this.dispatch = function(type, data) {
+        this._dispatcher.dispatch.call(this._dispatcher, {
+            type: type,
+            data: data
+        });
+    };
+    
+    /**
+     * Bridge to dispatcher's waitFor
+     * @param {array} arrayOfStores Array of stores to wait for
+     */
+    this.waitFor = function(arrayOfStores) {
+        arrayOfStores = arrayOfStores.map(function(store) {
+            return store.dispatchToken;
+        });
+
+        this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
+    };
+}
+
+_.extend(FFluxDispatcher.prototype, {
+    /**
+     * Register store to dispatcher
+     * @param {FFluxStore} instance     FFluxStore instance
+     * @return {void}
+     */
+    register: function(instance) {
+        instance.dispatchToken = this._dispatcher.register(function(action) {
+            var type = action.type;
+            var handler;
+            // Get array of registered actions
+            var actionKeys = _.keys(instance.actions);
+
+            // If we have such actions listener(s), invoke 
+            // related function with action provided
+            actionKeys.forEach(function(key) {
+                if (key === type) {
+                    switch (typeof instance.actions[type]) {
+                        case 'string':
+                            handler = instance[instance.actions[type]];
+                            break;
+                        case 'function':
+                            handler = instance.actions[type];
+                            break;
+                    }
+
+                    invariant((typeof handler === 'function'),
+                        'Function for action ' + type + 'isn\'t defined'
+                    );
+                    
+                    handler.call(instance, action.data);
+                }
+            });
+        });
+    },
+
+    /**
+     * Unregister store from dispatcher
+     * @param {object} options  Binding identificator or store instance
+     * @return {void}
+     */
+    unregister: function(options) {
+        var id;
+
+        if (typeof options === 'string') {
+            id = options;
+        } else {
+            id = options.dispatchToken;
+        }
+
+        this._dispatcher.unregister(id);
+    }
+});
+
+module.exports = function() {
+    return new FFluxDispatcher();
+};
+},{"./helper":6,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],5:[function(require,module,exports){
+'use strict';
+
+var _ = require('./helper');
+var EventEmitter = require('events').EventEmitter;
+
+/**
+ * Store instance constructor
+ */
+function FFluxStore(options) {
+    _.extend(this, {
+        actions: {}
+    }, options);
+}
+
+/**
+ * Inherit store prototype from event emitter and passed options
+ */
+_.extend(FFluxStore.prototype, EventEmitter.prototype, {
+    /**
+     * Emit change
+     * @return {void}
+     */
+    emitChange: function() {
+        this.emit('change');
+    },
+
+    /**
+     * Get copy of the actions hash
+     * @return {object} Copy of the actions
+     */
+    getActions: function() {
+        return _.clone(this.actions);
+    },
+
+    /**
+     * Register action's handler
+     * @param  {string} action  Action's name
+     * @param  {function} handler Aciont's handler
+     * @return {void}
+     */
+    registerAction: function(action, handler) {
+        if (this.actions[action]) {
+            throw Error('You can\'t override existing handler. Unregister it first!');
+        }
+
+        this.actions[action] = handler;
+    },
+
+    /**
+     * Unregister action's handler from store
+     * @param  {string} action Action name
+     * @return {void}
+     */
+    unregisterAction: function(action) {
+        if (this.actions[action]) {
+            delete this.actions[action];
+        } else {
+            throw Error('You have no handlers for action ' + action);
+        }
+    }
+});
+
+/**
+ * Store factory
+ * @param  {object}     options             Configuration of the store instance
+ * @return {function}   New store instance
+ */
+module.exports = function(options) {
+    return new FFluxStore(options);
+};
+},{"./helper":6,"events":1}],6:[function(require,module,exports){
+'use strict';
+
+/**
+ * Check if param is array
+ * @param  {any}  param Parameter to check
+ * @return {boolean}
+ */
+function isArray(param) {
+    return Object.prototype.toString.call(param) === '[object Array]';
+}
+
+/**
+ * Get object's keys
+ * @param  {object} obj
+ * @return {array}  Array of the keys
+ */
+function keys(obj) {
+    return Object.keys(obj);
+}
+
+/**
+ * Extend object by other obect(s)
+ * @param  {object} obj Object to extend
+ * @return {object}     Extended object
+ */
+function extend(obj) {
+    var source, prop;
+
+    for (var i = 1, length = arguments.length; i < length; i++) {
+        source = arguments[i];
+        for (prop in source) {
+            if (Object.hasOwnProperty.call(source, prop)) {
+                obj[prop] = source[prop];
+            }
+        }
+    }
+
+    return obj;
+}
+
+/**
+ * Clone object(not deep) or array
+ * @param  {object} obj Object/Array to Clone
+ * @return {object}     Clonned instance of the source
+ */
+function clone(obj) {
+    return isArray(obj) ? obj.slice() : extend({}, obj);
+}
+
+module.exports = {
+    keys: keys,
+    isArray: isArray,
+    extend: extend,
+    clone: clone
+};
+},{}],7:[function(require,module,exports){
+'use strict';
+
+var FFlux = FFlux || {};
+
+FFlux.createDispatcher = require('./Dispatcher');
+FFlux.createStore = require('./Store');
+FFlux.mixins = require('./mixins');
+
+module.exports = FFlux;
+},{"./Dispatcher":4,"./Store":5,"./mixins":8}],8:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+    /**
+     * Bind mixin for React views
+     * @param  {object} store Store the React view will bind to
+     * @return {object}       Mixin for the specified store
+     */
+    bind: function bind(store) {
+        return {
+            /**
+             * Set `storeDidUpdate` listener to the specified store
+             * @return {void}
+             */
+            componentWillMount: function() {
+                store.addListener('change', this.storeDidUpdate);
+            },
+
+            /**
+             * Remove all `storeDidUpdate` callbacks from the binded store
+             * @return {void}
+             */
+            componentWillUnmount: function () {
+                store.removeListener('change', this.storeDidUpdate);
+            }
+        };
+    }
+};
+},{}]},{},[7])(7)
 });

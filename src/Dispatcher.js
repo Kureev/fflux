@@ -1,7 +1,7 @@
 'use strict';
 
-var Dispatcher = require('./vendor/Dispatcher');
-var invariant = require('./vendor/invariant');
+var Dispatcher = require('flux/lib/Dispatcher');
+var invariant = require('flux/lib/invariant');
 var _ = require('./helper');
 
 function FFluxDispatcher() {
