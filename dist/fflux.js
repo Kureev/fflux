@@ -5623,14 +5623,6 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     },
 
     /**
-     * Represent current store state as JSON
-     * @return {Object}
-     */
-    toJSON: function() {
-        return this.state.toJSON();
-    },
-
-    /**
      * Get copy of the actions hash
      * @return {object} Copy of the actions
      */

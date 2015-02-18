@@ -43,10 +43,6 @@ describe('FFlux store functions', function() {
         expect(spy).to.have.been.called.once();
     });
 
-    it('toJSON', function() {
-        expect(Object.prototype.toString.call(store.toJSON())).to.be.equal('[object Object]');
-    });
-
     it('(un)registerAction', function() {
         var actionName = 'STORE_TEST';
         var savedActions = store.getActions();
