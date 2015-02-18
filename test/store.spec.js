@@ -35,6 +35,12 @@ describe('FFlux store functions', function() {
         expect(store.state.get('b')).to.be.equal(20);
         
         expect(spy).to.have.been.called.once();
+
+        store.setState({
+            a: 10
+        });
+
+        expect(spy).to.have.been.called.once();
     });
 
     it('toJSON', function() {
