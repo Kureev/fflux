@@ -10,6 +10,8 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha",
+    "start": "make && npm test && http-server",
+    "build": "make",
     "precommit": "make && npm test",
     "postmerge": "npm test"
   },
