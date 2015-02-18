@@ -5585,7 +5585,7 @@ function FFluxStore(options) {
         actions: {}
     }, options);
 
-    this.state = this.getInitialState();
+    this.state = Immutable.fromJS(this.getInitialState());
 }
 
 /**
@@ -5605,7 +5605,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {Object}
      */
     getInitialState: function() {
-        return Immutable.Map();
+        return {};
     },
 
     /**
