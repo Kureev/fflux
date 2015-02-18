@@ -40,10 +40,22 @@ Actions
 Actions are used for sending messages from different sources to dispatcher:
 
 ```javascript
-var action = FFlux.createAction('SOME_ACTION', payload);
+dispatcher.dispatch('SOME_ACTION', payload);
 ```
 
 Where `payload` is an usual JS object with event's payload.
+
+Action Creators
+---------------
+Action Creators is an API middleware, all requests to the backend happends here.
+By design it's just a javascript object:
+
+```javascript
+var ActionCreatorExample = {
+  fetchData: function() {...},
+  postData: function() {...},
+  ...
+};
 
 Store
 -----
