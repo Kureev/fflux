@@ -56,6 +56,7 @@ var ActionCreatorExample = {
   postData: function() {...},
   ...
 };
+```
 
 Store
 -----
