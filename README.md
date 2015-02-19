@@ -18,7 +18,7 @@ Dispatcher
 To create a dispatcher:
 
 ```javascript
-var dispatcher = FFlux.createDispatcher();
+var dispatcher = new FFlux.Dispatcher();
 ```
 
 It's very similar with facebook's realization (because it's based on it), but `register` method takes store instance instead of callback function:
@@ -28,7 +28,7 @@ It's very similar with facebook's realization (because it's based on it), but `r
  * Create store
  * @type {FFluxStore}
  */
-var store = FFlux.createStore({ ... });
+var store = new FFlux.Store({ ... });
 
 /**
  * Dispatch action to the system
@@ -81,7 +81,7 @@ function otherActionHandler(data) {
   console.log('Some other function has been called');
 }
 
-var store = FFlux.createStore({
+var store = new FFlux.Store({
   /**
    * In this property we declare list
    * of the actions we're interested in.
@@ -130,7 +130,7 @@ As you can see from the example above, you will have an actions property which p
 You can register/unregister action handlers dynamicly after store initialization:
 
 ```javascript
-var store = FFlux.createStore({...});
+var store = new FFlux.Store({...});
 
 /**
  * Action handler function
@@ -163,7 +163,7 @@ For the sake of the simplicity (and package size), I decided not to add any view
 /**
  * Create some store
  */
-var store = FFlux.createStore({...});
+var store = new FFlux.Store({...});
 
 /**
  * React class to describe component
