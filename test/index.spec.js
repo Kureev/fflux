@@ -12,16 +12,16 @@ global.window = global.document.parentWindow;
 describe('FFlux static functions', function() {
     
     it('createDispatcher', function() {
-        expect(FFlux.createDispatcher).not.to.throw(Error);
+        expect(FFlux.Dispatcher).to.be.a('function');
     });
 
     it('createStore', function() {
-        expect(FFlux.createStore).not.to.throw(Error);
+        expect(FFlux.Store).to.be.a('function');
     });
 
     it('mixin\'s bind function', function() {
-        var dispatcher = FFlux.createDispatcher();
-        var store = FFlux.createStore({
+        var dispatcher = new FFlux.Dispatcher();
+        var store = new FFlux.Store({
             actions: {
                 'TEST': 'test'
             },

@@ -5594,9 +5594,7 @@ _.extend(FFluxDispatcher.prototype, {
     }
 });
 
-module.exports = function() {
-    return new FFluxDispatcher();
-};
+module.exports = FFluxDispatcher;
 },{"./helper":7,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],6:[function(require,module,exports){
 'use strict';
 
@@ -5710,9 +5708,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
  * @param  {object}     options             Configuration of the store instance
  * @return {function}   New store instance
  */
-module.exports = function(options) {
-    return new FFluxStore(options);
-};
+module.exports = FFluxStore;
 },{"./helper":7,"events":1,"flux/lib/invariant":3,"immutable":4}],7:[function(require,module,exports){
 'use strict';
 
@@ -5774,8 +5770,8 @@ module.exports = {
 
 var FFlux = {};
 
-FFlux.createDispatcher = require('./Dispatcher');
-FFlux.createStore = require('./Store');
+FFlux.Dispatcher = require('./Dispatcher');
+FFlux.Store = require('./Store');
 FFlux.mixins = require('./mixins');
 
 module.exports = FFlux;

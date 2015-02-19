@@ -9,11 +9,11 @@ chai.use(require('chai-spies'));
 
 describe('FFlux dispatcher functions', function() {
 
-    var dispatcher = FFlux.createDispatcher();
-    var store1 = FFlux.createStore({
+    var dispatcher = new FFlux.Dispatcher();
+    var store1 = new FFlux.Store({
         getData: function() { return this._data; }
     });
-    var store2 = FFlux.createStore({
+    var store2 = new FFlux.Store({
         getData: function() { return this._data; }
     });
 

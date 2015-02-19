@@ -118,6 +118,4 @@ _.extend(FFluxDispatcher.prototype, {
     }
 });
 
-module.exports = function() {
-    return new FFluxDispatcher();
-};
+module.exports = FFluxDispatcher;

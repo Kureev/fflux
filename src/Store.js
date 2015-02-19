@@ -110,6 +110,4 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
  * @param  {object}     options             Configuration of the store instance
  * @return {function}   New store instance
  */
-module.exports = function(options) {
-    return new FFluxStore(options);
-};
+module.exports = FFluxStore;

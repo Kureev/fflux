@@ -9,7 +9,7 @@ chai.use(require('chai-spies'));
 
 describe('FFlux store functions', function() {
 
-    var store = FFlux.createStore();
+    var store = new FFlux.Store();
 
     it('emitChange', function() {
         var spy = chai.spy();
