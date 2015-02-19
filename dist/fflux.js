@@ -5494,6 +5494,17 @@ function FFluxDispatcher() {
      * @return {void}
      */
     this.dispatch = function(type, data) {
+        invariant(
+            typeof type === 'string' &&
+            (
+                typeof data === 'object' ||
+                typeof data === 'undefined'
+            ),
+            'Please check type of parameters you\'re passing to the `dispatch` function. ' + 
+            'First parameter(type) must be a string(' + typeof type + ' given), ' + 
+            'second parameter(data) must be an object/undefined(' + typeof data + ' given).'
+        );
+
         this._dispatcher.dispatch.call(this._dispatcher, {
             type: type,
             data: data
@@ -5505,6 +5516,12 @@ function FFluxDispatcher() {
      * @param {array} arrayOfStores Array of stores to wait for
      */
     this.waitFor = function(arrayOfStores) {
+        invariant(
+            Object.prototype.toString.call(arrayOfStores) === '[object Array]',
+            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
+            'It must be an array of stores (' + typeof action + ' given).'
+        );
+
         arrayOfStores = arrayOfStores.map(function(store) {
             return store.dispatchToken;
         });
@@ -5555,6 +5572,16 @@ _.extend(FFluxDispatcher.prototype, {
      * @return {void}
      */
     unregister: function(options) {
+        invariant(
+            typeof options === 'string' ||
+            (
+                typeof options === 'object' && 
+                options.dispatchToken !== 'undefined'
+            ),
+            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
+            'It must be an array of stores (' + typeof action + ' given).'
+        );
+
         var id;
 
         if (typeof options === 'string') {
@@ -5574,6 +5601,7 @@ module.exports = function() {
 'use strict';
 
 var _ = require('./helper');
+var invariant = require('flux/lib/invariant');
 var Immutable = require('immutable');
 var EventEmitter = require('events').EventEmitter;
 
@@ -5614,6 +5642,12 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {Void}
      */
     setState: function(state) {
+        invariant(
+            typeof state === 'object',
+            'FFlux Store: You\'re attempting to use a non-object type to ' +
+            'update your store\'s state. Function `setState` accepts only object as a parameter.'
+        );
+        
         var newState = this.state.mergeDeep(state);
 
         if (this.state !== newState) {
@@ -5637,9 +5671,18 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {void}
      */
     registerAction: function(action, handler) {
-        if (this.actions[action]) {
-            throw Error('You can\'t override existing handler. Unregister it first!');
-        }
+        invariant(
+            typeof action === 'string' &&
+            typeof handler === 'function',
+            'Please check the parameters you\'re passing to the registerAction function. ' +
+            'First parameter(action) must be a string, second parameter(handler) must be a function.'
+        );
+
+        invariant(
+            !this.actions[action],
+            'You\'ve already registered action with `' + action + '` name. You can\'t override existing ' +
+            'action, so if you want to change the handler please, unregister existing one first.'
+        );
 
         this.actions[action] = handler;
     },
@@ -5650,10 +5693,14 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {void}
      */
     unregisterAction: function(action) {
+        invariant(
+            typeof action === 'string',
+            'Please check type of the parameter you\'re passing to the `unregisterAction` function. ' + 
+            'It must be a string (got ' + typeof action + ' instead).'
+        );
+
         if (this.actions[action]) {
             delete this.actions[action];
-        } else {
-            throw Error('You have no handlers for action ' + action);
         }
     }
 });
@@ -5666,7 +5713,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
 module.exports = function(options) {
     return new FFluxStore(options);
 };
-},{"./helper":7,"events":1,"immutable":4}],7:[function(require,module,exports){
+},{"./helper":7,"events":1,"flux/lib/invariant":3,"immutable":4}],7:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5725,7 +5772,7 @@ module.exports = {
 },{}],8:[function(require,module,exports){
 'use strict';
 
-var FFlux = FFlux || {};
+var FFlux = {};
 
 FFlux.createDispatcher = require('./Dispatcher');
 FFlux.createStore = require('./Store');
@@ -5734,6 +5781,8 @@ FFlux.mixins = require('./mixins');
 module.exports = FFlux;
 },{"./Dispatcher":5,"./Store":6,"./mixins":9}],9:[function(require,module,exports){
 'use strict';
+
+var invariant = require('flux/lib/invariant');
 
 module.exports = {
     /**
@@ -5748,6 +5797,11 @@ module.exports = {
              * @return {void}
              */
             componentWillMount: function() {
+                invariant(
+                    typeof this.storeDidUpdate === 'function',
+                    'FFlux bind mixin: You\'re attempting to use ' + typeof this.storeDidUpdate + ' as a function. ' +
+                    'Make sure you defined `storeDidUpdate` function in your component and try again.'
+                );
                 store.addListener('change', this.storeDidUpdate);
             },
 
@@ -5761,5 +5815,5 @@ module.exports = {
         };
     }
 };
-},{}]},{},[8])(8)
+},{"flux/lib/invariant":3}]},{},[8])(8)
 });

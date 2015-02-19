@@ -1,5 +1,7 @@
 'use strict';
 
+var invariant = require('flux/lib/invariant');
+
 module.exports = {
     /**
      * Bind mixin for React views
@@ -13,6 +15,11 @@ module.exports = {
              * @return {void}
              */
             componentWillMount: function() {
+                invariant(
+                    typeof this.storeDidUpdate === 'function',
+                    'FFlux bind mixin: You\'re attempting to use ' + typeof this.storeDidUpdate + ' as a function. ' +
+                    'Make sure you defined `storeDidUpdate` function in your component and try again.'
+                );
                 store.addListener('change', this.storeDidUpdate);
             },
 

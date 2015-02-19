@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('./helper');
+var invariant = require('flux/lib/invariant');
 var Immutable = require('immutable');
 var EventEmitter = require('events').EventEmitter;
 
@@ -41,6 +42,12 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {Void}
      */
     setState: function(state) {
+        invariant(
+            typeof state === 'object',
+            'FFlux Store: You\'re attempting to use a non-object type to ' +
+            'update your store\'s state. Function `setState` accepts only object as a parameter.'
+        );
+        
         var newState = this.state.mergeDeep(state);
 
         if (this.state !== newState) {
@@ -64,9 +71,18 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {void}
      */
     registerAction: function(action, handler) {
-        if (this.actions[action]) {
-            throw Error('You can\'t override existing handler. Unregister it first!');
-        }
+        invariant(
+            typeof action === 'string' &&
+            typeof handler === 'function',
+            'Please check the parameters you\'re passing to the registerAction function. ' +
+            'First parameter(action) must be a string, second parameter(handler) must be a function.'
+        );
+
+        invariant(
+            !this.actions[action],
+            'You\'ve already registered action with `' + action + '` name. You can\'t override existing ' +
+            'action, so if you want to change the handler please, unregister existing one first.'
+        );
 
         this.actions[action] = handler;
     },
@@ -77,10 +93,14 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @return {void}
      */
     unregisterAction: function(action) {
+        invariant(
+            typeof action === 'string',
+            'Please check type of the parameter you\'re passing to the `unregisterAction` function. ' + 
+            'It must be a string (got ' + typeof action + ' instead).'
+        );
+
         if (this.actions[action]) {
             delete this.actions[action];
-        } else {
-            throw Error('You have no handlers for action ' + action);
         }
     }
 });

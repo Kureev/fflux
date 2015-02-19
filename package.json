@@ -9,10 +9,10 @@
   "author": "Kureev Alexey <kureev-mail@ya.ru>",
   "license": "MIT",
   "scripts": {
-    "test": "mocha",
-    "start": "make && npm test && http-server",
+    "test": "make && mocha",
+    "start": "npm test && http-server",
     "build": "make",
-    "precommit": "make && npm test",
+    "precommit": "npm test",
     "postmerge": "npm test"
   },
   "repository": {

@@ -58,8 +58,6 @@ describe('FFlux store functions', function() {
         // Unregister the action
         store.unregisterAction(actionName);
 
-        // You can't unregister non-existing action
-        expect(store.unregisterAction.bind(store, actionName)).to.throw(Error);
         // Check if it's back to the default state
         assert(JSON.stringify(savedActions) === JSON.stringify(store.getActions()));
     });
