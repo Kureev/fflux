@@ -4,6 +4,15 @@ fflux.js
 
 Some time ago Facebook engineers released a specification describing [Flux](https://facebook.github.io/flux/) - one-way data flow architecture. After that, they released a Dispatcher constructor, but skipped store, actions and react view/controller-binding parts. In fflux.js I tried to supplement existing code to complete architecture with a tiny layer of the user-friendly API for it.
 
+What is FFlux?
+--------------
+* Dispatcher, Store, React mixin + simple API to use them together
+* Immutable state in the store (emit "change" event only if data has been really changed)
+* 100% test covered code
+* "A" class code quality (by @codeclimate)
+* Detailed information about errors (by facebook's invariant)
+* Very modular: use only those parts that you need
+
 Dispatcher
 -----------
 To create a dispatcher:
