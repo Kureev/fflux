@@ -43,6 +43,16 @@ describe('FFlux store functions', function() {
         expect(spy).to.have.been.called.once();
     });
 
+    it('replaceState', function() {
+        store.replaceState({
+            a: 50,
+            b: 60
+        });
+
+        expect(store.state.get('a')).to.be.equal(50);
+        expect(store.state.get('b')).to.be.equal(60);
+    });
+
     it('(un)registerAction', function() {
         var actionName = 'STORE_TEST';
         var savedActions = store.getActions();

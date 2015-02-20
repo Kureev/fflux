@@ -37,7 +37,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     },
 
     /**
-     * Set state
+     * Set state of the store
      * @param {Object} state
      * @return {Void}
      */
@@ -54,6 +54,22 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
             this.state = newState;
             this.emitChange();
         }
+    },
+
+    /**
+     * Replace state of the store
+     * @param  {Object} state
+     * @return {Void}
+     */
+    replaceState: function(state) {
+        invariant(
+            typeof state === 'object',
+            'FFlux Store: You\'re attempting to use a non-object type to ' +
+            'replace your store\'s state. Function `replaceState` accepts only object as a parameter.'
+        );
+
+        this.state = Immutable.fromJS(state);
+        this.emitChange();
     },
 
     /**
