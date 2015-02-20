@@ -1,6 +1,6 @@
 {
   "name": "fflux",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "Flux-based library to provide some easy API to build architecture",
   "main": "./src/index.js",
   "keywords": [
@@ -22,11 +22,13 @@
   "bugs": {
     "url": "https://github.com/Kureev/fflux/issues"
   },
-  "maintainers":[{
-    "name": "Alexey Kureev",
-    "email": "kureev-mail@ya.ru",
-    "web": "http://github.com/Kureev/"
-  }],
+  "maintainers": [
+    {
+      "name": "Alexey Kureev",
+      "email": "kureev-mail@ya.ru",
+      "web": "http://github.com/Kureev/"
+    }
+  ],
   "devDependencies": {
     "assert": "^1.3.0",
     "browserify": "^8.0.3",
