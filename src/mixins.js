@@ -17,8 +17,10 @@ module.exports = {
             componentWillMount: function() {
                 invariant(
                     typeof this.storeDidUpdate === 'function',
-                    'FFlux bind mixin: You\'re attempting to use ' + typeof this.storeDidUpdate + ' as a function. ' +
-                    'Make sure you defined `storeDidUpdate` function in your component and try again.'
+                    'FFlux bind mixin: You\'re attempting to use ' + 
+                    typeof this.storeDidUpdate + ' as a function. ' +
+                    'Make sure you defined `storeDidUpdate` function ' + 
+                    'in your component and try again.'
                 );
                 store.addListener('change', this.storeDidUpdate);
             },

@@ -5500,9 +5500,10 @@ function FFluxDispatcher() {
                 typeof data === 'object' ||
                 typeof data === 'undefined'
             ),
-            'Please check type of parameters you\'re passing to the `dispatch` function. ' + 
-            'First parameter(type) must be a string(' + typeof type + ' given), ' + 
-            'second parameter(data) must be an object/undefined(' + typeof data + ' given).'
+            'Please check type of parameters you\'re passing to ' +
+            'the `dispatch` function. First parameter(type) must ' +
+            'be a string(' + typeof type + ' given), second parameter(data) ' +
+            'must be an object/undefined(' + typeof data + ' given).'
         );
 
         this._dispatcher.dispatch.call(this._dispatcher, {
@@ -5518,8 +5519,9 @@ function FFluxDispatcher() {
     this.waitFor = function(arrayOfStores) {
         invariant(
             Object.prototype.toString.call(arrayOfStores) === '[object Array]',
-            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
-            'It must be an array of stores (' + typeof action + ' given).'
+            'Please check type of the parameter you\'re passing ' +
+            'to the `waitFor` function. It must be an array of stores ' + 
+            '(' + typeof action + ' given).'
         );
 
         arrayOfStores = arrayOfStores.map(function(store) {
@@ -5578,8 +5580,9 @@ _.extend(FFluxDispatcher.prototype, {
                 typeof options === 'object' && 
                 options.dispatchToken !== 'undefined'
             ),
-            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
-            'It must be an array of stores (' + typeof action + ' given).'
+            'Please check type of the parameter you\'re passing to ' +
+            'the `waitFor` function. It must be an array of stores ' +
+            '(' + typeof action + ' given).'
         );
 
         var id;
@@ -5643,7 +5646,8 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof state === 'object',
             'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'update your store\'s state. Function `setState` accepts only object as a parameter.'
+            'update your store\'s state. Function `setState` accepts only ' +
+            'object as a parameter.'
         );
         
         var newState = this.state.mergeDeep(state);
@@ -5663,7 +5667,8 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof state === 'object',
             'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'replace your store\'s state. Function `replaceState` accepts only object as a parameter.'
+            'replace your store\'s state. Function `replaceState` accepts ' +
+            'only object as a parameter.'
         );
 
         this.state = Immutable.fromJS(state);
@@ -5688,14 +5693,17 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof action === 'string' &&
             typeof handler === 'function',
-            'Please check the parameters you\'re passing to the registerAction function. ' +
-            'First parameter(action) must be a string, second parameter(handler) must be a function.'
+            'Please check the parameters you\'re passing to the ' +
+            'registerAction function. First parameter(action) must ' +
+            'be a string, second parameter(handler) must be a function.'
         );
 
         invariant(
             !this.actions[action],
-            'You\'ve already registered action with `' + action + '` name. You can\'t override existing ' +
-            'action, so if you want to change the handler please, unregister existing one first.'
+            'You\'ve already registered action with `' + action + 
+            '` name. You can\'t override existing action, so if ' +
+            'you want to change the handler please, ' +
+            'unregister existing one first.'
         );
 
         this.actions[action] = handler;
@@ -5709,8 +5717,9 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     unregisterAction: function(action) {
         invariant(
             typeof action === 'string',
-            'Please check type of the parameter you\'re passing to the `unregisterAction` function. ' + 
-            'It must be a string (got ' + typeof action + ' instead).'
+            'Please check type of the parameter you\'re passing to the ' +
+            '`unregisterAction` function. It must be a string ' + 
+            '(got ' + typeof action + ' instead).'
         );
 
         if (this.actions[action]) {
@@ -5811,8 +5820,10 @@ module.exports = {
             componentWillMount: function() {
                 invariant(
                     typeof this.storeDidUpdate === 'function',
-                    'FFlux bind mixin: You\'re attempting to use ' + typeof this.storeDidUpdate + ' as a function. ' +
-                    'Make sure you defined `storeDidUpdate` function in your component and try again.'
+                    'FFlux bind mixin: You\'re attempting to use ' + 
+                    typeof this.storeDidUpdate + ' as a function. ' +
+                    'Make sure you defined `storeDidUpdate` function ' + 
+                    'in your component and try again.'
                 );
                 store.addListener('change', this.storeDidUpdate);
             },
