@@ -1,3 +1,7 @@
+## v0.10.1 (Feb 20, 2015)
+* A bit more clean and strict .jshintrc
+* Code formatted to max 80 chars / line
+
 ## v0.10.0 (Feb 20, 2015)
 * Changed object create method from factory to constructor. There are no more `FFlux.createDispatcher` and `FFlux.createStore`. 
 Instad of them you should use `new FFlux.Dispatcher()` and `new FFlux.Store()`.
