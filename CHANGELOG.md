@@ -1,3 +1,9 @@
+## v0.10.0 (Feb 20, 2015)
+* Changed object create method from factory to constructor. There are no more `FFlux.createDispatcher` and `FFlux.createStore`. 
+Instad of them you should use `new FFlux.Dispatcher()` and `new FFlux.Store()`.
+* New method `replaceStore`. Works the same as React's `replaceStore`.
+* Added maintainers block to `package.json`
+
 ## v0.9.2 (Feb 19, 2015)
 * Added invariant assertations. Now you all of your errors will be informative.
 * Removed error if you trying to remove non-existing listener
