@@ -24,9 +24,10 @@ function FFluxDispatcher() {
                 typeof data === 'object' ||
                 typeof data === 'undefined'
             ),
-            'Please check type of parameters you\'re passing to the `dispatch` function. ' + 
-            'First parameter(type) must be a string(' + typeof type + ' given), ' + 
-            'second parameter(data) must be an object/undefined(' + typeof data + ' given).'
+            'Please check type of parameters you\'re passing to ' +
+            'the `dispatch` function. First parameter(type) must ' +
+            'be a string(' + typeof type + ' given), second parameter(data) ' +
+            'must be an object/undefined(' + typeof data + ' given).'
         );
 
         this._dispatcher.dispatch.call(this._dispatcher, {
@@ -42,8 +43,9 @@ function FFluxDispatcher() {
     this.waitFor = function(arrayOfStores) {
         invariant(
             Object.prototype.toString.call(arrayOfStores) === '[object Array]',
-            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
-            'It must be an array of stores (' + typeof action + ' given).'
+            'Please check type of the parameter you\'re passing ' +
+            'to the `waitFor` function. It must be an array of stores ' + 
+            '(' + typeof action + ' given).'
         );
 
         arrayOfStores = arrayOfStores.map(function(store) {
@@ -102,8 +104,9 @@ _.extend(FFluxDispatcher.prototype, {
                 typeof options === 'object' && 
                 options.dispatchToken !== 'undefined'
             ),
-            'Please check type of the parameter you\'re passing to the `waitFor` function. ' + 
-            'It must be an array of stores (' + typeof action + ' given).'
+            'Please check type of the parameter you\'re passing to ' +
+            'the `waitFor` function. It must be an array of stores ' +
+            '(' + typeof action + ' given).'
         );
 
         var id;

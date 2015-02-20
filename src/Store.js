@@ -45,7 +45,8 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof state === 'object',
             'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'update your store\'s state. Function `setState` accepts only object as a parameter.'
+            'update your store\'s state. Function `setState` accepts only ' +
+            'object as a parameter.'
         );
         
         var newState = this.state.mergeDeep(state);
@@ -65,7 +66,8 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof state === 'object',
             'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'replace your store\'s state. Function `replaceState` accepts only object as a parameter.'
+            'replace your store\'s state. Function `replaceState` accepts ' +
+            'only object as a parameter.'
         );
 
         this.state = Immutable.fromJS(state);
@@ -90,14 +92,17 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof action === 'string' &&
             typeof handler === 'function',
-            'Please check the parameters you\'re passing to the registerAction function. ' +
-            'First parameter(action) must be a string, second parameter(handler) must be a function.'
+            'Please check the parameters you\'re passing to the ' +
+            'registerAction function. First parameter(action) must ' +
+            'be a string, second parameter(handler) must be a function.'
         );
 
         invariant(
             !this.actions[action],
-            'You\'ve already registered action with `' + action + '` name. You can\'t override existing ' +
-            'action, so if you want to change the handler please, unregister existing one first.'
+            'You\'ve already registered action with `' + action + 
+            '` name. You can\'t override existing action, so if ' +
+            'you want to change the handler please, ' +
+            'unregister existing one first.'
         );
 
         this.actions[action] = handler;
@@ -111,8 +116,9 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     unregisterAction: function(action) {
         invariant(
             typeof action === 'string',
-            'Please check type of the parameter you\'re passing to the `unregisterAction` function. ' + 
-            'It must be a string (got ' + typeof action + ' instead).'
+            'Please check type of the parameter you\'re passing to the ' +
+            '`unregisterAction` function. It must be a string ' + 
+            '(got ' + typeof action + ' instead).'
         );
 
         if (this.actions[action]) {
