@@ -17,9 +17,11 @@ Installation
 -------------
 ### npm
 
-You can install `fflux` from npm:
-
     npm install fflux
+
+### bower
+
+    bower install fflux
 
 Dispatcher
 -----------
