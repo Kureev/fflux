@@ -13,6 +13,16 @@ What is FFlux?
 * Detailed information about errors (by facebook's invariant)
 * Very modular: use only those parts that you need
 
+Installation
+-------------
+### npm
+
+    npm install fflux
+
+### bower
+
+    bower install fflux
+
 Dispatcher
 -----------
 To create a dispatcher:
