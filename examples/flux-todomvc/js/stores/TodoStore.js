@@ -11,6 +11,7 @@
 
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var FFlux = require('fflux');
+var assign = require('object-assign');
 var TodoConstants = require('../constants/TodoConstants');
 
 function getNewRecordID() {
@@ -60,7 +61,7 @@ var TodoStore = new FFlux.Store({
   updateAll: function(patch) {
     this.setState({
       todos: this.state.get('todos').map(function(todoItem) {
-        return todoItem.merge(patch);
+        return assign({}, todoItem, patch);
       })
     });
   },
@@ -103,7 +104,7 @@ var TodoStore = new FFlux.Store({
     this.setState({
       todos: this.state.get('todos').map(function(todoItem) {
         if (todoItem.id === id) {
-          return todoItem.merge(patch);
+          return assign({}, todoItem, patch);
         }
 
         return todoItem;
