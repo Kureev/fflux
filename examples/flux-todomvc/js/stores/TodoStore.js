@@ -117,7 +117,12 @@ var TodoStore = new FFlux.Store({
    * @return {object}
    */
   getAll: function() {
-    return this.state.get('todos').toObject();
+    var all = {};
+    this.state.get('todos').map(function(todoItem) {
+      all[todoItem.id] = todoItem;
+    });
+
+    return all;
   }
 });
 
