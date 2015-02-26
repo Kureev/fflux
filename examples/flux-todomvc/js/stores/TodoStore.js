@@ -83,7 +83,7 @@ var TodoStore = new FFlux.Store({
   },
 
   destroy: function(payload) {
-    this.filterTodos(function(todoItem) { 
+    this.filterTodos(function(todoItem) {
       return todoItem.id !== payload.id;
     });
   },
@@ -95,9 +95,11 @@ var TodoStore = new FFlux.Store({
   },
 
   filterTodos: function(filterFunction) {
-    this.setState({
+    this.replaceState({
       todos: this.state.get('todos').filter(filterFunction)
     });
+
+    this.emitChange();
   },
 
   updateTodoItem: function(id, patch) {
