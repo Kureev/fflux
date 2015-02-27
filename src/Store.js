@@ -49,9 +49,9 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
             'object as a parameter.'
         );
         
-        var newState = this.state.mergeDeep(state);
+        var newState = this.state.merge(state);
 
-        if (this.state !== newState) {
+        if (Immutable.is(this.state, newState) === false) {
             this.state = newState;
             this.emitChange();
         }
