@@ -4,8 +4,16 @@ fflux.js
 
 Some time ago Facebook engineers released a specification describing [Flux](https://facebook.github.io/flux/) - one-way data flow architecture. After that, they released a Dispatcher constructor, but skipped store, actions and react view/controller-binding parts. In fflux.js I tried to supplement existing code to complete architecture with a tiny layer of the user-friendly API for it.
 
-What is FFlux?
---------------
+#### Menu:
+* [Installation](#installation)
+* [Dispatcher](#dispatcher)
+* [Actions](#actions)
+* [Action Creators](#action-creators)
+* [Store](#store)
+* [Store state immutability](#store-state-immutability)
+* [View layer](#view-layer)
+
+## What is FFlux?
 * Dispatcher, Store, React mixin + simple API to use them together
 * Immutable state in the store (emit "change" event only if data has been really changed)
 * 100% test covered code
@@ -13,18 +21,14 @@ What is FFlux?
 * Detailed information about errors (by facebook's invariant)
 * Very modular: use only those parts that you need
 
-Installation
--------------
-### npm
+## Installation
+#### npm
+`npm install fflux`
 
-    npm install fflux
+#### bower
+`bower install fflux`
 
-### bower
-
-    bower install fflux
-
-Dispatcher
------------
+## Dispatcher
 To create a dispatcher:
 
 ```javascript
@@ -54,8 +58,7 @@ dispatcher.register(store);
 
 Now all dispatched events will be available in the action handlers.
 
-Actions
--------
+## Actions
 Actions are used for sending messages from different sources to dispatcher:
 
 ```javascript
@@ -64,8 +67,7 @@ dispatcher.dispatch('SOME_ACTION', payload);
 
 Where `payload` is an usual JS object with event's payload.
 
-Action Creators
----------------
+## Action Creators
 Action Creators is an API middleware, all requests to the backend happends here.
 By design it's just a javascript object:
 
@@ -77,8 +79,7 @@ var ActionCreatorExample = {
 };
 ```
 
-Store
------
+## Store
 Store instances should process and store applicatoin data(**they shouldn't fetch or push data!**). Basic store looks like this:
 
 ```javascript
@@ -164,8 +165,7 @@ store.unregisterAction('SOME_ACTION');
 
 That's what we have in our flux stores!
 
-Stores immutability
--------------------
+## Store state immutability
 Since version 0.9.0 stores have their own immutable state (using [Immutable.js](http://facebook.github.io/immutable-js/)). They're following React.Component state interface, so you can use them the same way:
 
 ```javascript
@@ -214,8 +214,9 @@ store.replaceState({
 console.log(store.state.toObject()); // -> { newStateKey: 'test' }
 ```
 
-View layer
-------------------------------------------
+After mutating state thru the `setState` or `replaceState` methods, store will automaticly trigger `change` event.
+
+## View layer
 Flux doesn't have any requirements for the view layer.
 For the sake of the simplicity (and package size), I decided not to add any view layer and let programmers decide themselfs what to use. The only thing that fflux.js provides you - it's mixins for auto-binding to the stores:
 
