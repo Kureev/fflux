@@ -1,3 +1,11 @@
+## v0.10.3 (Feb 28, 2015)
+* Updated documentation about [immutable state](http://facebook.github.io/immutable-js/) in the state.
+* Finalized `todo-mvc` example
+
+## v0.10.2 (Feb 27, 2015)
+* Examples folder with `todo-mvc` example
+* `deepMerge` in the `setState` replaced by `merge`
+
 ## v0.10.1 (Feb 20, 2015)
 * A bit more clean and strict .jshintrc
 * Code formatted to max 80 chars / line
