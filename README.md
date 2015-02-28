@@ -154,6 +154,56 @@ store.unregisterAction('SOME_ACTION');
 
 That's what we have in our flux stores!
 
+Stores immutability
+-------------------
+Since version 0.9.0 stores have their own immutable state (using [Immutable.js](http://facebook.github.io/immutable-js/)). They're following React.Component state interface, so you can use them the same way:
+
+```javascript
+var store = new FFlux.Store({
+  /**
+   * Get initial state
+   * By default, initial state equals to empty object
+   * @return {Object} Initial state
+   */
+  getInitialState: function() {
+    return {};
+  }
+});
+
+store.setState({
+  someArray: [1, 2, 3]
+});
+```
+
+As we know, arrays and objects are passed by reference and to modify them you need to create a (deep) copy. Immutable data takes it upon itself:
+
+```javascript
+var someArray = store.state.get('someArray');
+
+console.log(someArray.toArray()); // -> [1, 2, 3]
+
+var modifiedArray = someArray.push(4); // -> [1, 2, 3, 4]
+
+console.log(someArray.toArray()); // -> [1, 2, 3]
+console.log(modifiedArray.toArray()); // -> [1, 2, 3, 4]
+```
+
+So, to mutate the store's state you need use one of the `React.Component` state API methods:
+
+```javascript
+store.setState({
+  someArray: store.state.get('someArray').push(4)
+});
+
+console.log(store.state.get('someArray')); // -> [1, 2, 3, 4]
+
+store.replaceState({
+  newStateKey: 'test'
+});
+
+console.log(store.state.toObject()); // -> { newStateKey: 'test' }
+```
+
 View layer
 ------------------------------------------
 Flux doesn't have any requirements for the view layer.
