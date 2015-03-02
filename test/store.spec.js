@@ -5,6 +5,9 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 
+var toString = Object.prototype.toString;
+var noop = function() {};
+
 chai.use(require('chai-spies'));
 
 describe('FFlux store functions', function() {
@@ -19,6 +22,10 @@ describe('FFlux store functions', function() {
         store.emitChange();
 
         expect(spy).to.have.been.called.once();
+    });
+
+    it('getState', function() {
+        expect(toString.call(store.getState())).to.be.equal('[object Object]');
     });
 
     it('setState', function() {
@@ -58,18 +65,21 @@ describe('FFlux store functions', function() {
         var savedActions = store.getActions();
 
         // Register action to store
-        store.registerAction(actionName, function() {});
+        store.registerAction(actionName, noop);
         // Check if the `actions` hash have been changed
         assert(savedActions !== store.getActions());
 
         // You can't re-register existing action
-        expect(store.registerAction.bind(store, actionName, function() {})).to.throw(Error);
+        expect(store.registerAction
+            .bind(store, actionName, noop)).to.throw(Error);
             
         // Unregister the action
         store.unregisterAction(actionName);
 
         // Check if it's back to the default state
-        assert(JSON.stringify(savedActions) === JSON.stringify(store.getActions()));
+        assert(
+            JSON.stringify(savedActions) === JSON.stringify(store.getActions())
+        );
     });
     
 });

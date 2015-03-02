@@ -5659,6 +5659,14 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     },
 
     /**
+     * Get mutable state of the store
+     * @return {Object} state
+     */
+    getState: function() {
+        return this.state.toObject();
+    },
+
+    /**
      * Replace state of the store
      * @param  {Object} state
      * @return {Void}
