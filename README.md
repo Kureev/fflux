@@ -23,10 +23,14 @@ Some time ago Facebook engineers released a specification describing [Flux](http
 
 ## Installation
 #### npm
-`npm install fflux`
+```shell
+npm install fflux
+```
 
 #### bower
-`bower install fflux`
+```shell
+bower install fflux
+```
 
 ## Dispatcher
 To create a dispatcher:
