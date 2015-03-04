@@ -12,8 +12,6 @@
     "test": "make && mocha",
     "start": "npm test && http-server",
     "build": "make"
-    // "precommit": "npm test",
-    // "postmerge": "npm test"
   },
   "repository": {
     "type": "git",
