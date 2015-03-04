@@ -2,24 +2,23 @@
 
 var _ = require('./helper');
 var invariant = require('flux/lib/invariant');
-var Immutable = require('immutable');
 var EventEmitter = require('events').EventEmitter;
 
 /**
- * Store instance constructor
+ * Mutable store instance constructor
+ * @param {Object} options 
  */
-function FFluxStore(options) {
+function MutableStore(options) {
     _.extend(this, {
-        actions: {}
+        actions: {},
+        state: this.getInitialState()
     }, options);
-
-    this.state = Immutable.fromJS(this.getInitialState());
 }
 
 /**
  * Inherit store prototype from event emitter and passed options
  */
-_.extend(FFluxStore.prototype, EventEmitter.prototype, {
+_.extend(MutableStore.prototype, EventEmitter.prototype, {
     /**
      * Emit change
      * @return {void}
@@ -41,28 +40,25 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @param {Object} state
      * @return {Void}
      */
-    setState: function(state) {
+    setState: function(patch) {
+        var toString = Object.prototype.toString;
         invariant(
-            typeof state === 'object',
-            'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'update your store\'s state. Function `setState` accepts only ' +
-            'object as a parameter.'
+            toString.call(patch) === '[object Object]',
+            'FFlux Store: You\'re trying to use a `setState` function ' +
+            'with a non-object parameter.'
         );
         
-        var newState = this.state.merge(state);
+        _.extend(this.state, patch);
 
-        if (Immutable.is(this.state, newState) === false) {
-            this.state = newState;
-            this.emitChange();
-        }
+        this.emitChange();
     },
 
     /**
-     * Get mutable state of the store
+     * Get mutable copy of the state
      * @return {Object} state
      */
     getState: function() {
-        return this.state.toObject();
+        return _.clone(this.state);
     },
 
     /**
@@ -78,7 +74,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
             'only object as a parameter.'
         );
 
-        this.state = Immutable.fromJS(state);
+        this.state = _.clone(state);
         this.emitChange();
     },
 
@@ -135,9 +131,4 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     }
 });
 
-/**
- * Store factory
- * @param  {object}     options             Configuration of the store instance
- * @return {function}   New store instance
- */
-module.exports = FFluxStore;
+module.exports = MutableStore;

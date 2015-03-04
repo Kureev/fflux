@@ -5598,29 +5598,104 @@ _.extend(FFluxDispatcher.prototype, {
 });
 
 module.exports = FFluxDispatcher;
-},{"./helper":7,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],6:[function(require,module,exports){
+},{"./helper":8,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],6:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
 var invariant = require('flux/lib/invariant');
 var Immutable = require('immutable');
-var EventEmitter = require('events').EventEmitter;
+var MutableStore = require('./MutableStore');
 
 /**
- * Store instance constructor
+ * Immutable store constructor
+ * @param {Object} options
  */
-function FFluxStore(options) {
+function ImmutableStore(options) {
     _.extend(this, {
-        actions: {}
+        actions: {},
+        state: Immutable.fromJS(this.getInitialState())
     }, options);
-
-    this.state = Immutable.fromJS(this.getInitialState());
 }
 
 /**
  * Inherit store prototype from event emitter and passed options
  */
-_.extend(FFluxStore.prototype, EventEmitter.prototype, {
+_.extend(ImmutableStore.prototype, MutableStore.prototype, {
+    /**
+     * Set state of the store
+     * @param {Object} state
+     * @return {Void}
+     */
+    setState: function(path, stateMutator) {
+        var toString = Object.prototype.toString;
+        invariant(
+            toString.call(path) === '[object Array]' &&
+            toString.call(stateMutator) === '[object Function]',
+            'FFlux Store: You\'re trying to use a `setState` function ' +
+            'with wrong parameters. `setState(a: Array, b: Function)` expected'
+        );
+        
+        var newState = this.state.deepMergeIn(path, stateMutator);
+
+        if (Immutable.is(this.state, newState) === false) {
+            this.state = newState;
+            this.emitChange();
+        }
+    },
+
+    /**
+     * Get link to immutable state
+     * @return {Object} state
+     */
+    getState: function() {
+        return this.state;
+    },
+
+    /**
+     * Replace state of the store
+     * @param  {Object} state
+     * @return {Void}
+     */
+    replaceState: function(state) {
+        invariant(
+            typeof state === 'object',
+            'FFlux Store: You\'re attempting to use a non-object type to ' +
+            'replace your store\'s state. Function `replaceState` accepts ' +
+            'only object as a parameter.'
+        );
+
+        var newState = Immutable.fromJS(state);
+        
+        if (!Immutable.is(newState, this.state)) {
+            this.state = newState;
+            this.emitChange();
+        }
+    }
+});
+
+module.exports = ImmutableStore;
+},{"./MutableStore":7,"./helper":8,"flux/lib/invariant":3,"immutable":4}],7:[function(require,module,exports){
+'use strict';
+
+var _ = require('./helper');
+var invariant = require('flux/lib/invariant');
+var EventEmitter = require('events').EventEmitter;
+
+/**
+ * Mutable store instance constructor
+ * @param {Object} options 
+ */
+function MutableStore(options) {
+    _.extend(this, {
+        actions: {},
+        state: this.getInitialState()
+    }, options);
+}
+
+/**
+ * Inherit store prototype from event emitter and passed options
+ */
+_.extend(MutableStore.prototype, EventEmitter.prototype, {
     /**
      * Emit change
      * @return {void}
@@ -5642,28 +5717,25 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
      * @param {Object} state
      * @return {Void}
      */
-    setState: function(state) {
+    setState: function(patch) {
+        var toString = Object.prototype.toString;
         invariant(
-            typeof state === 'object',
-            'FFlux Store: You\'re attempting to use a non-object type to ' +
-            'update your store\'s state. Function `setState` accepts only ' +
-            'object as a parameter.'
+            toString.call(patch) === '[object Object]',
+            'FFlux Store: You\'re trying to use a `setState` function ' +
+            'with a non-object parameter.'
         );
         
-        var newState = this.state.merge(state);
+        _.extend(this.state, patch);
 
-        if (Immutable.is(this.state, newState) === false) {
-            this.state = newState;
-            this.emitChange();
-        }
+        this.emitChange();
     },
 
     /**
-     * Get mutable state of the store
+     * Get mutable copy of the state
      * @return {Object} state
      */
     getState: function() {
-        return this.state.toObject();
+        return _.clone(this.state);
     },
 
     /**
@@ -5679,7 +5751,7 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
             'only object as a parameter.'
         );
 
-        this.state = Immutable.fromJS(state);
+        this.state = _.clone(state);
         this.emitChange();
     },
 
@@ -5736,13 +5808,8 @@ _.extend(FFluxStore.prototype, EventEmitter.prototype, {
     }
 });
 
-/**
- * Store factory
- * @param  {object}     options             Configuration of the store instance
- * @return {function}   New store instance
- */
-module.exports = FFluxStore;
-},{"./helper":7,"events":1,"flux/lib/invariant":3,"immutable":4}],7:[function(require,module,exports){
+module.exports = MutableStore;
+},{"./helper":8,"events":1,"flux/lib/invariant":3}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5798,17 +5865,18 @@ module.exports = {
     extend: extend,
     clone: clone
 };
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var FFlux = {};
 
 FFlux.Dispatcher = require('./Dispatcher');
-FFlux.Store = require('./Store');
+FFlux.ImmutableStore = require('./ImmutableStore');
+FFlux.MutableStore = require('./MutableStore');
 FFlux.mixins = require('./mixins');
 
 module.exports = FFlux;
-},{"./Dispatcher":5,"./Store":6,"./mixins":9}],9:[function(require,module,exports){
+},{"./Dispatcher":5,"./ImmutableStore":6,"./MutableStore":7,"./mixins":10}],10:[function(require,module,exports){
 'use strict';
 
 var invariant = require('flux/lib/invariant');
@@ -5846,5 +5914,5 @@ module.exports = {
         };
     }
 };
-},{"flux/lib/invariant":3}]},{},[8])(8)
+},{"flux/lib/invariant":3}]},{},[9])(9)
 });
