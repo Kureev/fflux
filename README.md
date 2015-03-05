@@ -9,8 +9,9 @@ Some time ago Facebook engineers released a specification describing [Flux](http
 * [Dispatcher](#dispatcher)
 * [Actions](#actions)
 * [Action Creators](#action-creators)
-* [Store](#store)
-* [Store state immutability](#store-state-immutability)
+* [Stores](#stores)
+  * [Mutable Store](#mutable-store)
+  * [Immutable Store](#immutable-store)
 * [View layer](#view-layer)
 
 ## What is FFlux?
@@ -46,7 +47,7 @@ It's very similar with facebook's realization (because it's based on it), but `r
  * Create store
  * @type {FFluxStore}
  */
-var store = new FFlux.Store({ ... });
+var store = new FFlux.MutableStore({ ... });
 
 /**
  * Dispatch action to the system
@@ -72,8 +73,8 @@ dispatcher.dispatch('SOME_ACTION', payload);
 Where `payload` is an usual JS object with event's payload.
 
 ## Action Creators
-Action Creators is an API middleware, all requests to the backend happends here.
-By design it's just a javascript object:
+Action Creators usually perform a function of data middleware.
+By default it's just a javascript object with functions:
 
 ```javascript
 var ActionCreatorExample = {
@@ -83,59 +84,61 @@ var ActionCreatorExample = {
 };
 ```
 
-## Store
-Store instances should process and store applicatoin data(**they shouldn't fetch or push data!**). Basic store looks like this:
+## Stores
+Store instances should process and store applicatoin data(**they shouldn't fetch or push data!**).
+In fflux, you're able to use mutable and immutable stores. If you want to work with store's state as native javascript object - you should use [mutable stores](#mutable-store). If you prefer immutable structures, [immutable stores](#immutable-store) - that's your choice.
+
+### Mutable Store
+Basic mutable store looks like this:
 
 ```javascript
-/**
- * Handler for OTHER_ACTION
- * @param {object} data Payload
- * @return {void}
- */
-function otherActionHandler(data) {
-  console.log('Some other function has been called');
-}
 
-var store = new FFlux.Store({
+var store = new FFlux.MutableStore({
   /**
    * In this property we declare list
    * of the actions we're interested in.
-   *
-   * For every of those actions we specify handler function. It can be independent
-   * function like `otherActionHandler` or instance method like `someMethod`
    */
   actions: {
     'SOME_ACTION': 'someMethod'
-    'OTHER_ACTION': otherActionHandler
+    'OTHER_ACTION': 'otherActionHandler'
   },
 
   /**
    * Handler for SOME_ACTION
-   * @param {object} data Payload
-   * @return {void}
+   * @param {Object} data Payload
+   * @return {Void}
    */
-  someMethod: function(data) {
-    console.log('Some method has been called');
+  someActionHandler: function(data) {
+    this.setState(data);
+  },
+
+  /**
+   * Handler for OTHER_ACTION
+   * @param {Object} data Payload
+   * @return {Void}
+   */
+  otherActionHandler: function(data) {
+    this.setState(data);
   }
 });
 ```
 
-As you can see from the example above, you will have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). In every action handler you can use `waitFor` method as it's described on the [flux's dispatcher page](http://facebook.github.io/flux/docs/dispatcher.html#content):
+In the example above, you have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). Every handler could be a property of the store instance or independent function. In every action handler you can use `waitFor` method as it's described [here](http://facebook.github.io/flux/docs/dispatcher.html#content):
 
 ```javascript
 {
   /**
    * Some action's handler
-   * @param {object} data Payload
-   * @return {void}
+   * @param {Object} data Payload
+   * @return {Void}
    *
    * @description For invoke some function(s) only *after* other store
    * process action, we need to use `waitFor` method
    */
   someMethod: function(data) {
     /**
-     * Now we have no idea if `storage` store already processed the data
-     * But after calling `waitFor` we can be sure, that it's done
+     * If we need to be sure, that some function will be called
+     * only after `storage` store would process the action
      */
     dispatcher.waitFor([storage]);
   }
@@ -145,12 +148,12 @@ As you can see from the example above, you will have an actions property which p
 You can register/unregister action handlers dynamicly after store initialization:
 
 ```javascript
-var store = new FFlux.Store({...});
+var store = new FFlux.MutableStore({...});
 
 /**
  * Action handler function
- * @param {object} data Payload
- * @return {void}
+ * @param {Object} data Payload
+ * @return {Void}
  */
 function actionHandler(data) {
   //...
@@ -167,13 +170,11 @@ store.registerAction('SOME_ACTION', actionHandler);
 store.unregisterAction('SOME_ACTION');
 ```
 
-That's what we have in our flux stores!
-
-## Store state immutability
-Since version 0.9.0 stores have their own immutable state (using [Immutable.js](http://facebook.github.io/immutable-js/)). They're following React.Component state interface, so you can use them the same way:
+### Immutable store
+Immutable stores inherits form [mutable stores](#mutable-store) and enchance thier functionality with [immutable data](http://facebook.github.io/immutable-js/). To explain it on example, let's create some store:
 
 ```javascript
-var store = new FFlux.Store({
+var store = new FFlux.ImmutableStore({
   /**
    * Get initial state
    * By default, initial state equals to empty object
@@ -183,42 +184,48 @@ var store = new FFlux.Store({
     return {};
   }
 });
-
-store.setState({
-  someArray: [1, 2, 3]
-});
 ```
 
-As we know, arrays and objects are passed by reference and to modify them you need to create a (deep) copy. Immutable data takes it upon itself:
-
-```javascript
-var someArray = store.state.get('someArray');
-
-console.log(someArray.toArray()); // -> [1, 2, 3]
-
-var modifiedArray = someArray.push(4); // -> [1, 2, 3, 4]
-
-console.log(someArray.toArray()); // -> [1, 2, 3]
-console.log(modifiedArray.toArray()); // -> [1, 2, 3, 4]
-```
-
-So, to mutate the store's state you need use one of the `React.Component` state API methods:
+At this part we don't see the difference, but let's try to mutate the state:
 
 ```javascript
 store.setState({
-  someArray: store.state.get('someArray').push(4)
+  a: {
+    b: {
+      c: [1, 2, 3]
+    }
+  }
 });
-
-console.log(store.state.get('someArray')); // -> [1, 2, 3, 4]
-
-store.replaceState({
-  newStateKey: 'test'
-});
-
-console.log(store.state.toObject()); // -> { newStateKey: 'test' }
 ```
 
-After mutating state thru the `setState` or `replaceState` methods, store will automaticly trigger `change` event.
+`setState` in the example above will [merge](http://facebook.github.io/immutable-js/docs/#/Map/merge) passed object with existing state. If given state is idential to current state, nothing will happend, otherwise `change` event will occur. Let's take a look how to create a new store state and replace current with a new one:
+
+```javascript
+var currentState = store.getState();
+
+/**
+ * Mutator for `c` key in `a.b.c` path
+ * @param  {Array} element 
+ * @return {Immutable.List}
+ */
+function mutator(element) {
+    return element.map(function(i) {
+      return i * i;
+    });
+  }
+}
+
+var newState = currentState
+  .updateIn(['a', 'b', 'c'], mutator)
+  .set('b', 'new key')
+  .set('c', currentState.getIn(['a', 'b', 'c']));
+
+store.replaceState(newState);
+```
+
+`replaceState` replace your current state with a given one. If given state is idential to current state, nothing will happend, otherwise `change` event will occur.
+
+But if you want more, you can always use full API of [immutable.js](http://facebook.github.io/immutable-js/docs/#/).
 
 ## View layer
 Flux doesn't have any requirements for the view layer.
@@ -226,9 +233,9 @@ For the sake of the simplicity (and package size), I decided not to add any view
 
 ```javascript
 /**
- * Create some store
+ * Create some immutable store
  */
-var store = new FFlux.Store({...});
+var store = new FFlux.ImmutableStore({...});
 
 /**
  * React class to describe component
@@ -243,20 +250,17 @@ var MyComponentClass = React.createClass({
   /**
    * After store emit `change` event
    * this function will be invoked
-   * @return {void}
+   * @return {Void}
    */
   storeDidUpdate: function() {...},
 
   render: function() {...}
 });
 
-// Create React component (using 0.12.2 syntax)
-var MyComponent = React.createElement(MyComponentClass);
-
 /**
  * That's it, now you can render `MyComponent` and
  * as soon as `store` will emit `change` event, 
  * your component will be redrawn
  */
-React.render(MyComponent, document.body);
+React.render(<MyComponent />, document.body);
 ``` 

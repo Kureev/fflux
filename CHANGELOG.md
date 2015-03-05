@@ -1,3 +1,8 @@
+## v0.11.0 (Mar 05, 2015)
+* Introduced `immutable` and `mutable` stores
+* Cleaned up unused tests from examples
+* Updated readme
+
 ## v0.10.3 (Feb 28, 2015)
 * Updated documentation about [immutable state](http://facebook.github.io/immutable-js/) in the state.
 * Finalized `todo-mvc` example
