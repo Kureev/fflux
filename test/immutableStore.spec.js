@@ -2,7 +2,6 @@
 
 var FFlux = require('../src/index.js');
 var chai = require('chai');
-var assert = chai.assert;
 var expect = chai.expect;
 
 var toString = Object.prototype.toString;

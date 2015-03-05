@@ -2,7 +2,6 @@
 
 var FFlux = require('../src/index.js');
 var chai = require('chai');
-var assert = chai.assert;
 var expect = chai.expect;
 
 var toString = Object.prototype.toString;
@@ -72,8 +71,9 @@ describe('FFlux mutable store functions', function() {
 
         // Register action to store
         store.registerAction(actionName, noop);
+        
         // Check if the `actions` hash have been changed
-        assert(savedActions !== store.getActions());
+        expect(savedActions).not.to.be.equal(store.getActions());
 
         // You can't re-register existing action
         expect(store.registerAction
@@ -83,9 +83,8 @@ describe('FFlux mutable store functions', function() {
         store.unregisterAction(actionName);
 
         // Check if it's back to the default state
-        assert(
-            JSON.stringify(savedActions) === JSON.stringify(store.getActions())
-        );
+        expect(JSON.stringify(savedActions))
+            .to.be.equal(JSON.stringify(store.getActions()));
     });
     
 });
