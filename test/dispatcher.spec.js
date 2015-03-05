@@ -2,7 +2,6 @@
 
 var FFlux = require('../src/index.js');
 var chai = require('chai');
-var assert = chai.assert;
 var expect = chai.expect;
 
 chai.use(require('chai-spies'));
@@ -80,8 +79,8 @@ describe('FFlux dispatcher functions', function() {
         expect(waitingSpy).to.have.been.called.once.with(payload);
 
         // Check if we got our waitFor condition work correct
-        assert(JSON.stringify(store2.getState().dataFromStore1) === 
-            JSON.stringify(store1.getState()));
+        expect(JSON.stringify(store2.getState().dataFromStore1))
+            .to.be.equal(JSON.stringify(store1.getState()));
 
         dispatcher.unregister(store1);
         dispatcher.unregister(store2);
