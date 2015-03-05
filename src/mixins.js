@@ -1,6 +1,7 @@
 'use strict';
 
 var invariant = require('flux/lib/invariant');
+var _ = require('../src/helper');
 
 module.exports = {
     /**
@@ -16,7 +17,7 @@ module.exports = {
              */
             componentWillMount: function() {
                 invariant(
-                    typeof this.storeDidUpdate === 'function',
+                    _.isFunction(this.storeDidUpdate),
                     'FFlux bind mixin: You\'re attempting to use ' + 
                     typeof this.storeDidUpdate + ' as a function. ' +
                     'Make sure you defined `storeDidUpdate` function ' + 
