@@ -15,13 +15,17 @@ describe('FFlux static functions', function() {
         expect(FFlux.Dispatcher).to.be.a('function');
     });
 
-    it('createStore', function() {
-        expect(FFlux.Store).to.be.a('function');
+    it('mutable store constructor is a function', function() {
+        expect(FFlux.MutableStore).to.be.a('function');
+    });
+
+    it('immutable store constructor is a function', function() {
+        expect(FFlux.ImmutableStore).to.be.a('function');
     });
 
     it('mixin\'s bind function', function() {
         var dispatcher = new FFlux.Dispatcher();
-        var store = new FFlux.Store({
+        var store = new FFlux.MutableStore({
             actions: {
                 'TEST': 'test'
             },

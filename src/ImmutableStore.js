@@ -21,25 +21,26 @@ function ImmutableStore(options) {
  */
 _.extend(ImmutableStore.prototype, MutableStore.prototype, {
     /**
-     * Set state of the store
-     * @param {Object} state
+     * Update state
+     * @private
+     * @param  {Object|Immutable} newState 
      * @return {Void}
      */
-    setState: function(path, stateMutator) {
-        var toString = Object.prototype.toString;
-        invariant(
-            toString.call(path) === '[object Array]' &&
-            toString.call(stateMutator) === '[object Function]',
-            'FFlux Store: You\'re trying to use a `setState` function ' +
-            'with wrong parameters. `setState(a: Array, b: Function)` expected'
-        );
-        
-        var newState = this.state.deepMergeIn(path, stateMutator);
-
-        if (Immutable.is(this.state, newState) === false) {
+    _updateState: function(newState) {
+        if (Immutable.is(newState, this.state) === false) {
             this.state = newState;
             this.emitChange();
         }
+    },
+
+    /**
+     * Set new state by merge
+     * @see http://facebook.github.io/immutable-js/docs/#/Map/merge
+     * @param {Object|Immutable} patch
+     * @return {Void}
+     */
+    setState: function(patch) {
+        this._updateState(this.state.merge(patch));
     },
 
     /**
@@ -52,23 +53,19 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
 
     /**
      * Replace state of the store
-     * @param  {Object} state
+     * @see http://facebook.github.io/immutable-js/docs/#/Map/withMutations
+     * @param  {Object|Immutable} state
      * @return {Void}
      */
     replaceState: function(state) {
         invariant(
-            typeof state === 'object',
+            _.isObject(state),
             'FFlux Store: You\'re attempting to use a non-object type to ' +
             'replace your store\'s state. Function `replaceState` accepts ' +
             'only object as a parameter.'
         );
-
-        var newState = Immutable.fromJS(state);
         
-        if (!Immutable.is(newState, this.state)) {
-            this.state = newState;
-            this.emitChange();
-        }
+        this._updateState(Immutable.fromJS(state));
     }
 });
 

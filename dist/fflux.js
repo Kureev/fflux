@@ -5622,15 +5622,35 @@ function ImmutableStore(options) {
  */
 _.extend(ImmutableStore.prototype, MutableStore.prototype, {
     /**
-     * Set state of the store
-     * @param {Object} state
+     * Update state
+     * @private
+     * @param  {Object|Immutable.Map} newState 
      * @return {Void}
      */
-    setState: function(path, stateMutator) {
-        var toString = Object.prototype.toString;
+    _updateState: function(newState) {
+        if (Immutable.is(newState, this.state) === false) {
+            this.state = newState;
+            this.emitChange();
+        }
+    },
+
+    /**
+     * Set new state by merge
+     * @param {Object|Immutable.Map} patch
+     */
+    setState: function(patch) {
+        this._updateState(this.state.merge(patch));
+    },
+
+    /**
+     * Set state by path and mutator function
+     * @param {Array} path
+     * @param {Function} stateMutator
+     * @return {Void}
+     */
+    setStateIn: function(path, stateMutator) {
         invariant(
-            toString.call(path) === '[object Array]' &&
-            toString.call(stateMutator) === '[object Function]',
+            _.isArray(path) && _.isFunction(stateMutator),
             'FFlux Store: You\'re trying to use a `setState` function ' +
             'with wrong parameters. `setState(a: Array, b: Function)` expected'
         );
@@ -5813,12 +5833,30 @@ module.exports = MutableStore;
 'use strict';
 
 /**
- * Check if param is array
- * @param  {any}  param Parameter to check
+ * Check if param is an array
+ * @param  {any}  param
  * @return {boolean}
  */
 function isArray(param) {
     return Object.prototype.toString.call(param) === '[object Array]';
+}
+
+/**
+ * Check if param is an object
+ * @param  {any}  param
+ * @return {boolean}
+ */
+function isObject(param) {
+    return Object.prototype.toString.call(param) === '[object Object]';
+}
+
+/**
+ * Check if param is a function
+ * @param  {any}  param
+ * @return {boolean}
+ */
+function isFunction(param) {
+    return Object.prototype.toString.call(param) === '[object Function]';
 }
 
 /**
@@ -5862,6 +5900,8 @@ function clone(obj) {
 module.exports = {
     keys: keys,
     isArray: isArray,
+    isObject: isObject,
+    isFunction: isFunction,
     extend: extend,
     clone: clone
 };

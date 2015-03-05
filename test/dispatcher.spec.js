@@ -10,12 +10,8 @@ chai.use(require('chai-spies'));
 describe('FFlux dispatcher functions', function() {
 
     var dispatcher = new FFlux.Dispatcher();
-    var store1 = new FFlux.Store({
-        getData: function() { return this._data; }
-    });
-    var store2 = new FFlux.Store({
-        getData: function() { return this._data; }
-    });
+    var store1 = new FFlux.MutableStore();
+    var store2 = new FFlux.MutableStore();
 
     // Test data
     var actionName = 'DISPATCH_TEST';
@@ -42,11 +38,14 @@ describe('FFlux dispatcher functions', function() {
     });
 
     it('(un)register', function() {
-        expect(dispatcher.register.bind(dispatcher, store1)).not.to.throw(Error);
-        expect(dispatcher.unregister.bind(dispatcher, store1)).not.to.throw(Error);
+        expect(dispatcher.register.bind(dispatcher, store1))
+            .not.to.throw(Error);
+        expect(dispatcher.unregister.bind(dispatcher, store1))
+            .not.to.throw(Error);
 
         dispatcher.register(store1);
-        expect(dispatcher.unregister.bind(dispatcher, store1.dispatchToken)).not.to.throw(Error);
+        expect(dispatcher.unregister.bind(dispatcher, store1.dispatchToken))
+            .not.to.throw(Error);
     });
 
     it('waitFor', function() {
@@ -54,16 +53,16 @@ describe('FFlux dispatcher functions', function() {
         dispatcher.register(store2);
 
         function normalHandler(payload) {
-            this._data = payload;
+            store1.setState(payload);
         }
 
         function waitingHandler(payload) {
             dispatcher.waitFor([store1]);
 
-            this._data = {
-                dataFromStore1: store1.getData(),
+            store2.setState({
+                dataFromStore1: store1.getState(),
                 myOwnData: payload
-            };
+            });
         }
 
         // Create 2 spies for 2 stores: sync and async
@@ -81,7 +80,8 @@ describe('FFlux dispatcher functions', function() {
         expect(waitingSpy).to.have.been.called.once.with(payload);
 
         // Check if we got our waitFor condition work correct
-        assert(store2.getData().dataFromStore1 === store1.getData());
+        assert(JSON.stringify(store2.getState().dataFromStore1) === 
+            JSON.stringify(store1.getState()));
 
         dispatcher.unregister(store1);
         dispatcher.unregister(store2);

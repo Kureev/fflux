@@ -10,17 +10,20 @@ var noop = function() {};
 
 chai.use(require('chai-spies'));
 
-describe('FFlux store functions', function() {
+describe('FFlux immutable store functions', function() {
 
-    var store = new FFlux.Store();
+    var store = new FFlux.ImmutableStore();
 
-    it('emitChange', function() {
+    it('_updateState', function() {
+        var state = store.getState();
+
         var spy = chai.spy();
 
         store.on('change', spy);
 
-        store.emitChange();
+        store._updateState(state.merge({ a: 11 }));
 
+        expect(store.getState().get('a')).to.be.equal(11);
         expect(spy).to.have.been.called.once();
     });
 
@@ -51,6 +54,10 @@ describe('FFlux store functions', function() {
     });
 
     it('replaceState', function() {
+        var spy = chai.spy();
+
+        store.on('change', spy);
+
         store.replaceState({
             a: 50,
             b: 60
@@ -58,28 +65,8 @@ describe('FFlux store functions', function() {
 
         expect(store.state.get('a')).to.be.equal(50);
         expect(store.state.get('b')).to.be.equal(60);
-    });
 
-    it('(un)registerAction', function() {
-        var actionName = 'STORE_TEST';
-        var savedActions = store.getActions();
-
-        // Register action to store
-        store.registerAction(actionName, noop);
-        // Check if the `actions` hash have been changed
-        assert(savedActions !== store.getActions());
-
-        // You can't re-register existing action
-        expect(store.registerAction
-            .bind(store, actionName, noop)).to.throw(Error);
-            
-        // Unregister the action
-        store.unregisterAction(actionName);
-
-        // Check if it's back to the default state
-        assert(
-            JSON.stringify(savedActions) === JSON.stringify(store.getActions())
-        );
+        expect(spy).to.have.been.called.once(); 
     });
     
 });
