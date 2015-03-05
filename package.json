@@ -1,10 +1,12 @@
 {
   "name": "fflux",
-  "version": "0.10.3",
+  "version": "0.11.0",
   "description": "Flux-based library to provide some easy API to build architecture",
   "main": "./src/index.js",
   "keywords": [
-    "flux", "immutable", "reactjs"
+    "flux",
+    "immutable",
+    "reactjs"
   ],
   "author": "Kureev Alexey <kureev-mail@ya.ru>",
   "license": "MIT",
