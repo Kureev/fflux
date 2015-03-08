@@ -1,3 +1,7 @@
+## v0.11.2 (Mar 08, 2015)
+* Examples: TODO list adapted for v0.11.*
+* Major readme update
+
 ## v0.11.1 (Mar 08, 2015)
 * Fixed a bug with `getInitialState()`
 * Removed deprecated code from dispatcher

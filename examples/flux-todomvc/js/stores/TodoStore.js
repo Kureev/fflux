@@ -19,7 +19,7 @@ function getNewRecordID() {
   return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
 }
 
-var TodoStore = new FFlux.Store({
+var TodoStore = new FFlux.ImmutableStore({
 
   /**
    * Initial state of the store
@@ -40,7 +40,7 @@ var TodoStore = new FFlux.Store({
     var text = payload.text.trim();
     if (text !== '') {
       this.setState({
-        todos: this.state.get('todos').push({
+        todos: this.getState().get('todos').push({
           id: getNewRecordID(),
           complete: false,
           text: text
@@ -54,7 +54,7 @@ var TodoStore = new FFlux.Store({
    * @return {boolean}
    */
   areAllComplete: function() {
-    return this.state.get('todos').every(function(todoItem) {
+    return this.getState().get('todos').every(function(todoItem) {
       return todoItem.complete;
     });
   },
@@ -67,7 +67,7 @@ var TodoStore = new FFlux.Store({
     var areAllComplete = this.areAllComplete();
 
     this.setState({
-      todos: this.state.get('todos').map(function(todoItem) {
+      todos: this.getState().get('todos').map(function(todoItem) {
         return assign({}, todoItem, {
           complete: !areAllComplete
         });
@@ -134,7 +134,7 @@ var TodoStore = new FFlux.Store({
    */
   filterTodos: function(filterFunction) {
     this.setState({
-      todos: this.state.get('todos').filter(filterFunction)
+      todos: this.getState().get('todos').filter(filterFunction)
     });
 
     this.emitChange();
@@ -148,7 +148,7 @@ var TodoStore = new FFlux.Store({
    */
   updateTodoItem: function(id, patch) {
     this.setState({
-      todos: this.state.get('todos').map(function(todoItem) {
+      todos: this.getState().get('todos').map(function(todoItem) {
         if (todoItem.id === id) {
           return assign({}, todoItem, patch);
         }
@@ -164,7 +164,7 @@ var TodoStore = new FFlux.Store({
    */
   getAll: function() {
     var all = {};
-    this.state.get('todos').map(function(todoItem) {
+    this.getState().get('todos').map(function(todoItem) {
       all[todoItem.id] = todoItem;
     });
 
