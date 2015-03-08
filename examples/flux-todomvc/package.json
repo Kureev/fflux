@@ -5,7 +5,7 @@
   "repository": "https://github.com/facebook/flux",
   "main": "js/app.js",
   "dependencies": {
-    "fflux": "^0.10",
+    "fflux": "^0.11",
     "keymirror": "~0.1.0",
     "object-assign": "^1.0.0",
     "react": "^0.12.0"

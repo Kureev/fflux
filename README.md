@@ -2,6 +2,9 @@ fflux.js
 ==========
 [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux) [![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux) [![Test Coverage](https://codeclimate.com/github/Kureev/fflux/badges/coverage.svg)](https://codeclimate.com/github/Kureev/fflux)
 
+#### Examples:
+* [TODO list](https://github.com/Kureev/fflux/tree/master/examples/flux-todomvc)
+
 #### Contents:
 * [What is FFlux?](#what-is-fflux)
 * [Installation](#installation)
@@ -289,14 +292,25 @@ var MyComponentClass = React.createClass({
    */
   mixins: [FFlux.mixins.bind(store)],
 
+  getInitialState: function() {
+    return store.getState();
+  },
+
   /**
    * After store emit `change` event
    * this function will be invoked
    * @return {Void}
    */
-  storeDidUpdate: function() {...},
+  storeDidUpdate: function() {
+    this.setState(store.getState());
+  },
 
-  render: function() {...}
+  render: function() {
+    var state = this.getState();
+    return (
+      <div>{state.get('something')}</div>
+    );
+  }
 });
 
 /**
@@ -312,3 +326,5 @@ React.render(<MyComponent />, document.body);
 - [ ] Separate stores to mutable and immutable
 - [ ] Write "Getting Started"
 - [ ] Make an example of isomorphic app
+- [ ] Make an example for [Riot.js](https://muut.com/riotjs/)
+- [ ] Find a way to avoid using mixins

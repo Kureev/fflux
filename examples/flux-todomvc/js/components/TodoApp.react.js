@@ -38,9 +38,6 @@ var TodoApp = React.createClass({
     return getTodoState();
   },
 
-  /**
-   * @return {object}
-   */
   render: function() {
   	return (
       <div>
@@ -54,8 +51,8 @@ var TodoApp = React.createClass({
   	);
   },
 
-  /**
-   * Event handler for 'change' events coming from the TodoStore
+  /*
+   * Handle `change` events from the store
    */
   storeDidUpdate: function() {
     this.setState(getTodoState());
