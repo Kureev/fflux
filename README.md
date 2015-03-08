@@ -2,25 +2,26 @@ fflux.js
 ==========
 [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux) [![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux) [![Test Coverage](https://codeclimate.com/github/Kureev/fflux/badges/coverage.svg)](https://codeclimate.com/github/Kureev/fflux)
 
-Some time ago Facebook engineers released a specification describing [Flux](https://facebook.github.io/flux/) - one-way data flow architecture. After that, they released a Dispatcher constructor, but skipped store, actions and react view/controller-binding parts. In fflux.js I tried to supplement existing code to complete architecture with a tiny layer of the user-friendly API for it.
-
-#### Menu:
+#### Contents:
+* [What is FFlux?](#what-is-fflux)
 * [Installation](#installation)
 * [Dispatcher](#dispatcher)
+  * [Dispatcher API](#dispatcher-api)
 * [Actions](#actions)
 * [Action Creators](#action-creators)
 * [Stores](#stores)
+  * [Store API](#store-api)
   * [Mutable Store](#mutable-store)
   * [Immutable Store](#immutable-store)
 * [View layer](#view-layer)
 
 ## What is FFlux?
 * Dispatcher, Store, React mixin + simple API to use them together
-* Immutable state in the store (emit "change" event only if data has been really changed)
-* 100% test covered code
-* "A" class code quality (by @codeclimate)
-* Detailed information about errors (by facebook's invariant)
-* Very modular: use only those parts that you need
+* Two types of stores: [mutable](#mutable-store) & [immutable](#immutable-store)
+* No singletons (can be used for isomorphic apps)
+* 100% test coverage
+* Detailed error messages (using facebook's `invariant`)
+* Modular: use only parts you need
 
 ## Installation
 #### npm
@@ -34,62 +35,108 @@ bower install fflux
 ```
 
 ## Dispatcher
-To create a dispatcher:
+FFlux dispatcher extends standard Flux.Dispatcher implementation.
 
 ```javascript
 var dispatcher = new FFlux.Dispatcher();
-```
 
-It's very similar with facebook's realization (because it's based on it), but `register` method takes store instance instead of callback function:
+// ...
 
-```javascript
-/**
- * Create store
- * @type {FFluxStore}
- */
-var store = new FFlux.MutableStore({ ... });
-
-/**
- * Dispatch action to the system
- */
 dispatcher.dispatch('SOME_ACTION', payload);
 ```
 
-But as you see, nothing happens. The reason is that the store hasn't been registered in the dispatcher:
+### Dispatcher API
 
-```javascript
-dispatcher.register(store);
-```
+* **register** - register store in dispatcher<br>
+  After registration, store will receive dispatcher's actions<br>
+  ```javascript
+  dispatcher.register(store);
+  ```
 
-Now all dispatched events will be available in the action handlers.
+* **unregister** - unregister store from the dispatcher<br>
+  Store wouldn't receive actions any more.<br>
+  ```javascript
+  dispatcher.unregister(store);
+  ```
+
+* **dispatch** - dispatch action to the stores:<br>
+  ```javascript
+  dispatcher.dispatch(actionName, actionPayload);`
+  ```
+
+* **waitFor** - wait for another store to process action first
+  ```javascript
+  var someStore = FFlux.ImmutableStore();
+
+  dispatcher.waitFor([someStore]);
+  ```
 
 ## Actions
-Actions are used for sending messages from different sources to dispatcher:
+Actions are used for sending messages to dispatcher:
 
 ```javascript
-dispatcher.dispatch('SOME_ACTION', payload);
+dispatcher.dispatch('SOME_ACTION', data);
 ```
 
-Where `payload` is an usual JS object with event's payload.
+Where `data` is a JS object with action's payload.
 
 ## Action Creators
-Action Creators usually perform a function of data middleware.
-By default it's just a javascript object with functions:
+Action Creators are commonly used to make a bridge between front-end and back-end parts of your application. All async stuff should happend here.
 
 ```javascript
+var dispatcher = require('dispatcher');
+
 var ActionCreatorExample = {
-  fetchData: function() {...},
-  postData: function() {...},
-  ...
+  /**
+   * Fetch data from server
+   * @param {Object} criteria
+   */
+  fetchData: function(criteria) {
+    $.get(someUrl, criteria, function(response) {
+      dispatcher.dispatch('FETCH_DATA', response);
+    });
+  },
+
+  /*
+   * Post data to the server
+   * @param {Object} data
+   */
+  postData: function(data) {
+    $.post(someUrl, data, function(response) {
+      dispatcher.dispatch('POST_DATA', response);
+    });
+  }
 };
 ```
 
 ## Stores
-Store instances should process and store applicatoin data(**they shouldn't fetch or push data!**).
-In fflux, you're able to use mutable and immutable stores. If you want to work with store's state as native javascript object - you should use [mutable stores](#mutable-store). If you prefer immutable structures, [immutable stores](#immutable-store) - that's your choice.
+In fflux, you can use mutable and immutable stores. If you want to work with store's state as native javascript object - you should use [mutable store](#mutable-store). If you prefer immutable structures, [immutable stores](#immutable-store) - is your choice.
+Both stores have the same API:
+
+### Store API
+* **setState** - merge current state with the one provided<br>
+  *Hint: if you're using [mutable stores](#mutable-store), every `setState` will emit `change` event. In the case of [immutable stores](#immutable-store), `change` event will be emitted only if new state is different from the current one.*<br>
+  ```javascript
+  store.setState({ key: value });
+  ```
+
+* **replaceState** - replace current state with a given one<br>
+  ```javascript
+  store.replaceState({ key: value });
+  ```
+
+* **registerAction** - register action handler<br>
+  ```javascript
+  store.registerAction(actionName, actionHandler);
+  ```
+
+* **unregisterAction** - unregister action handler<br>
+  ```javascript
+  store.unregisterAction(actionName);
+  ```
 
 ### Mutable Store
-Basic mutable store looks like this:
+Mutable store is a basic store you have in fflux:
 
 ```javascript
 
@@ -102,6 +149,15 @@ var store = new FFlux.MutableStore({
     'SOME_ACTION': 'someMethod'
     'OTHER_ACTION': 'otherActionHandler'
   },
+
+  /**
+   * Get initial state
+   * Works the same way as in React
+   * @return {Any} Initial state
+   */
+  getInitialState: function() {
+    return {};
+  }
 
   /**
    * Handler for SOME_ACTION
@@ -123,7 +179,7 @@ var store = new FFlux.MutableStore({
 });
 ```
 
-In the example above, you have an actions property which provides you a possibility to use declarative style for describing handlers for different action types (looks like backbone's events, huh?). Every handler could be a property of the store instance or independent function. In every action handler you can use `waitFor` method as it's described [here](http://facebook.github.io/flux/docs/dispatcher.html#content):
+Every handler could be a method name of the store instance or a standalone function. In every action handler you can use `waitFor` method as described [here](http://facebook.github.io/flux/docs/dispatcher.html#content):
 
 ```javascript
 {
@@ -145,7 +201,7 @@ In the example above, you have an actions property which provides you a possibil
 }
 ```
 
-You can register/unregister action handlers dynamicly after store initialization:
+You can register/unregister action handlers dynamically after store initialization:
 
 ```javascript
 var store = new FFlux.MutableStore({...});
@@ -170,37 +226,18 @@ store.registerAction('SOME_ACTION', actionHandler);
 store.unregisterAction('SOME_ACTION');
 ```
 
+And the last, but not least: states. FFlux stores have a state like React components, so you can easily work with it using already familiar functions: 
+`setState`, `getState`, `replaceState` and `getInitialState`.
+
 ### Immutable store
-Immutable stores inherits form [mutable stores](#mutable-store) and enchance thier functionality with [immutable data](http://facebook.github.io/immutable-js/). To explain it on example, let's create some store:
+Immutable store inherits form [mutable store](#mutable-store) and enhances its functionality with [immutable data](http://facebook.github.io/immutable-js/).
 
 ```javascript
-var store = new FFlux.ImmutableStore({
-  /**
-   * Get initial state
-   * By default, initial state equals to empty object
-   * @return {Object} Initial state
-   */
-  getInitialState: function() {
-    return {};
-  }
-});
-```
+var store = new FFlux.ImmutableStore();
 
-At this part we don't see the difference, but let's try to mutate the state:
-
-```javascript
-store.setState({
-  a: {
-    b: {
-      c: [1, 2, 3]
-    }
-  }
-});
-```
-
-`setState` in the example above will [merge](http://facebook.github.io/immutable-js/docs/#/Map/merge) passed object with existing state. If given state is idential to current state, nothing will happend, otherwise `change` event will occur. Let's take a look how to create a new store state and replace current with a new one:
-
-```javascript
+/*
+ * currentState will be empty Immutable.Map
+ */
 var currentState = store.getState();
 
 /**
@@ -215,21 +252,26 @@ function mutator(element) {
   }
 }
 
+/*
+ * If we using immutable data, 
+ * any manipulation with `currentState`
+ * will create a new immutable object
+ */
 var newState = currentState
   .updateIn(['a', 'b', 'c'], mutator)
   .set('b', 'new key')
   .set('c', currentState.getIn(['a', 'b', 'c']));
 
+// currentState is still the same (empty Immutable.Map)
+
 store.replaceState(newState);
 ```
 
-`replaceState` replace your current state with a given one. If given state is idential to current state, nothing will happend, otherwise `change` event will occur.
-
-But if you want more, you can always use full API of [immutable.js](http://facebook.github.io/immutable-js/docs/#/).
+Any store state operation (e.g. `setState` or `replaceState`) will trigger `change` event **only** in the cases when previous state isn't equal to the new one.
 
 ## View layer
-Flux doesn't have any requirements for the view layer.
-For the sake of the simplicity (and package size), I decided not to add any view layer and let programmers decide themselfs what to use. The only thing that fflux.js provides you - it's mixins for auto-binding to the stores:
+FFlux is view-agnostic.
+The only thing that fflux provides you - a mixin for react to bind to store, which would add a `storeDidUpdate` funciton to handle store's update:
 
 ```javascript
 /**
@@ -263,4 +305,10 @@ var MyComponentClass = React.createClass({
  * your component will be redrawn
  */
 React.render(<MyComponent />, document.body);
-``` 
+```
+
+## Roadmap
+- [ ] Finalize the API
+- [ ] Separate stores to mutable and immutable
+- [ ] Write "Getting Started"
+- [ ] Make an example of isomorphic app
