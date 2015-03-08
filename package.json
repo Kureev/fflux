@@ -1,6 +1,6 @@
 {
   "name": "fflux",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Flux-based library to provide some easy API to build architecture",
   "main": "./src/index.js",
   "keywords": [
