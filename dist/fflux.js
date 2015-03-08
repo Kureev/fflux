@@ -5489,9 +5489,9 @@ function FFluxDispatcher() {
 
     /**
      * Invoke dispatch method of the flux dispatcher's instance
-     * @param {string} type Type of the action
-     * @param {object} data Payload of the action
-     * @return {void}
+     * @param {String} type Type of the action
+     * @param {Object} data Payload of the action
+     * @return {Void}
      */
     this.dispatch = function(type, data) {
         invariant(
@@ -5514,7 +5514,8 @@ function FFluxDispatcher() {
     
     /**
      * Bridge to dispatcher's waitFor
-     * @param {array} arrayOfStores Array of stores to wait for
+     * @param {Array} arrayOfStores Array of stores to wait for
+     * @return {Void}
      */
     this.waitFor = function(arrayOfStores) {
         invariant(
@@ -5536,7 +5537,7 @@ _.extend(FFluxDispatcher.prototype, {
     /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
-     * @return {void}
+     * @return {Void}
      */
     register: function(instance) {
         instance.dispatchToken = this._dispatcher.register(function(action) {
@@ -5570,30 +5571,18 @@ _.extend(FFluxDispatcher.prototype, {
 
     /**
      * Unregister store from dispatcher
-     * @param {object} options  Binding identificator or store instance
-     * @return {void}
+     * @param {Object} store Store instance
+     * @return {Void}
      */
-    unregister: function(options) {
+    unregister: function(store) {
         invariant(
-            typeof options === 'string' ||
-            (
-                typeof options === 'object' && 
-                options.dispatchToken !== 'undefined'
-            ),
+            _.isObject(store),
             'Please check type of the parameter you\'re passing to ' +
             'the `waitFor` function. It must be an array of stores ' +
             '(' + typeof action + ' given).'
         );
 
-        var id;
-
-        if (typeof options === 'string') {
-            id = options;
-        } else {
-            id = options.dispatchToken;
-        }
-
-        this._dispatcher.unregister(id);
+        this._dispatcher.unregister(store.dispatchToken);
     }
 });
 
@@ -5612,9 +5601,10 @@ var MutableStore = require('./MutableStore');
  */
 function ImmutableStore(options) {
     _.extend(this, {
-        actions: {},
-        state: Immutable.fromJS(this.getInitialState())
+        actions: {}
     }, options);
+
+    this.state = Immutable.fromJS(this.getInitialState());
 }
 
 /**
@@ -5624,7 +5614,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
     /**
      * Update state
      * @private
-     * @param  {Object|Immutable.Map} newState 
+     * @param  {Object|Immutable} newState 
      * @return {Void}
      */
     _updateState: function(newState) {
@@ -5636,31 +5626,12 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
 
     /**
      * Set new state by merge
-     * @param {Object|Immutable.Map} patch
+     * @see http://facebook.github.io/immutable-js/docs/#/Map/merge
+     * @param {Object|Immutable} patch
+     * @return {Void}
      */
     setState: function(patch) {
         this._updateState(this.state.merge(patch));
-    },
-
-    /**
-     * Set state by path and mutator function
-     * @param {Array} path
-     * @param {Function} stateMutator
-     * @return {Void}
-     */
-    setStateIn: function(path, stateMutator) {
-        invariant(
-            _.isArray(path) && _.isFunction(stateMutator),
-            'FFlux Store: You\'re trying to use a `setState` function ' +
-            'with wrong parameters. `setState(a: Array, b: Function)` expected'
-        );
-        
-        var newState = this.state.deepMergeIn(path, stateMutator);
-
-        if (Immutable.is(this.state, newState) === false) {
-            this.state = newState;
-            this.emitChange();
-        }
     },
 
     /**
@@ -5673,23 +5644,19 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
 
     /**
      * Replace state of the store
-     * @param  {Object} state
+     * @see http://facebook.github.io/immutable-js/docs/#/Map/withMutations
+     * @param  {Object|Immutable} state
      * @return {Void}
      */
     replaceState: function(state) {
         invariant(
-            typeof state === 'object',
+            _.isObject(state),
             'FFlux Store: You\'re attempting to use a non-object type to ' +
             'replace your store\'s state. Function `replaceState` accepts ' +
             'only object as a parameter.'
         );
-
-        var newState = Immutable.fromJS(state);
         
-        if (!Immutable.is(newState, this.state)) {
-            this.state = newState;
-            this.emitChange();
-        }
+        this._updateState(Immutable.fromJS(state));
     }
 });
 
@@ -5707,9 +5674,10 @@ var EventEmitter = require('events').EventEmitter;
  */
 function MutableStore(options) {
     _.extend(this, {
-        actions: {},
-        state: this.getInitialState()
+        actions: {}
     }, options);
+
+    this.state = this.getInitialState();
 }
 
 /**
@@ -5920,6 +5888,7 @@ module.exports = FFlux;
 'use strict';
 
 var invariant = require('flux/lib/invariant');
+var _ = require('../src/helper');
 
 module.exports = {
     /**
@@ -5935,7 +5904,7 @@ module.exports = {
              */
             componentWillMount: function() {
                 invariant(
-                    typeof this.storeDidUpdate === 'function',
+                    _.isFunction(this.storeDidUpdate),
                     'FFlux bind mixin: You\'re attempting to use ' + 
                     typeof this.storeDidUpdate + ' as a function. ' +
                     'Make sure you defined `storeDidUpdate` function ' + 
@@ -5954,5 +5923,5 @@ module.exports = {
         };
     }
 };
-},{"flux/lib/invariant":3}]},{},[9])(9)
+},{"../src/helper":8,"flux/lib/invariant":3}]},{},[9])(9)
 });

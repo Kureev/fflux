@@ -10,9 +10,10 @@ var EventEmitter = require('events').EventEmitter;
  */
 function MutableStore(options) {
     _.extend(this, {
-        actions: {},
-        state: this.getInitialState()
+        actions: {}
     }, options);
+
+    this.state = this.getInitialState();
 }
 
 /**

@@ -1,3 +1,8 @@
+## v0.11.1 (Mar 08, 2015)
+* Fixed a bug with `getInitialState()`
+* Removed deprecated code from dispatcher
+* Updated tests
+
 ## v0.11.0 (Mar 05, 2015)
 * Introduced `immutable` and `mutable` stores
 * Cleaned up unused tests from examples

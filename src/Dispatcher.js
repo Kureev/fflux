@@ -13,9 +13,9 @@ function FFluxDispatcher() {
 
     /**
      * Invoke dispatch method of the flux dispatcher's instance
-     * @param {string} type Type of the action
-     * @param {object} data Payload of the action
-     * @return {void}
+     * @param {String} type Type of the action
+     * @param {Object} data Payload of the action
+     * @return {Void}
      */
     this.dispatch = function(type, data) {
         invariant(
@@ -38,7 +38,8 @@ function FFluxDispatcher() {
     
     /**
      * Bridge to dispatcher's waitFor
-     * @param {array} arrayOfStores Array of stores to wait for
+     * @param {Array} arrayOfStores Array of stores to wait for
+     * @return {Void}
      */
     this.waitFor = function(arrayOfStores) {
         invariant(
@@ -60,7 +61,7 @@ _.extend(FFluxDispatcher.prototype, {
     /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
-     * @return {void}
+     * @return {Void}
      */
     register: function(instance) {
         instance.dispatchToken = this._dispatcher.register(function(action) {
@@ -94,30 +95,18 @@ _.extend(FFluxDispatcher.prototype, {
 
     /**
      * Unregister store from dispatcher
-     * @param {object} options  Binding identificator or store instance
-     * @return {void}
+     * @param {Object} store Store instance
+     * @return {Void}
      */
-    unregister: function(options) {
+    unregister: function(store) {
         invariant(
-            typeof options === 'string' ||
-            (
-                typeof options === 'object' && 
-                options.dispatchToken !== 'undefined'
-            ),
+            _.isObject(store),
             'Please check type of the parameter you\'re passing to ' +
             'the `waitFor` function. It must be an array of stores ' +
             '(' + typeof action + ' given).'
         );
 
-        var id;
-
-        if (typeof options === 'string') {
-            id = options;
-        } else {
-            id = options.dispatchToken;
-        }
-
-        this._dispatcher.unregister(id);
+        this._dispatcher.unregister(store.dispatchToken);
     }
 });
 

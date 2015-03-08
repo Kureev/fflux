@@ -36,14 +36,13 @@ describe('FFlux dispatcher functions', function() {
         dispatcher.unregister(store1);
     });
 
-    it('(un)register', function() {
+    it('register', function() {
         expect(dispatcher.register.bind(dispatcher, store1))
             .not.to.throw(Error);
-        expect(dispatcher.unregister.bind(dispatcher, store1))
-            .not.to.throw(Error);
+    });
 
-        dispatcher.register(store1);
-        expect(dispatcher.unregister.bind(dispatcher, store1.dispatchToken))
+    it('unregister', function() {
+        expect(dispatcher.unregister.bind(dispatcher, store1))
             .not.to.throw(Error);
     });
 

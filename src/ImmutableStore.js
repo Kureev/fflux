@@ -11,9 +11,10 @@ var MutableStore = require('./MutableStore');
  */
 function ImmutableStore(options) {
     _.extend(this, {
-        actions: {},
-        state: Immutable.fromJS(this.getInitialState())
+        actions: {}
     }, options);
+
+    this.state = Immutable.fromJS(this.getInitialState());
 }
 
 /**
