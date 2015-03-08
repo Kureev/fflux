@@ -7,6 +7,7 @@ fflux.js
 
 #### Contents:
 * [What is FFlux?](#what-is-fflux)
+* [Roadmap](#roadmap)
 * [Installation](#installation)
 * [Dispatcher](#dispatcher)
   * [Dispatcher API](#dispatcher-api)
@@ -25,6 +26,14 @@ fflux.js
 * 100% test coverage
 * Detailed error messages (using facebook's `invariant`)
 * Modular: use only parts you need
+
+## Roadmap
+- [ ] Finalize the API
+- [X] Separate stores to mutable and immutable
+- [ ] Write "Getting Started"
+- [ ] Make an example of isomorphic app
+- [ ] Make an example for [Riot.js](https://muut.com/riotjs/)
+- [ ] Find a way to avoid using mixins
 
 ## Installation
 #### npm
@@ -320,11 +329,3 @@ var MyComponentClass = React.createClass({
  */
 React.render(<MyComponent />, document.body);
 ```
-
-## Roadmap
-- [ ] Finalize the API
-- [ ] Separate stores to mutable and immutable
-- [ ] Write "Getting Started"
-- [ ] Make an example of isomorphic app
-- [ ] Make an example for [Riot.js](https://muut.com/riotjs/)
-- [ ] Find a way to avoid using mixins
