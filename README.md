@@ -283,7 +283,7 @@ Any store state operation (e.g. `setState` or `replaceState`) will trigger `chan
 
 ## View layer
 FFlux is view-agnostic.
-The only thing that fflux provides you - a mixin for react to bind to store, which would add a `storeDidUpdate` funciton to handle store's update:
+The only thing that fflux provides you - a mixin for react to bind to store, which would add a `storeDidUpdate` function to handle store's update:
 
 ```javascript
 /**
