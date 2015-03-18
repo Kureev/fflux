@@ -2,17 +2,26 @@
 
 /**
  * Check if param is an array
- * @param  {any}  param
- * @return {boolean}
+ * @param  {Any}  param
+ * @return {Boolean}
  */
 function isArray(param) {
     return Object.prototype.toString.call(param) === '[object Array]';
 }
 
 /**
+ * Check if para is a string
+ * @param {Any} param
+ * @return {Boolean}
+ */
+function isString(param) {
+    return Object.prototype.toString.call(param) === '[object String]';
+}
+
+/**
  * Check if param is an object
- * @param  {any}  param
- * @return {boolean}
+ * @param  {Any}  param
+ * @return {Boolean}
  */
 function isObject(param) {
     return Object.prototype.toString.call(param) === '[object Object]';
@@ -20,8 +29,8 @@ function isObject(param) {
 
 /**
  * Check if param is a function
- * @param  {any}  param
- * @return {boolean}
+ * @param  {Any}  param
+ * @return {Boolean}
  */
 function isFunction(param) {
     return Object.prototype.toString.call(param) === '[object Function]';
@@ -29,8 +38,8 @@ function isFunction(param) {
 
 /**
  * Get object's keys
- * @param  {object} obj
- * @return {array}  Array of the keys
+ * @param  {Object} obj
+ * @return {Array}  Array of the keys
  */
 function keys(obj) {
     return Object.keys(obj);
@@ -38,8 +47,8 @@ function keys(obj) {
 
 /**
  * Extend object by other obect(s)
- * @param  {object} obj Object to extend
- * @return {object}     Extended object
+ * @param  {Object} obj Object to extend
+ * @return {Object}     Extended object
  */
 function extend(obj) {
     var source, prop;
@@ -68,6 +77,7 @@ function clone(obj) {
 module.exports = {
     keys: keys,
     isArray: isArray,
+    isString: isString,
     isObject: isObject,
     isFunction: isFunction,
     extend: extend,

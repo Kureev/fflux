@@ -129,6 +129,14 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
         if (this.actions[action]) {
             delete this.actions[action];
         }
+    },
+
+    /**
+     * Dehydrate the store
+     * @return {String}
+     */
+    dehydrate: function() {
+        // @todo
     }
 });
 
