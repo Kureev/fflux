@@ -136,7 +136,16 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
      * @return {String}
      */
     dehydrate: function() {
-        // @todo
+        return JSON.stringify(this.state);
+    },
+
+    /**
+     * Rehydrate the store
+     * @param {String} dataString Data for rehydration
+     * @return {Void}
+     */
+    rehydrate: function(dataString) {
+        this.state = JSON.parse(dataString);
     }
 });
 

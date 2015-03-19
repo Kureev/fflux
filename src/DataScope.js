@@ -19,10 +19,12 @@ function parseDehydratedState(dehydrated) {
         'dehydrated data, but provided string is corrupted.'
     );
 
-    stringifiedStores.forEach(function(store) {
-        parsed = JSON.parse(store);
-        stores[parsed.name] = parsed.data;
-    });
+    stringifiedStores
+        .filter(function(i) { return i.length; })
+        .forEach(function(store) {
+            parsed = JSON.parse(store);
+            stores[parsed.name] = parsed.data;
+        });
 
     return stores;
 }
@@ -80,11 +82,15 @@ DataScope.prototype = {
         );
 
         var parsedStores = parseDehydratedState(dehydrated);
+        var stores = this._stores;
 
-        var registeredStores = Object.keys(this._stores);
-        var storesToRehydrate = Object.keys(parsedStores);
-
-        // @todo Compare and merge
+        Object.keys(stores).forEach(function(storeName) {
+            invariant(
+                parsedStores[storeName],
+                'Dehydrated state has no data for ' + storeName + ' store.'
+            );
+            stores[storeName].rehydrate(parsedStores[storeName]);
+        });
 
         return this;
     },

@@ -7,7 +7,7 @@ var expect = chai.expect;
 var jsdom = require("jsdom").jsdom;
 
 global.document = jsdom();
-global.window = global.document.parentWindow;
+global.window = global.document.defaultView;
 
 describe('FFlux static functions', function() {
     

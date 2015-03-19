@@ -65,7 +65,22 @@ describe('FFlux mutable store functions', function() {
         expect(spy).to.have.been.called.once(); 
     });
 
-    it('(un)registerAction', function() {
+    it('dehydrate & rehydrate', function() {
+        store.replaceState({
+            a: 1,
+            b: 2
+        });
+
+        var dataString = store.dehydrate();
+
+        var testStore = new FFlux.MutableStore();
+        testStore.rehydrate(dataString);
+
+        expect(store.state.a).to.be.equal(testStore.state.a);
+        expect(store.state.b).to.be.equal(testStore.state.b);
+    });
+
+    it('registerAction & unregisterAction', function() {
         var actionName = 'STORE_TEST';
         var savedActions = store.getActions();
 
