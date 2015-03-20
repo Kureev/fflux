@@ -1,6 +1,6 @@
 'use strict';
 
-var ImmutableStore = require('../src/immutableStore.js');
+var ImmutableStore = require('../src/ImmutableStore');
 var chai = require('chai');
 var expect = chai.expect;
 
