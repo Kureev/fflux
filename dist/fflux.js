@@ -5775,6 +5775,24 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
         );
         
         this._updateState(Immutable.fromJS(state));
+    },
+
+
+    /**
+     * Dehydrate the store
+     * @return {String}
+     */
+    dehydrate: function() {
+        return JSON.stringify(this.state.toJSON());
+    },
+
+    /**
+     * Rehydrate the store
+     * @param {String} dataString Data for rehydration
+     * @return {Void}
+     */
+    rehydrate: function(dataString) {
+        this.state = Immutable.fromJS(JSON.parse(dataString));
     }
 });
 

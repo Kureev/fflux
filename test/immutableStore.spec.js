@@ -40,8 +40,10 @@ describe('FFlux immutable store functions', function() {
             b: 20
         });
 
-        expect(store.state.get('a')).to.be.equal(10);
-        expect(store.state.get('b')).to.be.equal(20);
+        var state = store.getState();
+
+        expect(state.get('a')).to.be.equal(10);
+        expect(state.get('b')).to.be.equal(20);
         
         expect(spy).to.have.been.called.once();
 
@@ -50,6 +52,24 @@ describe('FFlux immutable store functions', function() {
         });
 
         expect(spy).to.have.been.called.once();
+    });
+
+    it('dehydrate & rehydrate', function() {
+        store.replaceState({
+            a: 1,
+            b: 2
+        });
+
+        var dataString = store.dehydrate();
+
+        var testStore = new FFlux.ImmutableStore();
+        testStore.rehydrate(dataString);
+
+        var oldState = store.getState();
+        var newState = testStore.getState();
+
+        expect(newState.a).to.be.equal(oldState.a);
+        expect(newState.b).to.be.equal(oldState.b);
     });
 
     it('replaceState', function() {
