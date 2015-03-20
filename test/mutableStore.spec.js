@@ -1,6 +1,6 @@
 'use strict';
 
-var FFlux = require('../src/index.js');
+var MutableStore = require('../src/MutableStore');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -11,7 +11,7 @@ chai.use(require('chai-spies'));
 
 describe('FFlux mutable store functions', function() {
 
-    var store = new FFlux.MutableStore();
+    var store = new MutableStore();
 
     it('emitChange', function() {
         var spy = chai.spy();
@@ -73,7 +73,7 @@ describe('FFlux mutable store functions', function() {
 
         var dataString = store.dehydrate();
 
-        var testStore = new FFlux.MutableStore();
+        var testStore = new MutableStore();
         testStore.rehydrate(dataString);
 
         expect(store.state.a).to.be.equal(testStore.state.a);

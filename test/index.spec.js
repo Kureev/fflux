@@ -1,6 +1,6 @@
 'use strict';
 
-var FFlux = require('../src/index.js');
+var FFlux = require('../src');
 var React = require('react/addons');
 var chai = require('chai');
 var expect = chai.expect;

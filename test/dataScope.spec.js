@@ -1,20 +1,21 @@
 'use strict';
 
-var FFlux = require('../src/index.js');
+var DataScope = require('../src/DataScope');
+var MutableStore = require('../src/MutableStore');
 var chai = require('chai');
 var expect = chai.expect;
 
 describe('DataScope', function() {
-    var scope = new FFlux.DataScope();
+    var scope = new DataScope();
 
     it('register store at scope', function() {
-        var storeA = new FFlux.MutableStore({
+        var storeA = new MutableStore({
             getInitialState: function() {
                 return { a: 10 };
             }
         });
 
-        var storeB = new FFlux.MutableStore({
+        var storeB = new MutableStore({
             getInitialState: function() {
                 return { b: 20 };
             }
@@ -29,9 +30,9 @@ describe('DataScope', function() {
     it('dehydrate & rehydrate data scope', function() {
         var dataString = scope.dehydrate();
         
-        var testScope = new FFlux.DataScope();
-        testScope.register('storeA', new FFlux.MutableStore());
-        testScope.register('storeB', new FFlux.MutableStore());
+        var testScope = new DataScope();
+        testScope.register('storeA', new MutableStore());
+        testScope.register('storeB', new MutableStore());
 
         testScope.rehydrate(dataString);
 

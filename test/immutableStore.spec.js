@@ -1,6 +1,6 @@
 'use strict';
 
-var FFlux = require('../src/index.js');
+var ImmutableStore = require('../src/immutableStore.js');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -11,7 +11,7 @@ chai.use(require('chai-spies'));
 
 describe('FFlux immutable store functions', function() {
 
-    var store = new FFlux.ImmutableStore();
+    var store = new ImmutableStore();
 
     it('_updateState', function() {
         var state = store.getState();
@@ -62,7 +62,7 @@ describe('FFlux immutable store functions', function() {
 
         var dataString = store.dehydrate();
 
-        var testStore = new FFlux.ImmutableStore();
+        var testStore = new ImmutableStore();
         testStore.rehydrate(dataString);
 
         var oldState = store.getState();
