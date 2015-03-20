@@ -17,6 +17,7 @@ fflux.js
   * [Store API](#store-api)
   * [Mutable Store](#mutable-store)
   * [Immutable Store](#immutable-store)
+  * [Data Scope](#data-scope)
 * [View layer](#view-layer)
 
 ## What is FFlux?
