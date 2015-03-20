@@ -129,6 +129,23 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
         if (this.actions[action]) {
             delete this.actions[action];
         }
+    },
+
+    /**
+     * Dehydrate the store
+     * @return {String}
+     */
+    dehydrate: function() {
+        return JSON.stringify(this.state);
+    },
+
+    /**
+     * Rehydrate the store
+     * @param {String} dataString Data for rehydration
+     * @return {Void}
+     */
+    rehydrate: function(dataString) {
+        this.state = JSON.parse(dataString);
     }
 });
 

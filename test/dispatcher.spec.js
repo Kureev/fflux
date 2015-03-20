@@ -1,6 +1,7 @@
 'use strict';
 
-var FFlux = require('../src/index.js');
+var Dispatcher = require('../src/Dispatcher');
+var MutableStore = require('../src/MutableStore');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -8,9 +9,9 @@ chai.use(require('chai-spies'));
 
 describe('FFlux dispatcher functions', function() {
 
-    var dispatcher = new FFlux.Dispatcher();
-    var store1 = new FFlux.MutableStore();
-    var store2 = new FFlux.MutableStore();
+    var dispatcher = new Dispatcher();
+    var store1 = new MutableStore();
+    var store2 = new MutableStore();
 
     // Test data
     var actionName = 'DISPATCH_TEST';

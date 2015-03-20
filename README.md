@@ -20,15 +20,17 @@ fflux.js
 * [View layer](#view-layer)
 
 ## What is FFlux?
-* Dispatcher, Store, React mixin + simple API to use them together
+* Dispatcher, Store, React mixin
+* Simple API
 * Two types of stores: [mutable](#mutable-store) & [immutable](#immutable-store)
-* No singletons (can be used for isomorphic apps)
+* Isomorphic friendly (no singletons)
 * 100% test coverage
 * Detailed error messages (using facebook's `invariant`)
 * Modular: use only parts you need
 
 ## Roadmap
 - [ ] Finalize the API
+- [X] Create a data scope for simple data (de|re)hydration
 - [X] Separate stores to mutable and immutable
 - [ ] Write "Getting Started"
 - [ ] Make an example of isomorphic app
@@ -280,6 +282,41 @@ store.replaceState(newState);
 ```
 
 Any store state operation (e.g. `setState` or `replaceState`) will trigger `change` event **only** in the cases when previous state isn't equal to the new one.
+
+### Data Scope
+```javascript
+var scope = new FFlux.DataScope();
+var someStore = new FFlux.MutableStore();
+```
+Provides some functionality for stores (de)serialization. Basically, it's just a container for stores with a tiny API:
+* **register** - register store in the scope
+  ```javascript
+  scope.register('someStore', someStore);
+  ```
+
+* **get** - get registered store by name
+  ```javascript
+  scope.get('someStore');
+  ```
+
+* **unregister** - unregister store from the scope
+  ```javascript
+  scope.unregister('someStore');
+  ```
+
+* **dehydrate** - stringify store's state
+  ```javascript
+  var dataString = scope.dehydrate();
+  ```
+
+* **rehydrate** - fill store with pre-served data
+  ```javascript
+  scope.rehydrate(dataString)
+  ```
+
+Once you registered all of your stores in the scope, you can simply `dehydrate` it and get a data string, using which you can `rehydrate` scope back in the future. It's especially handy when you're pre-fetching data on the back-end and want to transmit it to front-end.
+
+For further reading check [this example](https://github.com/Kureev/fflux-isomorphic-example).
 
 ## View layer
 FFlux is view-agnostic.
