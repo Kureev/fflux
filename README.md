@@ -11,7 +11,6 @@ fflux.js
 * [Installation](#installation)
 * [Dispatcher](#dispatcher)
   * [Dispatcher API](#dispatcher-api)
-* [Actions](#actions)
 * [Action Creators](#action-creators)
 * [Stores](#stores)
   * [Store API](#store-api)
@@ -21,8 +20,8 @@ fflux.js
 * [View layer](#view-layer)
 
 ## What is FFlux?
-* Dispatcher, Store, React mixin
-* Simple API
+* Simple way to use flux architecture
+* Minimum API
 * Two types of stores: [mutable](#mutable-store) & [immutable](#immutable-store)
 * Isomorphic friendly (no singletons)
 * 100% test coverage
@@ -32,6 +31,8 @@ fflux.js
 ## Roadmap
 - [ ] Finalize the API
 - [X] Create a data scope for simple data (de|re)hydration
+- [X] Create application abstraction
+- [X] Create action scope abstraction
 - [X] Separate stores to mutable and immutable
 - [ ] Write "Getting Started"
 - [ ] Make an example of isomorphic app
@@ -50,12 +51,11 @@ bower install fflux
 ```
 
 ## Dispatcher
-FFlux dispatcher extends standard Flux.Dispatcher implementation.
+FFlux dispatcher extends [facebook's dispatcher](https://facebook.github.io/flux/docs/dispatcher.html#content) implementation.
 
 ```javascript
-var dispatcher = new FFlux.Dispatcher();
-
-// ...
+var Dispatcher = require('fflux/src/Dispatcher');
+var dispatcher = new Dispatcher();
 
 dispatcher.dispatch('SOME_ACTION', payload);
 ```
@@ -86,40 +86,41 @@ dispatcher.dispatch('SOME_ACTION', payload);
   dispatcher.waitFor([someStore]);
   ```
 
-## Actions
-Actions are used for sending messages to dispatcher:
-
-```javascript
-dispatcher.dispatch('SOME_ACTION', data);
-```
-
-Where `data` is a JS object with action's payload.
-
 ## Action Creators
-Action Creators are commonly used to make a bridge between front-end and back-end parts of your application. All async stuff should happend here.
+Action Creators are commonly used to fetch/send data. All async stuff should happend here.
 
 ```javascript
-var dispatcher = require('dispatcher');
+var request = require('superagent');
 
 var ActionCreatorExample = {
   /**
    * Fetch data from server
+   * @param {Function} dispatch
    * @param {Object} criteria
    */
-  fetchData: function(criteria) {
-    $.get(someUrl, criteria, function(response) {
-      dispatcher.dispatch('FETCH_DATA', response);
-    });
+  fetchData: function(dispatch, criteria) {
+    request
+      .get('/some/url')
+      .end(function(res) {
+        dispatch('FETCH_DATA', res);
+      });
   },
 
   /*
    * Post data to the server
+   * @param {Function} dispatch
    * @param {Object} data
    */
-  postData: function(data) {
-    $.post(someUrl, data, function(response) {
-      dispatcher.dispatch('POST_DATA', response);
-    });
+  postData: function(dispatch, data) {
+    request
+      .post('/some/url')
+      .send(data)
+      .end(function(err, res) {
+        if (err) {
+          dispatch('FETCH_DATA_ERROR', err);
+        }
+        dispatch('POST_DATA', res);
+      });
   }
 };
 ```

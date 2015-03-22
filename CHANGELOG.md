@@ -1,3 +1,15 @@
+## v0.13.0 (Mar 22, 2015)
+* Introduced Application
+* Introduced ActionScope
+* New interface of shared actions
+
+## v0.12.1 (Mar 20, 2015)
+* Fixed issue with initializing DataScope
+
+## v0.12.0 (Mar 20, 2015)
+* Introduced DataScope
+* Added 2 functions to stores: dehydrate & rehydrate
+
 ## v0.11.2 (Mar 08, 2015)
 * Examples: TODO list adapted for v0.11.*
 * Major readme update
