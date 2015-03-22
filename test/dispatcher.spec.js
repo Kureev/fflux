@@ -48,8 +48,8 @@ describe('FFlux dispatcher functions', function() {
     });
 
     it('waitFor', function() {
-        dispatcher.register(store1);
         dispatcher.register(store2);
+        dispatcher.register(store1);
 
         function normalHandler(payload) {
             store1.setState(payload);

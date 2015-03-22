@@ -2,6 +2,7 @@
 
 var DataScope = require('../src/DataScope');
 var MutableStore = require('../src/MutableStore');
+var _ = require('../src/helper');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -25,6 +26,10 @@ describe('DataScope', function() {
             .not.to.throw(Error);
         expect(scope.register.bind(scope, 'storeB', storeB))
             .not.to.throw(Error);
+    });
+
+    it('should return object with stores', function() {
+        expect(_.isObject(scope.getAll())).to.be.equal(true);
     });
 
     it('dehydrate & rehydrate data scope', function() {

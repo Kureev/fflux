@@ -1,23 +1,25 @@
 'use strict';
 
-var Dispatcher = require('flux/lib/Dispatcher');
+var FBDispatcher = require('flux/lib/Dispatcher');
 var invariant = require('flux/lib/invariant');
 var _ = require('./helper');
 
-function FFluxDispatcher() {
+function Dispatcher() {
     /**
      * Create facebook's dispatcher realization
      * @type {Dispatcher}
      */
-    this._dispatcher = new Dispatcher();
+    this._dispatcher = new FBDispatcher();
+}
 
+_.extend(Dispatcher.prototype, {
     /**
      * Invoke dispatch method of the flux dispatcher's instance
      * @param {String} type Type of the action
      * @param {Object} data Payload of the action
      * @return {Void}
      */
-    this.dispatch = function(type, data) {
+    dispatch: function(type, data) {
         invariant(
             typeof type === 'string' &&
             (
@@ -30,18 +32,18 @@ function FFluxDispatcher() {
             'must be an object/undefined(' + typeof data + ' given).'
         );
 
-        this._dispatcher.dispatch.call(this._dispatcher, {
+        this._dispatcher.dispatch({
             type: type,
             data: data
         });
-    };
+    },
     
     /**
      * Bridge to dispatcher's waitFor
      * @param {Array} arrayOfStores Array of stores to wait for
      * @return {Void}
      */
-    this.waitFor = function(arrayOfStores) {
+    waitFor: function(arrayOfStores) {
         invariant(
             Object.prototype.toString.call(arrayOfStores) === '[object Array]',
             'Please check type of the parameter you\'re passing ' +
@@ -53,11 +55,9 @@ function FFluxDispatcher() {
             return store.dispatchToken;
         });
 
-        this._dispatcher.waitFor.call(this._dispatcher, arrayOfStores);
-    };
-}
+        this._dispatcher.waitFor(arrayOfStores);
+    },
 
-_.extend(FFluxDispatcher.prototype, {
     /**
      * Register store to dispatcher
      * @param {FFluxStore} instance     FFluxStore instance
@@ -110,4 +110,4 @@ _.extend(FFluxDispatcher.prototype, {
     }
 });
 
-module.exports = FFluxDispatcher;
+module.exports = Dispatcher;

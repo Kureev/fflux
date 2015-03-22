@@ -35,6 +35,7 @@ function parseDehydratedState(dehydrated) {
  */
 function DataScope() {
     this._stores = {};
+    this.length = 0;
 }
 
 DataScope.prototype = {
@@ -45,6 +46,7 @@ DataScope.prototype = {
      */
     register: function(name, store) {
         this._stores[name] = store;
+        this.length++;
 
         return this;
     },
@@ -56,6 +58,7 @@ DataScope.prototype = {
      */
     unregister: function(name) {
         this._stores[name] = null;
+        this.length--;
 
         return this;
     },
@@ -67,6 +70,14 @@ DataScope.prototype = {
      */
     get: function(name) {
         return this._stores[name];
+    },
+
+    /**
+     * Get all registered stores
+     * @return {Object}
+     */
+    getAll: function() {
+        return this._stores;
     },
 
     /**
