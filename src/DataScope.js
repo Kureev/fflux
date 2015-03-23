@@ -101,8 +101,8 @@ DataScope.prototype = {
     rehydrate: function(dehydrated) {
         invariant(
             _.isString(dehydrated) ||
-            _.isObject(dehydrated),
-            'Dehydrated data must be a string or object (' + 
+            _.isArray(dehydrated),
+            'Dehydrated data must be a string or array (' + 
             typeof dehydrated + ' given)'
         );
 
@@ -111,11 +111,13 @@ DataScope.prototype = {
             'You can\'t rehydrate empty data scope'
         );
 
-        var parsedStores;
         var stores = this._stores;
+        var parsedStores = {};
 
-        if (_.isObject(dehydrated)) {
-            parsedStores = dehydrated;
+        if (_.isArray(dehydrated)) {
+            dehydrated.forEach(function(store) {
+                parsedStores[store.name] = store.data;
+            });
         } else {
             parsedStores = parseDehydratedState(dehydrated);
         }
