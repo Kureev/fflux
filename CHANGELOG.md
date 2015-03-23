@@ -4,6 +4,7 @@
 * New interface of shared actions
 * DataScope need dispatcher as a parameter
 * DataScope automaticly attach stores to dispatcher
+* Stores now accept string|object for rehydration (only string before)
 * Fix: Store's dispatchToken will be automaticly removed after store unregister
 
 ## v0.12.1 (Mar 20, 2015)
