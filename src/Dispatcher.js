@@ -107,6 +107,7 @@ _.extend(Dispatcher.prototype, {
         );
 
         this._dispatcher.unregister(store.dispatchToken);
+        store.dispatchToken = null;
     }
 });
 

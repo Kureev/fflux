@@ -9,11 +9,7 @@ var expect = chai.expect;
 
 describe('ActionScope', function() {
     var dispatcher = new Dispatcher();
-    
-    var actions = new ActionScope({
-        dispatcher: dispatcher
-    });
-
+    var actions = new ActionScope(dispatcher);
     var store = new MutableStore();
 
     dispatcher.register(store);

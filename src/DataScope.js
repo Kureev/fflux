@@ -32,10 +32,18 @@ function parseDehydratedState(dehydrated) {
 /**
  * DataScope constructor
  * @constructor
+ * @param {Dispatcher} dispatcher
  */
-function DataScope() {
+function DataScope(dispatcher) {
     this._stores = {};
     this.length = 0;
+
+    invariant(
+        dispatcher,
+        'You can\'t initialize data scope without dispatcher'
+    );
+
+    this._dispatcher = dispatcher;
 }
 
 DataScope.prototype = {
@@ -45,6 +53,10 @@ DataScope.prototype = {
      * @return {Scope}
      */
     register: function(name, store) {
+        if (!store.dispatchToken) {
+            this._dispatcher.register(store);
+        }
+
         this._stores[name] = store;
         this.length++;
 
@@ -57,6 +69,7 @@ DataScope.prototype = {
      * @return {Scope}
      */
     unregister: function(name) {
+        this._dispatcher.unregister(this._stores[name]);
         this._stores[name] = null;
         this.length--;
 
@@ -87,13 +100,25 @@ DataScope.prototype = {
      */
     rehydrate: function(dehydrated) {
         invariant(
-            _.isString(dehydrated),
-            'Dehydrated data must be a string (' + 
+            _.isString(dehydrated) ||
+            _.isObject(dehydrated),
+            'Dehydrated data must be a string or object (' + 
             typeof dehydrated + ' given)'
         );
 
-        var parsedStores = parseDehydratedState(dehydrated);
+        invariant(
+            this.length,
+            'You can\'t rehydrate empty data scope'
+        );
+
+        var parsedStores;
         var stores = this._stores;
+
+        if (_.isObject(dehydrated)) {
+            parsedStores = dehydrated;
+        } else {
+            parsedStores = parseDehydratedState(dehydrated);
+        }
 
         Object.keys(stores).forEach(function(storeName) {
             invariant(

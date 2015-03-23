@@ -6,18 +6,16 @@ var _ = require('./helper');
 /**
  * Action scope constructor
  * @constructor
- * @param {Object} options
+ * @param {Dispatcher} dispatcher
  */
-function ActionScope(options) {
+function ActionScope(dispatcher) {
     invariant(
-        options.dispatcher,
-        'You must pass a valid dispatcher instance to ' +
-        'ActionScope constructor, "%s" given',
-        options.dispatcher
+        dispatcher,
+        'You can\'t initialize action scope without dispatcher'
     );
 
     this._actions = {};
-    this._dispatcher = options.dispatcher;
+    this._dispatcher = dispatcher;
 }
 
 ActionScope.prototype = {

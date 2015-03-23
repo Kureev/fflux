@@ -4,16 +4,16 @@ var Dispatcher = require('./Dispatcher');
 var DataScope = require('./DataScope');
 var ActionScope = require('./ActionScope');
 
-function Application() {
-    this._dispatcher = new Dispatcher();
+function Application(data) {
+    var dispatcher = new Dispatcher();
     
-    this._dataScope = new DataScope({
-        dispatcher: this._dispatcher
-    });
+    this._dispatcher = dispatcher;
+    this._dataScope = new DataScope(dispatcher);
+    this._actionScope = new ActionScope(dispatcher);
 
-    this._actionScope = new ActionScope({
-        dispatcher: this._dispatcher
-    });
+    if (data) {
+        DataScope.rehydrate(data);
+    }
 }
 
 Application.prototype = {

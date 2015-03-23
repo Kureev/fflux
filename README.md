@@ -50,6 +50,14 @@ npm install fflux
 bower install fflux
 ```
 
+## Application
+`Application` is an entry point for fflux.
+```javascript
+var Application = require('fflux/src/Application');
+
+var app = new Application();
+```
+
 ## Dispatcher
 FFlux dispatcher extends [facebook's dispatcher](https://facebook.github.io/flux/docs/dispatcher.html#content) implementation.
 
@@ -87,8 +95,7 @@ dispatcher.dispatch('SOME_ACTION', payload);
   ```
 
 ## Action Creators
-Action Creators are commonly used to fetch/send data. All async stuff should happend here.
-
+Action Creators are commonly used to fetch/post data. All async stuff should happend here.
 ```javascript
 var request = require('superagent');
 
@@ -123,7 +130,11 @@ var ActionCreatorExample = {
       });
   }
 };
+
+
 ```
+
+
 
 ## Stores
 In fflux, you can use mutable and immutable stores. If you want to work with store's state as native javascript object - you should use [mutable store](#mutable-store). If you prefer immutable structures, [immutable stores](#immutable-store) - is your choice.

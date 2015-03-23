@@ -2,12 +2,14 @@
 
 var DataScope = require('../src/DataScope');
 var MutableStore = require('../src/MutableStore');
+var Dispatcher = require('../src/Dispatcher');
 var _ = require('../src/helper');
 var chai = require('chai');
 var expect = chai.expect;
 
 describe('DataScope', function() {
-    var scope = new DataScope();
+    var dispatcher = new Dispatcher();
+    var scope = new DataScope(dispatcher);
 
     it('register store at scope', function() {
         var storeA = new MutableStore({
@@ -34,8 +36,8 @@ describe('DataScope', function() {
 
     it('dehydrate & rehydrate data scope', function() {
         var dataString = scope.dehydrate();
+        var testScope = new DataScope(dispatcher);
         
-        var testScope = new DataScope();
         testScope.register('storeA', new MutableStore());
         testScope.register('storeB', new MutableStore());
 

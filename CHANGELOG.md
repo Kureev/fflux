@@ -2,6 +2,9 @@
 * Introduced Application
 * Introduced ActionScope
 * New interface of shared actions
+* DataScope need dispatcher as a parameter
+* DataScope automaticly attach stores to dispatcher
+* Fix: Store's dispatchToken will be automaticly removed after store unregister
 
 ## v0.12.1 (Mar 20, 2015)
 * Fixed issue with initializing DataScope
