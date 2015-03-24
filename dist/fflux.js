@@ -5788,7 +5788,9 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
      * @return {Void}
      */
     setState: function(patch) {
-        this._updateState(this.state.merge(patch));
+        var currentState = this.getState() || Immutable.Map();
+
+        this._updateState(currentState.merge(patch));
     },
 
     /**
