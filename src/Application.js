@@ -7,21 +7,29 @@ var DataScope = require('./DataScope');
 var ActionScope = require('./ActionScope');
 
 /**
+ * Register object in the scope
+ * @param  {Object} obj
+ * @param  {Object} scope
+ * @return {Object}
+ */
+function register(obj, scope) {
+    if (obj) {
+        Object.keys(obj).forEach(function(key) {
+            scope.register(key, obj[key]);
+        });
+    }
+
+    return scope;
+}
+
+/**
  * Create data scope
  * @param  {Dispatcher} dispatcher
  * @param  {Object} stores
  * @return {DataScope}
  */
 function createDataScope(dispatcher, stores) {
-    var scope = new DataScope(dispatcher);
-
-    if (stores) {
-        Object.keys(stores).forEach(function(key) {
-            scope.register(key, stores[key]);
-        });
-    }
-
-    return scope;
+    return register(stores, new DataScope(dispatcher));
 }
 
 /**
@@ -31,15 +39,7 @@ function createDataScope(dispatcher, stores) {
  * @return {ActionScope}
  */
 function createAcionScope(dispatcher, actions) {
-    var scope = new ActionScope(dispatcher);
-
-    if (actions) {
-        Object.keys(actions).forEach(function(key) {
-            scope.register(key, actions[key]);
-        });
-    }
-
-    return scope;
+    return register(actions, new ActionScope(dispatcher));
 }
 
 function Application(schema) {
