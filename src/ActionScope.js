@@ -27,7 +27,7 @@ ActionScope.prototype = {
     register: function(name, actions) {
         invariant(
             _.isObject(actions),
-            'Action must be a function, ' +
+            'Action Creator must be an object, ' +
             '%s given',
             typeof actions
         );

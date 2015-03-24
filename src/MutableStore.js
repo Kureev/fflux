@@ -145,15 +145,17 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
      * @return {Void}
      */
     rehydrate: function(data) {
-        var state;
-
-        if (_.isObject(data)) {
-            state = data;
-        } else {
-            state = JSON.parse(data);
-        }
-
+        var state = this._parseDehydratedState(data);
         this.state = state;
+    },
+
+    /**
+     * Parse passed dehydrated state
+     * @param  {String|Object} data
+     * @return {Object}
+     */
+    _parseDehydratedState: function(data) {
+        return _.isObject(data) ? data : JSON.parse(data);
     }
 });
 

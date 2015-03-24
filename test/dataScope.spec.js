@@ -34,10 +34,39 @@ describe('DataScope', function() {
         expect(_.isObject(scope.getAll())).to.be.equal(true);
     });
 
-    it('dehydrate & rehydrate data scope', function() {
+    it('dehydrate data scope', function() {
+        expect(scope.dehydrate.bind(scope)).not.to.throw(Error);
+
+        var dataString = scope.dehydrate();
+        expect(_.isString(dataString)).to.be.equal(true);
+    });
+
+    it('rehydrate data scope from object', function() {
+        var testScope = new DataScope(dispatcher);
+
+        testScope.register('storeA', new MutableStore());
+        testScope.register('storeB', new MutableStore());
+
+        testScope.rehydrate([{
+            name: 'storeA',
+            data: {
+                a: 10
+            }
+        }, {
+            name: 'storeB',
+            data: {
+                b: 20
+            }
+        }]);
+
+        expect(testScope.get('storeA').getState().a).to.be.equal(10);
+        expect(testScope.get('storeB').getState().b).to.be.equal(20);
+    });
+
+    it('rehydrate data scope from string', function() {
         var dataString = scope.dehydrate();
         var testScope = new DataScope(dispatcher);
-        
+
         testScope.register('storeA', new MutableStore());
         testScope.register('storeB', new MutableStore());
 

@@ -86,14 +86,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
      * @return {Void}
      */
     rehydrate: function(data) {
-        var state;
-
-        if (_.isObject(data)) {
-            state = data;
-        } else {
-            state = JSON.parse(data);
-        }
-
+        var state = this._parseDehydratedState(data);
         this.state = Immutable.fromJS(state);
     }
 });

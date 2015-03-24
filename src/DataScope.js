@@ -138,22 +138,17 @@ DataScope.prototype = {
      * @return {String}
      */
     dehydrate: function() {
-        var keys = Object.keys(this._stores);
         var dehydrated = '';
-        var name;
-        var item;
+        var stores = this._stores;
 
-        for (var i in keys) {
-            name = keys[i];
-            item = this._stores[name];
-
-            if (item !== null) {
+        Object.keys(stores).map(function(key) {
+            if (stores[key]) {
                 dehydrated += JSON.stringify({
-                    name: name,
-                    data: item.dehydrate()
+                    name: key,
+                    data: stores[key].dehydrate()
                 }) + ';';
             }
-        }
+        });
 
         return dehydrated;
     }
