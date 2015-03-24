@@ -5518,7 +5518,7 @@ function DataScope(dispatcher) {
 DataScope.prototype = {
     /**
      * Register store in the data scope
-     * @param {Store} store 
+     * @param {Store} store
      * @return {Scope}
      */
     register: function(name, store) {
@@ -5534,7 +5534,7 @@ DataScope.prototype = {
 
     /**
      * Unregister store from the data scope
-     * @param  {Store} store 
+     * @param  {Store} store
      * @return {Scope}
      */
     unregister: function(name) {
@@ -5547,7 +5547,7 @@ DataScope.prototype = {
 
     /**
      * Get store by registered name
-     * @param  {String} name 
+     * @param  {String} name
      * @return {Store}
      */
     get: function(name) {
@@ -5571,7 +5571,7 @@ DataScope.prototype = {
         invariant(
             _.isString(dehydrated) ||
             _.isArray(dehydrated),
-            'Dehydrated data must be a string or array (' + 
+            'Dehydrated data must be a string or array (' +
             typeof dehydrated + ' given)'
         );
 
@@ -5669,7 +5669,7 @@ _.extend(Dispatcher.prototype, {
             data: data
         });
     },
-    
+
     /**
      * Bridge to dispatcher's waitFor
      * @param {Array} arrayOfStores Array of stores to wait for
@@ -5679,7 +5679,7 @@ _.extend(Dispatcher.prototype, {
         invariant(
             Object.prototype.toString.call(arrayOfStores) === '[object Array]',
             'Please check type of the parameter you\'re passing ' +
-            'to the `waitFor` function. It must be an array of stores ' + 
+            'to the `waitFor` function. It must be an array of stores ' +
             '(' + typeof action + ' given).'
         );
 
@@ -5702,7 +5702,7 @@ _.extend(Dispatcher.prototype, {
             // Get array of registered actions
             var actionKeys = _.keys(instance.actions);
 
-            // If we have such actions listener(s), invoke 
+            // If we have such actions listener(s), invoke
             // related function with action provided
             actionKeys.forEach(function(key) {
                 if (key === type) {
@@ -5718,7 +5718,7 @@ _.extend(Dispatcher.prototype, {
                     invariant((typeof handler === 'function'),
                         'Function for action ' + type + 'isn\'t defined'
                     );
-                    
+
                     handler.call(instance, action.data);
                 }
             });
@@ -5771,7 +5771,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
     /**
      * Update state
      * @private
-     * @param  {Object|Immutable} newState 
+     * @param  {Object|Immutable} newState
      * @return {Void}
      */
     _updateState: function(newState) {
@@ -5812,7 +5812,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
             'replace your store\'s state. Function `replaceState` accepts ' +
             'only object as a parameter.'
         );
-        
+
         this._updateState(Immutable.fromJS(state));
     },
 
@@ -5838,7 +5838,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
         } else {
             state = JSON.parse(data);
         }
-        
+
         this.state = Immutable.fromJS(state);
     }
 });
@@ -5853,7 +5853,7 @@ var EventEmitter = require('events').EventEmitter;
 
 /**
  * Mutable store instance constructor
- * @param {Object} options 
+ * @param {Object} options
  */
 function MutableStore(options) {
     _.extend(this, {
@@ -5895,7 +5895,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
             'FFlux Store: You\'re trying to use a `setState` function ' +
             'with a non-object parameter.'
         );
-        
+
         _.extend(this.state, patch);
 
         this.emitChange();
@@ -5951,7 +5951,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
 
         invariant(
             !this.actions[action],
-            'You\'ve already registered action with `' + action + 
+            'You\'ve already registered action with `' + action +
             '` name. You can\'t override existing action, so if ' +
             'you want to change the handler please, ' +
             'unregister existing one first.'
@@ -5969,7 +5969,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof action === 'string',
             'Please check type of the parameter you\'re passing to the ' +
-            '`unregisterAction` function. It must be a string ' + 
+            '`unregisterAction` function. It must be a string ' +
             '(got ' + typeof action + ' instead).'
         );
 
@@ -6124,9 +6124,9 @@ module.exports = {
             componentWillMount: function() {
                 invariant(
                     _.isFunction(this.storeDidUpdate),
-                    'FFlux bind mixin: You\'re attempting to use ' + 
+                    'FFlux bind mixin: You\'re attempting to use ' +
                     typeof this.storeDidUpdate + ' as a function. ' +
-                    'Make sure you defined `storeDidUpdate` function ' + 
+                    'Make sure you defined `storeDidUpdate` function ' +
                     'in your component and try again.'
                 );
                 store.addListener('change', this.storeDidUpdate);

@@ -37,7 +37,7 @@ _.extend(Dispatcher.prototype, {
             data: data
         });
     },
-    
+
     /**
      * Bridge to dispatcher's waitFor
      * @param {Array} arrayOfStores Array of stores to wait for
@@ -47,7 +47,7 @@ _.extend(Dispatcher.prototype, {
         invariant(
             Object.prototype.toString.call(arrayOfStores) === '[object Array]',
             'Please check type of the parameter you\'re passing ' +
-            'to the `waitFor` function. It must be an array of stores ' + 
+            'to the `waitFor` function. It must be an array of stores ' +
             '(' + typeof action + ' given).'
         );
 
@@ -70,7 +70,7 @@ _.extend(Dispatcher.prototype, {
             // Get array of registered actions
             var actionKeys = _.keys(instance.actions);
 
-            // If we have such actions listener(s), invoke 
+            // If we have such actions listener(s), invoke
             // related function with action provided
             actionKeys.forEach(function(key) {
                 if (key === type) {
@@ -86,7 +86,7 @@ _.extend(Dispatcher.prototype, {
                     invariant((typeof handler === 'function'),
                         'Function for action ' + type + 'isn\'t defined'
                     );
-                    
+
                     handler.call(instance, action.data);
                 }
             });

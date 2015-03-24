@@ -49,7 +49,7 @@ function DataScope(dispatcher) {
 DataScope.prototype = {
     /**
      * Register store in the data scope
-     * @param {Store} store 
+     * @param {Store} store
      * @return {Scope}
      */
     register: function(name, store) {
@@ -65,7 +65,7 @@ DataScope.prototype = {
 
     /**
      * Unregister store from the data scope
-     * @param  {Store} store 
+     * @param  {Store} store
      * @return {Scope}
      */
     unregister: function(name) {
@@ -78,7 +78,7 @@ DataScope.prototype = {
 
     /**
      * Get store by registered name
-     * @param  {String} name 
+     * @param  {String} name
      * @return {Store}
      */
     get: function(name) {
@@ -102,7 +102,7 @@ DataScope.prototype = {
         invariant(
             _.isString(dehydrated) ||
             _.isArray(dehydrated),
-            'Dehydrated data must be a string or array (' + 
+            'Dehydrated data must be a string or array (' +
             typeof dehydrated + ' given)'
         );
 

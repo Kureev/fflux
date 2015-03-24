@@ -24,7 +24,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
     /**
      * Update state
      * @private
-     * @param  {Object|Immutable} newState 
+     * @param  {Object|Immutable} newState
      * @return {Void}
      */
     _updateState: function(newState) {
@@ -65,7 +65,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
             'replace your store\'s state. Function `replaceState` accepts ' +
             'only object as a parameter.'
         );
-        
+
         this._updateState(Immutable.fromJS(state));
     },
 
@@ -91,7 +91,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
         } else {
             state = JSON.parse(data);
         }
-        
+
         this.state = Immutable.fromJS(state);
     }
 });

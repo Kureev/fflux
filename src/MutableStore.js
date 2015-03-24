@@ -6,7 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 
 /**
  * Mutable store instance constructor
- * @param {Object} options 
+ * @param {Object} options
  */
 function MutableStore(options) {
     _.extend(this, {
@@ -48,7 +48,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
             'FFlux Store: You\'re trying to use a `setState` function ' +
             'with a non-object parameter.'
         );
-        
+
         _.extend(this.state, patch);
 
         this.emitChange();
@@ -104,7 +104,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
 
         invariant(
             !this.actions[action],
-            'You\'ve already registered action with `' + action + 
+            'You\'ve already registered action with `' + action +
             '` name. You can\'t override existing action, so if ' +
             'you want to change the handler please, ' +
             'unregister existing one first.'
@@ -122,7 +122,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
         invariant(
             typeof action === 'string',
             'Please check type of the parameter you\'re passing to the ' +
-            '`unregisterAction` function. It must be a string ' + 
+            '`unregisterAction` function. It must be a string ' +
             '(got ' + typeof action + ' instead).'
         );
 

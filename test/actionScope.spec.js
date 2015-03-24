@@ -20,9 +20,9 @@ describe('ActionScope', function() {
         }
     };
 
-    it('add action creator to the actions', function() {
+    it('register action creator at actions', function() {
         expect(
-            actions.add.bind(actions, 'action creator', actionCreator)
+            actions.register.bind(actions, 'action creator', actionCreator)
         ).not.to.throw(Error);
 
         expect(
@@ -46,8 +46,8 @@ describe('ActionScope', function() {
         expect(spy).to.have.been.called.once.with({ param: 'test' });
     });
 
-    it('remove action from actions', function() {
-        actions.remove('action creator');
+    it('unregister action creator from actions', function() {
+        actions.unregister('action creator');
         expect(actions.get('action creator')).to.be.equal(null);
     });
 });

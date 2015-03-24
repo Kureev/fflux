@@ -20,15 +20,15 @@ function ActionScope(dispatcher) {
 
 ActionScope.prototype = {
     /**
-     * Add action to action scope
-     * @param {String} name   
+     * Register action to action scope
+     * @param {String} name
      * @param {Object} actions
      */
-    add: function(name, actions) {
+    register: function(name, actions) {
         invariant(
             _.isObject(actions),
             'Action must be a function, ' +
-            '%s given', 
+            '%s given',
             typeof actions
         );
 
@@ -36,11 +36,11 @@ ActionScope.prototype = {
     },
 
     /**
-     * Remove action from action scope
-     * @param  {String} name 
+     * Unregister action from action scope
+     * @param  {String} name
      * @return {Void}
      */
-    remove: function(name) {
+    unregister: function(name) {
         this._actions[name] = null;
     },
 
@@ -54,7 +54,7 @@ ActionScope.prototype = {
     },
 
     /**
-     * Wrap actions to apply some extra arguments 
+     * Wrap actions to apply some extra arguments
      * (like `dispatch` method) to functions
      * @private
      * @param  {Object} actions Actions to wrap
@@ -69,7 +69,7 @@ ActionScope.prototype = {
         actionNames.forEach(function(name) {
             wrappedActions[name] = function() {
                 return actions[name]
-                    .apply(null, 
+                    .apply(null,
                         args.concat(Array.prototype.slice.call(arguments))
                     );
             };
