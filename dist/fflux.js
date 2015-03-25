@@ -5473,6 +5473,165 @@ var invariant = require('flux/lib/invariant');
 var _ = require('./helper');
 
 /**
+ * Action scope constructor
+ * @constructor
+ * @param {Dispatcher} dispatcher
+ */
+function ActionScope(dispatcher) {
+    invariant(
+        dispatcher,
+        'You can\'t initialize action scope without dispatcher'
+    );
+
+    this._actions = {};
+    this._dispatcher = dispatcher;
+}
+
+ActionScope.prototype = {
+    /**
+     * Register action to action scope
+     * @param {String} name
+     * @param {Object} actions
+     */
+    register: function(name, actions) {
+        invariant(
+            _.isObject(actions),
+            'Action Creator must be an object, ' +
+            '%s given',
+            typeof actions
+        );
+
+        this._actions[name] = this._wrapActions(actions);
+    },
+
+    /**
+     * Unregister action from action scope
+     * @param  {String} name
+     * @return {Void}
+     */
+    unregister: function(name) {
+        this._actions[name] = null;
+    },
+
+    /**
+     * Get actions scope
+     * @param  {String} name
+     * @return {Object}
+     */
+    get: function(name) {
+        return this._actions[name];
+    },
+
+    /**
+     * Wrap actions to apply some extra arguments
+     * (like `dispatch` method) to functions
+     * @private
+     * @param  {Object} actions Actions to wrap
+     * @return {Object} Wrapped actions
+     */
+    _wrapActions: function(actions) {
+        var wrappedActions = {};
+        var actionNames = Object.keys(actions);
+        var dispatch = this._dispatcher.dispatch.bind(this._dispatcher);
+        var args = [dispatch];
+
+        actionNames.forEach(function(name) {
+            wrappedActions[name] = function() {
+                return actions[name]
+                    .apply(null,
+                        args.concat(Array.prototype.slice.call(arguments))
+                    );
+            };
+        });
+
+        return wrappedActions;
+    }
+};
+
+module.exports = ActionScope;
+},{"./helper":11,"flux/lib/invariant":3}],6:[function(require,module,exports){
+'use strict';
+
+var invariant = require('flux/lib/invariant');
+var _ = require('./helper');
+var Dispatcher = require('./Dispatcher');
+var DataScope = require('./DataScope');
+var ActionScope = require('./ActionScope');
+
+/**
+ * Register object in the scope
+ * @param  {Object} obj
+ * @param  {Object} scope
+ * @return {Object}
+ */
+function register(obj, scope) {
+    if (obj) {
+        Object.keys(obj).forEach(function(key) {
+            scope.register(key, obj[key]);
+        });
+    }
+
+    return scope;
+}
+
+/**
+ * Create data scope
+ * @param  {Dispatcher} dispatcher
+ * @param  {Object} stores
+ * @return {DataScope}
+ */
+function createDataScope(dispatcher, stores) {
+    return register(stores, new DataScope(dispatcher));
+}
+
+/**
+ * Create action scope
+ * @param  {Dispatcher} dispatcher
+ * @param  {Object} actions
+ * @return {ActionScope}
+ */
+function createAcionScope(dispatcher, actions) {
+    return register(actions, new ActionScope(dispatcher));
+}
+
+function Application(schema) {
+    schema = schema || {};
+
+    invariant(
+        _.isObject(schema),
+        'Schema should be an object (%s given)',
+        typeof schema
+    );
+
+    var dispatcher = new Dispatcher();
+
+    this._dispatcher = dispatcher;
+    this._dataScope = createDataScope(dispatcher, schema.stores);
+    this._actionScope = createAcionScope(dispatcher, schema.actions);
+}
+
+Application.prototype = {
+    dispatcher: function() {
+        return this._dispatcher;
+    },
+
+    stores: function() {
+        return this._dataScope;
+    },
+
+    actions: function() {
+        return this._actionScope;
+    }
+};
+
+module.exports = Application;
+},{"./ActionScope":5,"./DataScope":7,"./Dispatcher":8,"./helper":11,"flux/lib/invariant":3}],7:[function(require,module,exports){
+'use strict';
+
+var invariant = require('flux/lib/invariant');
+var _ = require('./helper');
+
+/**
  * Parse dehydrated data
  * @param  {String} dehydrated
  * @return {Object}
@@ -5624,7 +5783,7 @@ DataScope.prototype = {
 };
 
 module.exports = DataScope;
-},{"./helper":9,"flux/lib/invariant":3}],6:[function(require,module,exports){
+},{"./helper":11,"flux/lib/invariant":3}],8:[function(require,module,exports){
 'use strict';
 
 var FBDispatcher = require('flux/lib/Dispatcher');
@@ -5739,7 +5898,7 @@ _.extend(Dispatcher.prototype, {
 });
 
 module.exports = Dispatcher;
-},{"./helper":9,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],7:[function(require,module,exports){
+},{"./helper":11,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],9:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -5834,7 +5993,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
 });
 
 module.exports = ImmutableStore;
-},{"./MutableStore":8,"./helper":9,"flux/lib/invariant":3,"immutable":4}],8:[function(require,module,exports){
+},{"./MutableStore":10,"./helper":11,"flux/lib/invariant":3,"immutable":4}],10:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -5997,7 +6156,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
 });
 
 module.exports = MutableStore;
-},{"./helper":9,"events":1,"flux/lib/invariant":3}],9:[function(require,module,exports){
+},{"./helper":11,"events":1,"flux/lib/invariant":3}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6083,7 +6242,7 @@ module.exports = {
     extend: extend,
     clone: clone
 };
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var FFlux = {};
@@ -6092,10 +6251,12 @@ FFlux.Dispatcher = require('./Dispatcher');
 FFlux.ImmutableStore = require('./ImmutableStore');
 FFlux.MutableStore = require('./MutableStore');
 FFlux.mixins = require('./mixins');
+FFlux.Application = require('./Application');
+FFlux.ActionScope = require('./ActionScope');
 FFlux.DataScope = require('./DataScope');
 
 module.exports = FFlux;
-},{"./DataScope":5,"./Dispatcher":6,"./ImmutableStore":7,"./MutableStore":8,"./mixins":11}],11:[function(require,module,exports){
+},{"./ActionScope":5,"./Application":6,"./DataScope":7,"./Dispatcher":8,"./ImmutableStore":9,"./MutableStore":10,"./mixins":13}],13:[function(require,module,exports){
 'use strict';
 
 var invariant = require('flux/lib/invariant');
@@ -6134,5 +6295,5 @@ module.exports = {
         };
     }
 };
-},{"../src/helper":9,"flux/lib/invariant":3}]},{},[10])(10)
+},{"../src/helper":11,"flux/lib/invariant":3}]},{},[12])(12)
 });
