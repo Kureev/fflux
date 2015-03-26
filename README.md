@@ -2,22 +2,28 @@ fflux.js
 ==========
 [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux) [![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux) [![Test Coverage](https://codeclimate.com/github/Kureev/fflux/badges/coverage.svg)](https://codeclimate.com/github/Kureev/fflux)
 
-#### Examples:
-* [TODO list](https://github.com/Kureev/fflux/tree/master/examples/flux-todomvc)
-
 #### Contents:
 * [What is FFlux?](#what-is-fflux)
+* [Examples](#examples)
 * [Roadmap](#roadmap)
 * [Installation](#installation)
+* [Application](#application)
 * [Dispatcher](#dispatcher)
   * [Dispatcher API](#dispatcher-api)
 * [Action Creators](#action-creators)
+* [Action Scope](#action-scope)
+  * [Action Scope API](#action-scope-api)
 * [Stores](#stores)
   * [Store API](#store-api)
   * [Mutable Store](#mutable-store)
   * [Immutable Store](#immutable-store)
-  * [Data Scope](#data-scope)
+* [Data Scope](#data-scope)
+  * [Data Scope API](#data-scope-api)
 * [View layer](#view-layer)
+
+#### Examples:
+* [TODO list](https://github.com/Kureev/fflux/tree/master/examples/flux-todomvc)
+* [FFlux isomorphic application (work in progress)](https://github.com/Kureev/fflux-isomorphic-example)
 
 ## What is FFlux?
 * Simple way to use flux architecture
@@ -35,7 +41,7 @@ fflux.js
 - [X] Create action scope abstraction
 - [X] Separate stores to mutable and immutable
 - [ ] Write "Getting Started"
-- [ ] Make an example of isomorphic app
+- [X] Make an example of isomorphic app
 - [ ] Make an example for [Riot.js](https://muut.com/riotjs/)
 - [ ] Find a way to avoid using mixins
 
@@ -58,6 +64,22 @@ var Application = require('fflux/src/Application');
 var app = new Application();
 ```
 
+Also, you can use config object to pre-set application enviroment:
+
+```javascript
+
+var app = new Application({
+    stores: {
+        list: new ListStore(),
+        wishlist: new WishlistStore()
+    },
+    actions: {
+        list: listActions,
+        wishlist: wishlistActions
+    }
+});
+```
+
 ## Dispatcher
 FFlux dispatcher extends [facebook's dispatcher](https://facebook.github.io/flux/docs/dispatcher.html#content) implementation.
 
@@ -69,7 +91,6 @@ dispatcher.dispatch('SOME_ACTION', payload);
 ```
 
 ### Dispatcher API
-
 * **register** - register store in dispatcher<br>
   After registration, store will receive dispatcher's actions<br>
   ```javascript
@@ -96,6 +117,7 @@ dispatcher.dispatch('SOME_ACTION', payload);
 
 ## Action Creators
 Action Creators are commonly used to fetch/post data. All async stuff should happend here.
+
 ```javascript
 var request = require('superagent');
 
@@ -130,11 +152,38 @@ var ActionCreatorExample = {
       });
   }
 };
-
-
 ```
 
+In this example I use [`superagent`](https://github.com/visionmedia/superagent) as isomorphic library for AJAX calls. As you probably mentioned, in every function we got `dispatch` as a first parameter. That's done to simplify your life. Every time you register action creator in the action scope, this dependency injection managed for you automaticly.
 
+## Action Scope
+The point is, that as like with the stores, it's handy to keep all your `action creators` inside your application instance. So, to provide you consistant interface (with data scope), action scope has been created. **Action Scope isn't aimed to be used outside from the application**
+
+```javascript
+var app = new Application({
+  actions: {
+    scope: scopeActions
+  }
+});
+
+app.actions(); // ActionScope instance
+```
+
+### Action Scope API
+* **register** - register action creator object in the scope
+  ```javascript
+  app.actions().register('otherScope', otherScopeActions);
+  ```
+
+* **unregister** - unregister action creator object by name
+  ```javascript
+  app.actions().unregister('otherScope');
+  ```
+
+* **get** - register action creator object in the scope
+  ```javascript
+  app.actions().get('scope'); // scope action creator
+  ```
 
 ## Stores
 In fflux, you can use mutable and immutable stores. If you want to work with store's state as native javascript object - you should use [mutable store](#mutable-store). If you prefer immutable structures, [immutable stores](#immutable-store) - is your choice.
@@ -296,35 +345,43 @@ store.replaceState(newState);
 
 Any store state operation (e.g. `setState` or `replaceState`) will trigger `change` event **only** in the cases when previous state isn't equal to the new one.
 
-### Data Scope
+## Data Scope
+Data Scope is used in the fflux applications for grouping stores and providing simple interface to manage them. For example, it's very handy for building isomorphic applications, when you need to serialize and deserialize all your stores to transmit them from server to client.
+
 ```javascript
-var scope = new FFlux.DataScope();
-var someStore = new FFlux.MutableStore();
+var app = new Application({
+  stores: {
+    someStore: someStore
+  }
+});
 ```
-Provides some functionality for stores (de)serialization. Basically, it's just a container for stores with a tiny API:
+
+Also, if you're using data scope with [`Application`](#application), all stores you add to data scope would be automaticly registered at dispatcher (if they weren't registered before).
+
+### Data Scope API
 * **register** - register store in the scope
   ```javascript
-  scope.register('someStore', someStore);
+  app.stores().register('someStore', someStore);
   ```
 
 * **get** - get registered store by name
   ```javascript
-  scope.get('someStore');
+  app.stores().get('someStore');
   ```
 
 * **unregister** - unregister store from the scope
   ```javascript
-  scope.unregister('someStore');
+  app.stores().unregister('someStore');
   ```
 
 * **dehydrate** - stringify store's state
   ```javascript
-  var dataString = scope.dehydrate();
+  var dataString = app.stores().dehydrate();
   ```
 
 * **rehydrate** - fill store with pre-served data
   ```javascript
-  scope.rehydrate(dataString)
+  app.stores().rehydrate(dataString);
   ```
 
 Once you registered all of your stores in the scope, you can simply `dehydrate` it and get a data string, using which you can `rehydrate` scope back in the future. It's especially handy when you're pre-fetching data on the back-end and want to transmit it to front-end.
