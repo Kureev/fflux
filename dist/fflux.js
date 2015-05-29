@@ -5545,7 +5545,7 @@ ActionScope.prototype = {
         actionNames.forEach(function(name) {
             wrappedActions[name] = function() {
                 return actions[name]
-                    .apply(actions,
+                    .apply(wrappedActions,
                         args.concat(Array.prototype.slice.call(arguments))
                     );
             };

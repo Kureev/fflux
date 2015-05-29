@@ -1,3 +1,6 @@
+## v0.13.2 (May 29, 2015)
+* Fixing v0.13.1 scope issue (wrong scope)
+
 ## v0.13.1 (May 29, 2015)
 * Added simple way to get actions/store:
   instead of using `app.stores().get('some')` you can now use `app.stores('some')`
