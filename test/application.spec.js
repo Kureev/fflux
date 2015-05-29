@@ -28,8 +28,16 @@ describe('Application', function() {
         expect(_.isObject(app.actions())).to.be.equal(true);
     });
 
+    it('return `some` action creater', function() {
+        expect(_.isObject(app.actions('some'))).to.be.equal(true);
+    });
+
     it('return stores', function() {
         expect(_.isObject(app.stores())).to.be.equal(true);
+    });
+
+    it('return `some` store', function() {
+        expect(_.isObject(app.stores('someStore'))).to.be.equal(true);
     });
 
 });

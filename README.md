@@ -1,4 +1,4 @@
-fflux.js 
+fflux.js
 ==========
 [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux) [![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux) [![Test Coverage](https://codeclimate.com/github/Kureev/fflux/badges/coverage.svg)](https://codeclimate.com/github/Kureev/fflux)
 
@@ -79,6 +79,8 @@ var app = new Application({
     }
 });
 ```
+
+Once you got `app` instance, you can use it to access `storesScope` and `actionsScope` by using `app.stores()` or `app.actions()`. Also you're able to get access to specific store or action directly: `app.stores('some')` or `app.actions('some')`.
 
 ## Dispatcher
 FFlux dispatcher extends [facebook's dispatcher](https://facebook.github.io/flux/docs/dispatcher.html#content) implementation.
@@ -302,7 +304,7 @@ store.registerAction('SOME_ACTION', actionHandler);
 store.unregisterAction('SOME_ACTION');
 ```
 
-And the last, but not least: states. FFlux stores have a state like React components, so you can easily work with it using already familiar functions: 
+And the last, but not least: states. FFlux stores have a state like React components, so you can easily work with it using already familiar functions:
 `setState`, `getState`, `replaceState` and `getInitialState`.
 
 ### Immutable store
@@ -318,7 +320,7 @@ var currentState = store.getState();
 
 /**
  * Mutator for `c` key in `a.b.c` path
- * @param  {Array} element 
+ * @param  {Array} element
  * @return {Immutable.List}
  */
 function mutator(element) {
@@ -329,7 +331,7 @@ function mutator(element) {
 }
 
 /*
- * If we using immutable data, 
+ * If we using immutable data,
  * any manipulation with `currentState`
  * will create a new immutable object
  */
@@ -431,7 +433,7 @@ var MyComponentClass = React.createClass({
 
 /**
  * That's it, now you can render `MyComponent` and
- * as soon as `store` will emit `change` event, 
+ * as soon as `store` will emit `change` event,
  * your component will be redrawn
  */
 React.render(<MyComponent />, document.body);

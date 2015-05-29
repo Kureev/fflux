@@ -63,12 +63,24 @@ Application.prototype = {
         return this._dispatcher;
     },
 
-    stores: function() {
-        return this._dataScope;
+    stores: function(name) {
+        var scope = this._dataScope;
+
+        if (name) {
+            return scope.get(name);
+        }
+
+        return scope;
     },
 
-    actions: function() {
-        return this._actionScope;
+    actions: function(name) {
+        var scope = this._actionScope;
+
+        if (name) {
+            return scope.get(name);
+        }
+
+        return scope;
     }
 };
 

@@ -1,3 +1,7 @@
+## v0.13.1 (May 29, 2015)
+* Added simple way to get actions/store:
+  instead of using `app.stores().get('some')` you can now use `app.stores('some')`
+
 ## v0.13.0 (Mar 22, 2015)
 * Introduced Application
 * Introduced ActionScope
@@ -41,7 +45,7 @@
 * Code formatted to max 80 chars / line
 
 ## v0.10.0 (Feb 20, 2015)
-* Changed object create method from factory to constructor. There are no more `FFlux.createDispatcher` and `FFlux.createStore`. 
+* Changed object create method from factory to constructor. There are no more `FFlux.createDispatcher` and `FFlux.createStore`.
 Instad of them you should use `new FFlux.Dispatcher()` and `new FFlux.Store()`.
 * New method `replaceStore`. Works the same as React's `replaceStore`.
 * Added maintainers block to `package.json`

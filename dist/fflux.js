@@ -610,7 +610,7 @@ module.exports = invariant;
 
 },{}],4:[function(require,module,exports){
 /**
- *  Copyright (c) 2014-2015, Facebook, Inc.
+ *  Copyright (c) 2014, Facebook, Inc.
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
@@ -781,22 +781,22 @@ module.exports = invariant;
   var ITERATOR_SYMBOL = REAL_ITERATOR_SYMBOL || FAUX_ITERATOR_SYMBOL;
 
 
-  function src_Iterator__Iterator(next) {
+  function Iterator(next) {
       this.next = next;
     }
 
-    src_Iterator__Iterator.prototype.toString = function() {
+    Iterator.prototype.toString = function() {
       return '[Iterator]';
     };
 
 
-  src_Iterator__Iterator.KEYS = ITERATE_KEYS;
-  src_Iterator__Iterator.VALUES = ITERATE_VALUES;
-  src_Iterator__Iterator.ENTRIES = ITERATE_ENTRIES;
+  Iterator.KEYS = ITERATE_KEYS;
+  Iterator.VALUES = ITERATE_VALUES;
+  Iterator.ENTRIES = ITERATE_ENTRIES;
 
-  src_Iterator__Iterator.prototype.inspect =
-  src_Iterator__Iterator.prototype.toSource = function () { return this.toString(); }
-  src_Iterator__Iterator.prototype[ITERATOR_SYMBOL] = function () {
+  Iterator.prototype.inspect =
+  Iterator.prototype.toSource = function () { return this.toString(); }
+  Iterator.prototype[ITERATOR_SYMBOL] = function () {
     return this;
   };
 
@@ -889,7 +889,15 @@ module.exports = invariant;
           keyedSeqFromValue(value);
     }
 
+    KeyedSeq.of = function(/*...values*/) {
+      return KeyedSeq(arguments);
+    };
+
     KeyedSeq.prototype.toKeyedSeq = function() {
+      return this;
+    };
+
+    KeyedSeq.prototype.toSeq = function() {
       return this;
     };
 
@@ -981,7 +989,7 @@ module.exports = invariant;
       var array = this._array;
       var maxIndex = array.length - 1;
       var ii = 0;
-      return new src_Iterator__Iterator(function() 
+      return new Iterator(function() 
         {return ii > maxIndex ?
           iteratorDone() :
           iteratorValue(type, ii, array[reverse ? maxIndex - ii++ : ii++])}
@@ -1027,7 +1035,7 @@ module.exports = invariant;
       var keys = this._keys;
       var maxIndex = keys.length - 1;
       var ii = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var key = keys[reverse ? maxIndex - ii : ii];
         return ii++ > maxIndex ?
           iteratorDone() :
@@ -1069,10 +1077,10 @@ module.exports = invariant;
       var iterable = this._iterable;
       var iterator = getIterator(iterable);
       if (!isIterator(iterator)) {
-        return new src_Iterator__Iterator(iteratorDone);
+        return new Iterator(iteratorDone);
       }
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step = iterator.next();
         return step.done ? step : iteratorValue(type, iterations++, step.value);
       });
@@ -1116,7 +1124,7 @@ module.exports = invariant;
       var iterator = this._iterator;
       var cache = this._iteratorCache;
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         if (iterations >= cache.length) {
           var step = iterator.next();
           if (step.done) {
@@ -1209,7 +1217,7 @@ module.exports = invariant;
     if (cache) {
       var maxIndex = cache.length - 1;
       var ii = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var entry = cache[reverse ? maxIndex - ii : ii];
         return ii++ > maxIndex ?
           iteratorDone() :
@@ -1335,13 +1343,13 @@ module.exports = invariant;
   }
 
   function isPlainObj(value) {
-    return value && (value.constructor === Object || value.constructor === undefined);
+    return value && value.constructor === Object;
   }
 
-  var src_Math__imul =
+  var Math__imul =
     typeof Math.imul === 'function' && Math.imul(0xffffffff, 2) === -2 ?
     Math.imul :
-    function src_Math__imul(a, b) {
+    function Math__imul(a, b) {
       a = a | 0; // int
       b = b | 0; // int
       var c = a & 0xffff;
@@ -1480,7 +1488,7 @@ module.exports = invariant;
   // True if Object.defineProperty works as expected. IE8 fails this test.
   var canDefineProperty = (function() {
     try {
-      Object.defineProperty({}, '@', {});
+      Object.defineProperty({}, 'x', {});
       return true;
     } catch (e) {
       return false;
@@ -1578,7 +1586,7 @@ module.exports = invariant;
       }
       var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
       var ii = reverse ? resolveSize(this) : 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step = iterator.next();
         return step.done ? step :
           iteratorValue(type, reverse ? --ii : ii++, step.value, step);
@@ -1606,7 +1614,7 @@ module.exports = invariant;
     ToIndexedSequence.prototype.__iterator = function(type, reverse) {
       var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step = iterator.next();
         return step.done ? step :
           iteratorValue(type, iterations++, step.value, step)
@@ -1631,7 +1639,7 @@ module.exports = invariant;
 
     ToSetSequence.prototype.__iterator = function(type, reverse) {
       var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step = iterator.next();
         return step.done ? step :
           iteratorValue(type, step.value, step.value, step);
@@ -1663,7 +1671,7 @@ module.exports = invariant;
 
     FromEntriesSequence.prototype.__iterator = function(type, reverse) {
       var iterator = this._iter.__iterator(ITERATE_VALUES, reverse);
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         while (true) {
           var step = iterator.next();
           if (step.done) {
@@ -1708,7 +1716,7 @@ module.exports = invariant;
     flipSequence.__iteratorUncached = function(type, reverse) {
       if (type === ITERATE_ENTRIES) {
         var iterator = iterable.__iterator(type, reverse);
-        return new src_Iterator__Iterator(function()  {
+        return new Iterator(function()  {
           var step = iterator.next();
           if (!step.done) {
             var k = step.value[0];
@@ -1745,7 +1753,7 @@ module.exports = invariant;
     }
     mappedSequence.__iteratorUncached = function (type, reverse) {
       var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step = iterator.next();
         if (step.done) {
           return step;
@@ -1817,7 +1825,7 @@ module.exports = invariant;
     filterSequence.__iteratorUncached = function (type, reverse) {
       var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         while (true) {
           var step = iterator.next();
           if (step.done) {
@@ -1837,7 +1845,7 @@ module.exports = invariant;
 
 
   function countByFactory(iterable, grouper, context) {
-    var groups = src_Map__Map().asMutable();
+    var groups = Map().asMutable();
     iterable.__iterate(function(v, k)  {
       groups.update(
         grouper.call(context, v, k, iterable),
@@ -1851,7 +1859,7 @@ module.exports = invariant;
 
   function groupByFactory(iterable, grouper, context) {
     var isKeyedIter = isKeyed(iterable);
-    var groups = (isOrdered(iterable) ? OrderedMap() : src_Map__Map()).asMutable();
+    var groups = (isOrdered(iterable) ? OrderedMap() : Map()).asMutable();
     iterable.__iterate(function(v, k)  {
       groups.update(
         grouper.call(context, v, k, iterable),
@@ -1926,7 +1934,7 @@ module.exports = invariant;
       var iterator = sliceSize && iterable.__iterator(type, reverse);
       var skipped = 0;
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         while (skipped++ !== resolvedBegin) {
           iterator.next();
         }
@@ -1966,7 +1974,7 @@ module.exports = invariant;
       }
       var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
       var iterating = true;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         if (!iterating) {
           return iteratorDone();
         }
@@ -2012,7 +2020,7 @@ module.exports = invariant;
       var iterator = iterable.__iterator(ITERATE_ENTRIES, reverse);
       var skipping = true;
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var step, k, v;
         do {
           step = iterator.next();
@@ -2108,7 +2116,7 @@ module.exports = invariant;
       var iterator = iterable.__iterator(type, reverse);
       var stack = [];
       var iterations = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         while (iterator) {
           var step = iterator.next();
           if (step.done !== false) {
@@ -2157,7 +2165,7 @@ module.exports = invariant;
       var iterator = iterable.__iterator(ITERATE_VALUES, reverse);
       var iterations = 0;
       var step;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         if (!step || iterations % 2) {
           step = iterator.next();
           if (step.done) {
@@ -2250,7 +2258,7 @@ module.exports = invariant;
       );
       var iterations = 0;
       var isDone = false;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var steps;
         if (!isDone) {
           steps = iterators.map(function(i ) {return i.next()});
@@ -2330,11 +2338,11 @@ module.exports = invariant;
     return iter;
   }
 
-  createClass(src_Map__Map, KeyedCollection);
+  createClass(Map, KeyedCollection);
 
     // @pragma Construction
 
-    function src_Map__Map(value) {
+    function Map(value) {
       return value === null || value === undefined ? emptyMap() :
         isMap(value) ? value :
         emptyMap().withMutations(function(map ) {
@@ -2344,13 +2352,13 @@ module.exports = invariant;
         });
     }
 
-    src_Map__Map.prototype.toString = function() {
+    Map.prototype.toString = function() {
       return this.__toString('Map {', '}');
     };
 
     // @pragma Access
 
-    src_Map__Map.prototype.get = function(k, notSetValue) {
+    Map.prototype.get = function(k, notSetValue) {
       return this._root ?
         this._root.get(0, undefined, k, notSetValue) :
         notSetValue;
@@ -2358,29 +2366,29 @@ module.exports = invariant;
 
     // @pragma Modification
 
-    src_Map__Map.prototype.set = function(k, v) {
+    Map.prototype.set = function(k, v) {
       return updateMap(this, k, v);
     };
 
-    src_Map__Map.prototype.setIn = function(keyPath, v) {
+    Map.prototype.setIn = function(keyPath, v) {
       return this.updateIn(keyPath, NOT_SET, function()  {return v});
     };
 
-    src_Map__Map.prototype.remove = function(k) {
+    Map.prototype.remove = function(k) {
       return updateMap(this, k, NOT_SET);
     };
 
-    src_Map__Map.prototype.deleteIn = function(keyPath) {
+    Map.prototype.deleteIn = function(keyPath) {
       return this.updateIn(keyPath, function()  {return NOT_SET});
     };
 
-    src_Map__Map.prototype.update = function(k, notSetValue, updater) {
+    Map.prototype.update = function(k, notSetValue, updater) {
       return arguments.length === 1 ?
         k(this) :
         this.updateIn([k], notSetValue, updater);
     };
 
-    src_Map__Map.prototype.updateIn = function(keyPath, notSetValue, updater) {
+    Map.prototype.updateIn = function(keyPath, notSetValue, updater) {
       if (!updater) {
         updater = notSetValue;
         notSetValue = undefined;
@@ -2394,7 +2402,7 @@ module.exports = invariant;
       return updatedValue === NOT_SET ? undefined : updatedValue;
     };
 
-    src_Map__Map.prototype.clear = function() {
+    Map.prototype.clear = function() {
       if (this.size === 0) {
         return this;
       }
@@ -2410,65 +2418,65 @@ module.exports = invariant;
 
     // @pragma Composition
 
-    src_Map__Map.prototype.merge = function(/*...iters*/) {
+    Map.prototype.merge = function(/*...iters*/) {
       return mergeIntoMapWith(this, undefined, arguments);
     };
 
-    src_Map__Map.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+    Map.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
       return mergeIntoMapWith(this, merger, iters);
     };
 
-    src_Map__Map.prototype.mergeIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
+    Map.prototype.mergeIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
       return this.updateIn(keyPath, emptyMap(), function(m ) {return m.merge.apply(m, iters)});
     };
 
-    src_Map__Map.prototype.mergeDeep = function(/*...iters*/) {
+    Map.prototype.mergeDeep = function(/*...iters*/) {
       return mergeIntoMapWith(this, deepMerger(undefined), arguments);
     };
 
-    src_Map__Map.prototype.mergeDeepWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+    Map.prototype.mergeDeepWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
       return mergeIntoMapWith(this, deepMerger(merger), iters);
     };
 
-    src_Map__Map.prototype.mergeDeepIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
+    Map.prototype.mergeDeepIn = function(keyPath) {var iters = SLICE$0.call(arguments, 1);
       return this.updateIn(keyPath, emptyMap(), function(m ) {return m.mergeDeep.apply(m, iters)});
     };
 
-    src_Map__Map.prototype.sort = function(comparator) {
+    Map.prototype.sort = function(comparator) {
       // Late binding
       return OrderedMap(sortFactory(this, comparator));
     };
 
-    src_Map__Map.prototype.sortBy = function(mapper, comparator) {
+    Map.prototype.sortBy = function(mapper, comparator) {
       // Late binding
       return OrderedMap(sortFactory(this, comparator, mapper));
     };
 
     // @pragma Mutability
 
-    src_Map__Map.prototype.withMutations = function(fn) {
+    Map.prototype.withMutations = function(fn) {
       var mutable = this.asMutable();
       fn(mutable);
       return mutable.wasAltered() ? mutable.__ensureOwner(this.__ownerID) : this;
     };
 
-    src_Map__Map.prototype.asMutable = function() {
+    Map.prototype.asMutable = function() {
       return this.__ownerID ? this : this.__ensureOwner(new OwnerID());
     };
 
-    src_Map__Map.prototype.asImmutable = function() {
+    Map.prototype.asImmutable = function() {
       return this.__ensureOwner();
     };
 
-    src_Map__Map.prototype.wasAltered = function() {
+    Map.prototype.wasAltered = function() {
       return this.__altered;
     };
 
-    src_Map__Map.prototype.__iterator = function(type, reverse) {
+    Map.prototype.__iterator = function(type, reverse) {
       return new MapIterator(this, type, reverse);
     };
 
-    src_Map__Map.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+    Map.prototype.__iterate = function(fn, reverse) {var this$0 = this;
       var iterations = 0;
       this._root && this._root.iterate(function(entry ) {
         iterations++;
@@ -2477,7 +2485,7 @@ module.exports = invariant;
       return iterations;
     };
 
-    src_Map__Map.prototype.__ensureOwner = function(ownerID) {
+    Map.prototype.__ensureOwner = function(ownerID) {
       if (ownerID === this.__ownerID) {
         return this;
       }
@@ -2494,11 +2502,11 @@ module.exports = invariant;
     return !!(maybeMap && maybeMap[IS_MAP_SENTINEL]);
   }
 
-  src_Map__Map.isMap = isMap;
+  Map.isMap = isMap;
 
   var IS_MAP_SENTINEL = '@@__IMMUTABLE_MAP__@@';
 
-  var MapPrototype = src_Map__Map.prototype;
+  var MapPrototype = Map.prototype;
   MapPrototype[IS_MAP_SENTINEL] = true;
   MapPrototype[DELETE] = MapPrototype.remove;
   MapPrototype.removeIn = MapPrototype.deleteIn;
@@ -2842,7 +2850,7 @@ module.exports = invariant;
     return fn(this.entry);
   }
 
-  createClass(MapIterator, src_Iterator__Iterator);
+  createClass(MapIterator, Iterator);
 
     function MapIterator(map, type, reverse) {
       this._type = type;
@@ -3275,7 +3283,7 @@ module.exports = invariant;
     List.prototype.__iterator = function(type, reverse) {
       var index = 0;
       var values = iterateList(this, reverse);
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var value = values();
         return value === DONE ?
           iteratorDone() :
@@ -3715,7 +3723,7 @@ module.exports = invariant;
     return size < SIZE ? 0 : (((size - 1) >>> SHIFT) << SHIFT);
   }
 
-  createClass(OrderedMap, src_Map__Map);
+  createClass(OrderedMap, Map);
 
     // @pragma Construction
 
@@ -3889,7 +3897,6 @@ module.exports = invariant;
 
     Stack.prototype.get = function(index, notSetValue) {
       var head = this._head;
-      index = wrapIndex(this, index);
       while (head && index--) {
         head = head.next;
       }
@@ -4022,7 +4029,7 @@ module.exports = invariant;
 
     Stack.prototype.__iterate = function(fn, reverse) {
       if (reverse) {
-        return this.reverse().__iterate(fn);
+        return this.toSeq().cacheResult.__iterate(fn, reverse);
       }
       var iterations = 0;
       var node = this._head;
@@ -4037,11 +4044,11 @@ module.exports = invariant;
 
     Stack.prototype.__iterator = function(type, reverse) {
       if (reverse) {
-        return this.reverse().__iterator(type);
+        return this.toSeq().cacheResult().__iterator(type, reverse);
       }
       var iterations = 0;
       var node = this._head;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         if (node) {
           var value = node.value;
           node = node.next;
@@ -4083,11 +4090,11 @@ module.exports = invariant;
     return EMPTY_STACK || (EMPTY_STACK = makeStack(0));
   }
 
-  createClass(src_Set__Set, SetCollection);
+  createClass(Set, SetCollection);
 
     // @pragma Construction
 
-    function src_Set__Set(value) {
+    function Set(value) {
       return value === null || value === undefined ? emptySet() :
         isSet(value) ? value :
         emptySet().withMutations(function(set ) {
@@ -4097,41 +4104,41 @@ module.exports = invariant;
         });
     }
 
-    src_Set__Set.of = function(/*...values*/) {
+    Set.of = function(/*...values*/) {
       return this(arguments);
     };
 
-    src_Set__Set.fromKeys = function(value) {
+    Set.fromKeys = function(value) {
       return this(KeyedIterable(value).keySeq());
     };
 
-    src_Set__Set.prototype.toString = function() {
+    Set.prototype.toString = function() {
       return this.__toString('Set {', '}');
     };
 
     // @pragma Access
 
-    src_Set__Set.prototype.has = function(value) {
+    Set.prototype.has = function(value) {
       return this._map.has(value);
     };
 
     // @pragma Modification
 
-    src_Set__Set.prototype.add = function(value) {
+    Set.prototype.add = function(value) {
       return updateSet(this, this._map.set(value, true));
     };
 
-    src_Set__Set.prototype.remove = function(value) {
+    Set.prototype.remove = function(value) {
       return updateSet(this, this._map.remove(value));
     };
 
-    src_Set__Set.prototype.clear = function() {
+    Set.prototype.clear = function() {
       return updateSet(this, this._map.clear());
     };
 
     // @pragma Composition
 
-    src_Set__Set.prototype.union = function() {var iters = SLICE$0.call(arguments, 0);
+    Set.prototype.union = function() {var iters = SLICE$0.call(arguments, 0);
       iters = iters.filter(function(x ) {return x.size !== 0});
       if (iters.length === 0) {
         return this;
@@ -4146,7 +4153,7 @@ module.exports = invariant;
       });
     };
 
-    src_Set__Set.prototype.intersect = function() {var iters = SLICE$0.call(arguments, 0);
+    Set.prototype.intersect = function() {var iters = SLICE$0.call(arguments, 0);
       if (iters.length === 0) {
         return this;
       }
@@ -4161,7 +4168,7 @@ module.exports = invariant;
       });
     };
 
-    src_Set__Set.prototype.subtract = function() {var iters = SLICE$0.call(arguments, 0);
+    Set.prototype.subtract = function() {var iters = SLICE$0.call(arguments, 0);
       if (iters.length === 0) {
         return this;
       }
@@ -4176,37 +4183,37 @@ module.exports = invariant;
       });
     };
 
-    src_Set__Set.prototype.merge = function() {
+    Set.prototype.merge = function() {
       return this.union.apply(this, arguments);
     };
 
-    src_Set__Set.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
+    Set.prototype.mergeWith = function(merger) {var iters = SLICE$0.call(arguments, 1);
       return this.union.apply(this, iters);
     };
 
-    src_Set__Set.prototype.sort = function(comparator) {
+    Set.prototype.sort = function(comparator) {
       // Late binding
       return OrderedSet(sortFactory(this, comparator));
     };
 
-    src_Set__Set.prototype.sortBy = function(mapper, comparator) {
+    Set.prototype.sortBy = function(mapper, comparator) {
       // Late binding
       return OrderedSet(sortFactory(this, comparator, mapper));
     };
 
-    src_Set__Set.prototype.wasAltered = function() {
+    Set.prototype.wasAltered = function() {
       return this._map.wasAltered();
     };
 
-    src_Set__Set.prototype.__iterate = function(fn, reverse) {var this$0 = this;
+    Set.prototype.__iterate = function(fn, reverse) {var this$0 = this;
       return this._map.__iterate(function(_, k)  {return fn(k, k, this$0)}, reverse);
     };
 
-    src_Set__Set.prototype.__iterator = function(type, reverse) {
+    Set.prototype.__iterator = function(type, reverse) {
       return this._map.map(function(_, k)  {return k}).__iterator(type, reverse);
     };
 
-    src_Set__Set.prototype.__ensureOwner = function(ownerID) {
+    Set.prototype.__ensureOwner = function(ownerID) {
       if (ownerID === this.__ownerID) {
         return this;
       }
@@ -4224,11 +4231,11 @@ module.exports = invariant;
     return !!(maybeSet && maybeSet[IS_SET_SENTINEL]);
   }
 
-  src_Set__Set.isSet = isSet;
+  Set.isSet = isSet;
 
   var IS_SET_SENTINEL = '@@__IMMUTABLE_SET__@@';
 
-  var SetPrototype = src_Set__Set.prototype;
+  var SetPrototype = Set.prototype;
   SetPrototype[IS_SET_SENTINEL] = true;
   SetPrototype[DELETE] = SetPrototype.remove;
   SetPrototype.mergeDeep = SetPrototype.merge;
@@ -4264,7 +4271,7 @@ module.exports = invariant;
     return EMPTY_SET || (EMPTY_SET = makeSet(emptyMap()));
   }
 
-  createClass(OrderedSet, src_Set__Set);
+  createClass(OrderedSet, Set);
 
     // @pragma Construction
 
@@ -4323,7 +4330,7 @@ module.exports = invariant;
         if (!(this instanceof RecordType)) {
           return new RecordType(values);
         }
-        this._map = src_Map__Map(values);
+        this._map = Map(values);
       };
 
       var keys = Object.keys(defaultValues);
@@ -4610,7 +4617,7 @@ module.exports = invariant;
       var step = this._step;
       var value = reverse ? this._start + maxIndex * step : this._start;
       var ii = 0;
-      return new src_Iterator__Iterator(function()  {
+      return new Iterator(function()  {
         var v = value;
         value += reverse ? -step : step;
         return ii > maxIndex ? iteratorDone() : iteratorValue(type, ii++, v);
@@ -4694,7 +4701,7 @@ module.exports = invariant;
 
     Repeat.prototype.__iterator = function(type, reverse) {var this$0 = this;
       var ii = 0;
-      return new src_Iterator__Iterator(function() 
+      return new Iterator(function() 
         {return ii < this$0.size ? iteratorValue(type, ii++, this$0._value) : iteratorDone()}
       );
     };
@@ -4719,7 +4726,7 @@ module.exports = invariant;
     return ctor;
   }
 
-  Iterable.Iterator = src_Iterator__Iterator;
+  Iterable.Iterator = Iterator;
 
   mixin(Iterable, {
 
@@ -4754,7 +4761,7 @@ module.exports = invariant;
 
     toMap: function() {
       // Use Late Binding here to solve the circular dependency.
-      return src_Map__Map(this.toKeyedSeq());
+      return Map(this.toKeyedSeq());
     },
 
     toObject: function() {
@@ -4776,7 +4783,7 @@ module.exports = invariant;
 
     toSet: function() {
       // Use Late Binding here to solve the circular dependency.
-      return src_Set__Set(isKeyed(this) ? this.valueSeq() : this);
+      return Set(isKeyed(this) ? this.valueSeq() : this);
     },
 
     toSetSeq: function() {
@@ -4876,7 +4883,7 @@ module.exports = invariant;
       var isFirst = true;
       this.__iterate(function(v ) {
         isFirst ? (isFirst = false) : (joined += separator);
-        joined += v !== null && v !== undefined ? v.toString() : '';
+        joined += v !== null && v !== undefined ? v : '';
       });
       return joined;
     },
@@ -5427,12 +5434,12 @@ module.exports = invariant;
   }
 
   function murmurHashOfSize(size, h) {
-    h = src_Math__imul(h, 0xCC9E2D51);
-    h = src_Math__imul(h << 15 | h >>> -15, 0x1B873593);
-    h = src_Math__imul(h << 13 | h >>> -13, 5);
+    h = Math__imul(h, 0xCC9E2D51);
+    h = Math__imul(h << 15 | h >>> -15, 0x1B873593);
+    h = Math__imul(h << 13 | h >>> -13, 5);
     h = (h + 0xE6546B64 | 0) ^ size;
-    h = src_Math__imul(h ^ h >>> 16, 0x85EBCA6B);
-    h = src_Math__imul(h ^ h >>> 13, 0xC2B2AE35);
+    h = Math__imul(h ^ h >>> 16, 0x85EBCA6B);
+    h = Math__imul(h ^ h >>> 13, 0xC2B2AE35);
     h = smi(h ^ h >>> 16);
     return h;
   }
@@ -5447,11 +5454,11 @@ module.exports = invariant;
 
     Seq: Seq,
     Collection: Collection,
-    Map: src_Map__Map,
+    Map: Map,
     OrderedMap: OrderedMap,
     List: List,
     Stack: Stack,
-    Set: src_Set__Set,
+    Set: Set,
     OrderedSet: OrderedSet,
 
     Record: Record,
@@ -5615,16 +5622,29 @@ Application.prototype = {
         return this._dispatcher;
     },
 
-    stores: function() {
-        return this._dataScope;
+    stores: function(name) {
+        var scope = this._dataScope;
+
+        if (name) {
+            return scope.get(name);
+        }
+
+        return scope;
     },
 
-    actions: function() {
-        return this._actionScope;
+    actions: function(name) {
+        var scope = this._actionScope;
+
+        if (name) {
+            return scope.get(name);
+        }
+
+        return scope;
     }
 };
 
 module.exports = Application;
+
 },{"./ActionScope":5,"./DataScope":7,"./Dispatcher":8,"./helper":11,"flux/lib/invariant":3}],7:[function(require,module,exports){
 'use strict';
 
