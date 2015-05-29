@@ -65,12 +65,11 @@ ActionScope.prototype = {
         var actionNames = Object.keys(actions);
         var dispatch = this._dispatcher.dispatch.bind(this._dispatcher);
         var args = [dispatch];
-        var scope = this;
 
         actionNames.forEach(function(name) {
             wrappedActions[name] = function() {
                 return actions[name]
-                    .apply(scope,
+                    .apply(actions,
                         args.concat(Array.prototype.slice.call(arguments))
                     );
             };
