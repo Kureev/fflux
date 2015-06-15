@@ -5771,11 +5771,7 @@ DataScope.prototype = {
         }
 
         Object.keys(stores).forEach(function(storeName) {
-            invariant(
-                parsedStores[storeName],
-                'Dehydrated state has no data for ' + storeName + ' store.'
-            );
-            stores[storeName].rehydrate(parsedStores[storeName]);
+            stores[storeName].rehydrate(parsedStores[storeName] || {});
         });
 
         return this;
@@ -5803,6 +5799,7 @@ DataScope.prototype = {
 };
 
 module.exports = DataScope;
+
 },{"./helper":11,"flux/lib/invariant":3}],8:[function(require,module,exports){
 'use strict';
 
