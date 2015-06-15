@@ -123,11 +123,7 @@ DataScope.prototype = {
         }
 
         Object.keys(stores).forEach(function(storeName) {
-            invariant(
-                parsedStores[storeName],
-                'Dehydrated state has no data for ' + storeName + ' store.'
-            );
-            stores[storeName].rehydrate(parsedStores[storeName]);
+            stores[storeName].rehydrate(parsedStores[storeName] || {});
         });
 
         return this;
