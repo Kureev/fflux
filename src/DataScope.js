@@ -123,7 +123,9 @@ DataScope.prototype = {
         }
 
         Object.keys(stores).forEach(function(storeName) {
-            stores[storeName].rehydrate(parsedStores[storeName] || {});
+            if (parsedStores[storeName]) {
+                stores[storeName].rehydrate(parsedStores[storeName]);
+            }
         });
 
         return this;

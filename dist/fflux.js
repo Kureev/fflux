@@ -5771,7 +5771,9 @@ DataScope.prototype = {
         }
 
         Object.keys(stores).forEach(function(storeName) {
-            stores[storeName].rehydrate(parsedStores[storeName] || {});
+            if (parsedStores[storeName]) {
+                stores[storeName].rehydrate(parsedStores[storeName]);
+            }
         });
 
         return this;
@@ -6158,21 +6160,12 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
      * @return {Void}
      */
     rehydrate: function(data) {
-        var state = this._parseDehydratedState(data);
-        this.state = state;
-    },
-
-    /**
-     * Parse passed dehydrated state
-     * @param  {String|Object} data
-     * @return {Object}
-     */
-    _parseDehydratedState: function(data) {
-        return _.isObject(data) ? data : JSON.parse(data);
+        this.state = _.isObject(data) ? data : JSON.parse(data);
     }
 });
 
 module.exports = MutableStore;
+
 },{"./helper":11,"events":1,"flux/lib/invariant":3}],11:[function(require,module,exports){
 'use strict';
 
