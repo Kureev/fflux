@@ -1,4 +1,7 @@
-## v0.13.2 (May 29, 2015)
+## v0.13.4 (June 15, 2015)
+* Improve: now you can rehydrate data scope without all the data for every store. If you're trying to rehydrate store without data, fflux will use {} as default
+
+## v0.13.2/3 (May 29, 2015)
 * Fixing v0.13.1 scope issue (wrong scope)
 
 ## v0.13.1 (May 29, 2015)
