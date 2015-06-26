@@ -1,13 +1,13 @@
 'use strict';
 
-var _ = require('./helpers');
+var _ = require('./helper');
 
 /**
  * Incapsulate React
  * @param  {Object} React
  * @return {Function}
  */
-module.exports = function createConnectConstructor(React) {
+module.exports = function createConnectorFactory(React) {
   /**
    * Connectors factory
    * @param  {Array} stores Array of stores to subscribe
@@ -22,19 +22,21 @@ module.exports = function createConnectConstructor(React) {
     return function connect(Component) {
       return React.createClass({
         componentWillMount: function() {
-          stores.forEach((store) =>
-            store.addListener('change', this.forceUpdate))
+          stores.forEach(function (store) {
+            store.addListener('change', this.forceUpdate);
+          });
         },
 
         componentWillUnmount: function() {
-          stores.forEach((store) =>
-            store.removeListener('change', this.forceUpdate))
+          stores.forEach(function (store) {
+            store.removeListener('change', this.forceUpdate);
+          });
         },
 
         render: function() {
           return React.cloneElement(Component, this.props);
         }
       });
-    }
+    };
   };
-}
+};

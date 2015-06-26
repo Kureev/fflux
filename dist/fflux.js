@@ -5556,7 +5556,7 @@ ActionScope.prototype = {
 };
 
 module.exports = ActionScope;
-},{"./helper":11,"flux/lib/invariant":3}],6:[function(require,module,exports){
+},{"./helper":12,"flux/lib/invariant":3}],6:[function(require,module,exports){
 'use strict';
 
 var invariant = require('flux/lib/invariant');
@@ -5645,7 +5645,51 @@ Application.prototype = {
 
 module.exports = Application;
 
-},{"./ActionScope":5,"./DataScope":7,"./Dispatcher":8,"./helper":11,"flux/lib/invariant":3}],7:[function(require,module,exports){
+},{"./ActionScope":5,"./DataScope":8,"./Dispatcher":9,"./helper":12,"flux/lib/invariant":3}],7:[function(require,module,exports){
+'use strict';
+
+var _ = require('./helper');
+
+/**
+ * Incapsulate React
+ * @param  {Object} React
+ * @return {Function}
+ */
+module.exports = function createConnectorFactory(React) {
+  /**
+   * Connectors factory
+   * @param  {Array} stores Array of stores to subscribe
+   * @return {Function}
+   */
+  return function createConnectFunction(stores) {
+    /**
+     * Component decorator
+     * @param  {React.Element} Component
+     * @return {React.Class}
+     */
+    return function connect(Component) {
+      return React.createClass({
+        componentWillMount: function() {
+          stores.forEach(function (store) {
+            store.addListener('change', this.forceUpdate);
+          });
+        },
+
+        componentWillUnmount: function() {
+          stores.forEach(function (store) {
+            store.removeListener('change', this.forceUpdate);
+          });
+        },
+
+        render: function() {
+          return React.cloneElement(Component, this.props);
+        }
+      });
+    };
+  };
+};
+
+},{"./helper":12}],8:[function(require,module,exports){
 'use strict';
 
 var invariant = require('flux/lib/invariant');
@@ -5802,7 +5846,7 @@ DataScope.prototype = {
 
 module.exports = DataScope;
 
-},{"./helper":11,"flux/lib/invariant":3}],8:[function(require,module,exports){
+},{"./helper":12,"flux/lib/invariant":3}],9:[function(require,module,exports){
 'use strict';
 
 var FBDispatcher = require('flux/lib/Dispatcher');
@@ -5917,7 +5961,7 @@ _.extend(Dispatcher.prototype, {
 });
 
 module.exports = Dispatcher;
-},{"./helper":11,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],9:[function(require,module,exports){
+},{"./helper":12,"flux/lib/Dispatcher":2,"flux/lib/invariant":3}],10:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -6014,7 +6058,7 @@ _.extend(ImmutableStore.prototype, MutableStore.prototype, {
 
 module.exports = ImmutableStore;
 
-},{"./MutableStore":10,"./helper":11,"flux/lib/invariant":3,"immutable":4}],10:[function(require,module,exports){
+},{"./MutableStore":11,"./helper":12,"flux/lib/invariant":3,"immutable":4}],11:[function(require,module,exports){
 'use strict';
 
 var _ = require('./helper');
@@ -6168,7 +6212,7 @@ _.extend(MutableStore.prototype, EventEmitter.prototype, {
 
 module.exports = MutableStore;
 
-},{"./helper":11,"events":1,"flux/lib/invariant":3}],11:[function(require,module,exports){
+},{"./helper":12,"events":1,"flux/lib/invariant":3}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6254,7 +6298,7 @@ module.exports = {
     extend: extend,
     clone: clone
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var FFlux = {};
@@ -6266,9 +6310,11 @@ FFlux.mixins = require('./mixins');
 FFlux.Application = require('./Application');
 FFlux.ActionScope = require('./ActionScope');
 FFlux.DataScope = require('./DataScope');
+FFlux.createConnectorFactory = require('./Connector');
 
 module.exports = FFlux;
-},{"./ActionScope":5,"./Application":6,"./DataScope":7,"./Dispatcher":8,"./ImmutableStore":9,"./MutableStore":10,"./mixins":13}],13:[function(require,module,exports){
+
+},{"./ActionScope":5,"./Application":6,"./Connector":7,"./DataScope":8,"./Dispatcher":9,"./ImmutableStore":10,"./MutableStore":11,"./mixins":14}],14:[function(require,module,exports){
 'use strict';
 
 var invariant = require('flux/lib/invariant');
@@ -6307,5 +6353,5 @@ module.exports = {
         };
     }
 };
-},{"../src/helper":11,"flux/lib/invariant":3}]},{},[12])(12)
+},{"../src/helper":12,"flux/lib/invariant":3}]},{},[13])(13)
 });

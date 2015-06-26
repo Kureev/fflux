@@ -9,5 +9,6 @@ FFlux.mixins = require('./mixins');
 FFlux.Application = require('./Application');
 FFlux.ActionScope = require('./ActionScope');
 FFlux.DataScope = require('./DataScope');
+FFlux.createConnectorFactory = require('./Connector');
 
 module.exports = FFlux;
