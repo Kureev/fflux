@@ -41,7 +41,7 @@ module.exports = function createConnectorFactory(React) {
                 },
 
                 render: function() {
-                    return React.createElement(Component);
+                    return React.createElement(Component, this.props);
                 }
             });
 
