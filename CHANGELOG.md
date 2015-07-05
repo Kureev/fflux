@@ -1,3 +1,6 @@
+## v0.14.0 (Jule 5, 2015)
+* Introduce @connector for composition by high-order components
+
 ## v0.13.4 (June 15, 2015)
 * Improve: now you can rehydrate data scope without all the data for every store. If you're trying to rehydrate store without data, fflux will use {} as default
 
