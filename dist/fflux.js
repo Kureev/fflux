@@ -5752,7 +5752,7 @@ module.exports = function createConnectorFactory(React) {
                 },
 
                 render: function() {
-                    return React.createElement(Component, this.props);
+                    return React.createElement(Component, this.props, this.props.children);
                 }
             });
 
