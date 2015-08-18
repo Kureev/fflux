@@ -43,7 +43,7 @@
     "react": "^0.13"
   },
   "dependencies": {
-    "flux": "2.0.2",
+    "flux": "2.0.3",
     "immutable": "^3.6.2"
   }
 }
