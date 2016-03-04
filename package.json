@@ -39,11 +39,13 @@
     "husky": "^0.6.2",
     "mocha": "^2.1.0",
     "uglify-js": "^2.4.16",
-    "react": "^0.14",
     "jsdom": "^7.0.2"
   },
   "dependencies": {
     "flux": "2.0.3",
     "immutable": "^3.6.2"
+  },
+  "peerDependencies": {
+    "react": "^0.14.7"
   }
 }
