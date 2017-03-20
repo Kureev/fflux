@@ -1,5 +1,7 @@
 fflux.js [deprecated, use redux instead]
 ==========
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Kureev/fflux.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/Kureev/fflux.svg?branch=master)](https://travis-ci.org/Kureev/fflux) [![Code Climate](https://codeclimate.com/github/Kureev/fflux/badges/gpa.svg)](https://codeclimate.com/github/Kureev/fflux) [![Test Coverage](https://codeclimate.com/github/Kureev/fflux/badges/coverage.svg)](https://codeclimate.com/github/Kureev/fflux)
 
 #### Contents:
